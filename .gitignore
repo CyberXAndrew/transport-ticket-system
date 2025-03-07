@@ -1,0 +1,52 @@
+### IntelliJ IDEA ###
+.idea/
+out/
+/target/
+
+# Gradle
+!gradle/wrapper/gradle-wrapper.jar
+/build
+.gradle
+
+# Compiled class file
+*.class
+
+# Log file
+*.log
+
+# Package Files #
+*.jar
+*.war
+*.ear
+
+# Module output directory
+/out
+
+# Spring Boot
+/mvnw
+/mvnw.cmd
+
+# H2 database files (если используешь H2 для разработки локально)
+*.mv.db
+*.trace.db
+
+# OS generated files #
+.DS_Store
+ehthumbs.db
+Thumbs.db
+
+# Personal files
+*.swp
+*.diff
+*.backup
+*.orig
+*.rej
+
+# Environment Variables
+.env
+
+# Redis
+redis.log
+
+# Kafka
+kafka.log
