@@ -2,7 +2,7 @@ plugins {
     id 'java'
 }
 
-group = 'com.github.cyberx'
+group = 'com.github.cyberxandrew'
 version = '1.0-SNAPSHOT'
 
 repositories {
@@ -11,11 +11,15 @@ repositories {
 
 dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.12.0'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.10.2'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.12.0'
+    testImplementation 'org.junit.platform:junit-platform-launcher:1.12.0'
+
     testImplementation 'org.mockito:mockito-core:5.16.0'
 
     compileOnly 'org.projectlombok:lombok:1.18.36'
     annotationProcessor 'org.projectlombok:lombok:1.18.36'
+
+    implementation 'org.springframework.data:spring-data-commons:4.0.0-M1'
 
     implementation 'org.springframework.boot:spring-boot-starter-web:3.4.3'
     implementation 'org.springframework.boot:spring-boot-starter-jdbc:3.4.3'
@@ -25,6 +29,8 @@ dependencies {
 
     testImplementation 'com.h2database:h2:2.3.232'
     implementation 'org.postgresql:postgresql:42.7.5'
+
+    implementation 'org.apache.commons:commons-lang3:3.17.0'
 
 }
 
