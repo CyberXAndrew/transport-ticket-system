@@ -1,6 +1,6 @@
 ### Description
 Microservice application that allow users to purchase transportation tickets.
-## Technologies used
+### Technologies used
 | Technology                 | Version  | Description                                                   |
 |----------------------------|----------|---------------------------------------------------------------|
 | **Programming language**   |          |                                                               |
