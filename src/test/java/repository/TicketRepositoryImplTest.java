@@ -1,5 +1,6 @@
 package repository;
 
+import exception.ticket.TicketSaveException;
 import model.Ticket;
 import mapper.TicketRowMapper;
 import exception.ticket.TicketAvailabilityException;
@@ -22,6 +23,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -188,21 +190,54 @@ public class TicketRepositoryImplTest {
         String sql = "UPDATE tickets SET date_time = ?, user_id = ?, route_id = ?, price = ?, seat_number = ?" +
                 " WHERE id = ?";
 
+        testTicket.setId(testTicketId);
+        setTicketFieldsWithoutId(testTicket);
+
         when(logger.isDebugEnabled()).thenReturn(true);
         when(jdbcTemplate.update(eq(sql), any(LocalDateTime.class), anyLong(), anyLong(),
                 any(BigInteger.class), anyString(), anyLong())).thenReturn(1);
 
         Ticket updatedTicket = ticketRepository.save(testTicket);
 
-        assertEquals(testTicket.getId(), updatedTicket.getId());
-
+        assertEquals(testTicket, updatedTicket);
         verify(logger, times(1))
                 .debug("Updating ticket with id: {} is successful", testTicket.getId());
     }
 
+    @Test
+    public void testSaveTicketNotFoundUpdate() {
+        String sql = "UPDATE tickets SET date_time = ?, user_id = ?, route_id = ?, price = ?, seat_number = ?" +
+                " WHERE id = ?";
 
+        testTicket.setId(testTicketId);
+        setTicketFieldsWithoutId(testTicket);
 
+        when(jdbcTemplate.update(eq(sql), any(LocalDateTime.class), anyLong(), anyLong(),
+                any(BigInteger.class), anyString(), anyLong())).thenReturn(0);
 
+        TicketSaveException ex = assertThrows(TicketSaveException.class, () -> {
+            ticketRepository.save(testTicket);
+        });
+        verify(logger, times(1))
+                .warn("Ticket with id: {} not found for updating", testTicket.getId());
+    }
+
+    @Test
+    public void testSaveDataBaseException() {
+        String sql = "UPDATE tickets SET date_time = ?, user_id = ?, route_id = ?, price = ?, seat_number = ?" +
+                " WHERE id = ?";
+
+        testTicket.setId(testTicketId);
+        setTicketFieldsWithoutId(testTicket);
+
+        when(jdbcTemplate.update(eq(sql), any(LocalDateTime.class), anyLong(), anyLong(),
+                any(BigInteger.class), anyString(), anyLong())).thenThrow(DataAccessException.class);
+
+        DataAccessException ex = assertThrows(DataAccessException.class, () -> {
+            ticketRepository.save(testTicket);
+        });
+        verify(logger, times(1)).error("Error while saving/updating ticket", ex);
+    }
 
 
 
@@ -255,4 +290,12 @@ public class TicketRepositoryImplTest {
 //        assertEquals(expectedList, actualList);
 //        verify(jdbcTemplate).query(eq(expectedSql), eq(expectedParams), any(TicketRowMapper.class));
 //    }
+
+    private void setTicketFieldsWithoutId(Ticket ticket) {
+        ticket.setDateTime(LocalDateTime.now());
+        ticket.setUserId(2L);
+        ticket.setRouteId(3L);
+        ticket.setPrice(new BigDecimal("15.5"));
+        ticket.setSeatNumber("1A");
+    }
 }
