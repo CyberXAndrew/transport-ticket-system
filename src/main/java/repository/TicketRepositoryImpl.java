@@ -1,33 +1,58 @@
 package repository;
 
 import dto.TicketDTO;
+import exception.ticket.TicketAvailabilityException;
+import exception.ticket.TicketDeleteException;
+import exception.ticket.TicketNotFoundException;
+import exception.ticket.TicketSaveException;
 import mapper.TicketRowMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.PreparedStatement;
 import java.util.List;
 import java.util.ArrayList;
 import java.time.LocalDateTime;
+import java.util.Optional;
+
 import org.springframework.data.domain.Pageable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import model.Ticket;
 
+@Repository
 public class TicketRepositoryImpl implements TicketRepository {
-
+    private static final Logger logger = LoggerFactory.getLogger(TicketRepository.class);
     @Autowired
     private JdbcTemplate jdbcTemplate;
     @Autowired
     private TicketRowMapper ticketRowMapper;
 
     @Override
-    public Ticket findById(Long ticketId) {
-        String sql = "";
-        return new Ticket();
+    public Optional<Ticket> findById(Long ticketId) {
+        String sql = "SELECT * FROM tickets WHERE id = ?";
+        try {
+            return Optional.of(jdbcTemplate.queryForObject(sql, new Object[]{ticketId}, ticketRowMapper::mapTicket));
+        } catch (EmptyResultDataAccessException ex) {
+            logger.warn("Ticket with id {} not found", ticketId);
+            return Optional.empty();
+        }
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Ticket> findByUserId(Long userId) {
-        return List.of();
+        String sql = "SELECT * FROM tickets WHERE user_id = ?";
+        List<Ticket> result = jdbcTemplate.query(sql, new Object[]{userId}, ticketRowMapper::mapTicket);
+        logger.debug("Found {} tickets for user with id: {}", result.size(), userId);
+        return result;
     }
 
     @Override
@@ -61,31 +86,91 @@ public class TicketRepositoryImpl implements TicketRepository {
             paginationParams.add(offset);
         }
 
-        return jdbcTemplate.query(sql, paginationParams.toArray(), ticketRowMapper);
+        return jdbcTemplate.query(sql, paginationParams.toArray(), ticketRowMapper::mapRow);
     }
 
     @Override
     public List<TicketDTO> findAll() {
-        return findAll(Pageable.unpaged(), null, null, null, null);
+        return findAll(Pageable.unpaged(), null, null,
+                null, null);
     }
 
     @Override
+    @Transactional
     public Ticket save(Ticket ticket) {
-        return null;
+        try {
+            if (ticket.getId() == null) {
+                String sql = "INSERT INTO tickets (date_time, user_id, route_id, price, seat_number) " +
+                        "VALUES (?, ?, ?, ?, ?)";
+                KeyHolder keyHolder = new GeneratedKeyHolder();
+
+                jdbcTemplate.update(connection -> {
+                    PreparedStatement preparedStatement = connection.prepareStatement(sql, new String[]{"id"});
+                    preparedStatement.setObject(1, ticket.getDateTime());
+                    preparedStatement.setObject(2, ticket.getUserId());
+                    preparedStatement.setObject(3, ticket.getRouteId());
+                    preparedStatement.setBigDecimal(4, ticket.getPrice());
+                    preparedStatement.setString(5, ticket.getSeatNumber());
+                    return preparedStatement;
+                }, keyHolder);
+
+                ticket.setId(keyHolder.getKey().longValue());
+                logger.debug("Ticket with id: {} successfully created", ticket.getId());
+                return ticket;
+            } else {
+                String sql = "UPDATE tickets SET date_time = ?, user_id = ?, route_id = ?, price = ?, seat_number = ?" +
+                        " WHERE id = ?";
+
+                int updated = jdbcTemplate.update(sql,
+                        ticket.getDateTime(),
+                        ticket.getUserId(),
+                        ticket.getRouteId(),
+                        ticket.getPrice(),
+                        ticket.getSeatNumber(),
+                        ticket.getId());
+                if (updated > 0) {
+                    logger.debug("Updating ticket with id: {} is successful", ticket.getId());
+                } else {
+                    logger.warn("Ticket with id: {} not found for updating", ticket.getId());
+                    throw new TicketSaveException("Ticket not found for updating");
+                }
+                return ticket;
+            }
+        } catch (DataAccessException ex) {
+            logger.error("Error while saving/updating ticket with id: {}", ticket.getId());
+            throw new TicketSaveException("Error while saving/updating ticket", ex);
+        }
     }
 
     @Override
-    public Ticket update(Ticket ticket) {
-        return null;
-    }
-
-    @Override
+    @Transactional
     public void deleteById(Long ticketId) {
-
+        try {
+            Optional<Ticket> ticket = findById(ticketId);
+            if (ticket.isEmpty()) {
+                logger.warn("Ticket with id: {} not found", ticketId);
+                throw new TicketNotFoundException("Ticket not found while deletion");
+            }
+            String sql = "DELETE FROM tickets WHERE id = ?";
+            jdbcTemplate.update(sql, ticketId);
+            logger.debug("Ticket with id {} successfully deleted", ticketId);
+        } catch (DataAccessException ex) {
+            logger.error("Error when deleting a ticket with id = {}: {}", ticketId, ex.getMessage(), ex);
+            throw new TicketDeleteException("Error when deleting a ticket", ex);
+        }
     }
 
     @Override
+    @Transactional(readOnly = true)
     public boolean isTicketAvailable(Long ticketId) {
-        return false;
+        String sql = "SELECT EXISTS (SELECT 1 FROM tickets WHERE id = ? AND user_id IS NULL)";
+        try {
+            Boolean result = jdbcTemplate.queryForObject(sql, new Object[]{ticketId}, Boolean.class);
+            logger.debug("Ticket with id: {} is available: {}", ticketId, result);
+            return result;
+        } catch (EmptyResultDataAccessException ex) {
+            logger.error("Ticket with id: {} availability definition error", ticketId, ex);
+            throw new TicketAvailabilityException("Ticket availability definition error", ex);
+        }
     }
 }
