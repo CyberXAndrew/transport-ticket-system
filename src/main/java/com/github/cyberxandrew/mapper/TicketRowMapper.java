@@ -1,8 +1,8 @@
-package mapper;
+package com.github.cyberxandrew.mapper;
 
-import dto.TicketDTO;
-import exception.ticket.TicketMappingException;
-import model.Ticket;
+import com.github.cyberxandrew.dto.TicketDTO;
+import com.github.cyberxandrew.exception.ticket.TicketMappingException;
+import com.github.cyberxandrew.model.Ticket;
 import org.springframework.jdbc.core.RowMapper;
 import org.apache.commons.lang3.StringUtils;
 
@@ -12,33 +12,16 @@ import java.time.LocalDateTime;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import repository.TicketRepository;
+import com.github.cyberxandrew.repository.TicketRepository;
+import org.springframework.stereotype.Component;
 
-public class TicketRowMapper implements RowMapper<TicketDTO> {
+@Component
+public class TicketRowMapper implements RowMapper<Ticket> {
 
     private static final Logger logger = LoggerFactory.getLogger(TicketRepository.class);
 
     @Override
-    public TicketDTO mapRow(ResultSet rs, int rowNum) throws SQLException {
-        TicketDTO ticketDTO = new TicketDTO();
-
-        ticketDTO.setId(rs.getLong("id"));
-        ticketDTO.setDateTime(rs.getObject("date_time", LocalDateTime.class));
-        ticketDTO.setUserId(rs.getLong("user_id"));
-        ticketDTO.setRouteId(rs.getLong("route_id"));
-        ticketDTO.setPrice(rs.getBigDecimal("price"));
-        ticketDTO.setSeatNumber(StringUtils.defaultString(rs.getString("seat_number"), "Unknown"));
-        ticketDTO.setDeparturePoint(StringUtils.defaultString(rs.getString("departure_point"),
-                "Unknown"));
-        ticketDTO.setDestinationPoint(StringUtils.defaultString(rs.getString("destination_point"),
-                "Unknown"));
-        ticketDTO.setCarrierName(StringUtils.defaultString(rs.getString("carrier_name"),
-                "Unknown"));
-
-        return ticketDTO;
-    }
-
-    public Ticket mapTicket(ResultSet rs, int rowNum) throws SQLException {
+    public Ticket mapRow(ResultSet rs, int rowNum) throws SQLException {
         Ticket ticket = new Ticket();
         try {
             Long id = rs.getLong("id");

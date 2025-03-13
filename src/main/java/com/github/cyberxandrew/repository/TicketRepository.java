@@ -1,7 +1,7 @@
-package repository;
+package com.github.cyberxandrew.repository;
 
-import dto.TicketDTO;
-import model.Ticket;
+import com.github.cyberxandrew.dto.TicketDTO;
+import com.github.cyberxandrew.model.Ticket;
 
 import org.springframework.data.domain.Pageable;
 import java.time.LocalDateTime;

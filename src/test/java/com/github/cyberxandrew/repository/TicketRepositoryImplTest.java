@@ -1,35 +1,31 @@
-package repository;
+package com.github.cyberxandrew.repository;
 
-import exception.ticket.TicketSaveException;
-import model.Ticket;
-import mapper.TicketRowMapper;
-import exception.ticket.TicketAvailabilityException;
-import exception.ticket.TicketDeleteException;
-import exception.ticket.TicketNotFoundException;
+import com.github.cyberxandrew.exception.ticket.TicketSaveException;
+import com.github.cyberxandrew.model.Ticket;
+import com.github.cyberxandrew.mapper.TicketRowMapper;
+import com.github.cyberxandrew.exception.ticket.TicketAvailabilityException;
+import com.github.cyberxandrew.exception.ticket.TicketDeleteException;
+import com.github.cyberxandrew.exception.ticket.TicketNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.support.GeneratedKeyHolder;
-import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -39,9 +35,6 @@ import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.Optional;
 import java.util.Collections;
-
-
-import java.sql.SQLException;
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -65,13 +58,22 @@ public class TicketRepositoryImplTest {
         testTicketId = 1L;
         testTicket = new Ticket();
         testTicket.setId(testTicketId);
+
+        jdbcTemplate.execute("DROP TABLE ID EXISTS tickets");
+        jdbcTemplate.execute("CREATE TABLE tickets (" +
+                "id BIGINT AUTO_INCREMENT PRIMARY_KEY," +
+                "date_time TIMESTAMP," +
+                "user_id BIGINT," +
+                "route_id BIGINT," +
+                "price DECIMAL (10,2)," +
+                "seat_number VARCHAR(255))");
     }
 
     @Test
     public void testFindByIdSuccessful() {
         String sql = "SELECT * FROM tickets WHERE id = ?";
 
-        when(jdbcTemplate.queryForObject(eq(sql), eq(new Object[]{testTicketId}), ticketRowMapper::mapTicket))
+        when(jdbcTemplate.queryForObject(eq(sql), eq(new Object[]{testTicketId}), any(TicketRowMapper.class)))
                 .thenReturn(testTicket);
 
         Optional<Ticket> actual = ticketRepository.findById(testTicketId);
@@ -82,7 +84,7 @@ public class TicketRepositoryImplTest {
     public void testFindByIdFailed() {
         String sql = "SELECT * FROM tickets WHERE id = ?";
 
-        when(jdbcTemplate.queryForObject(eq(sql), eq(new Object[]{testTicketId}), ticketRowMapper::mapTicket))
+        when(jdbcTemplate.queryForObject(eq(sql), eq(new Object[]{testTicketId}), ticketRowMapper))
                 .thenThrow(new EmptyResultDataAccessException(1));
 
         Optional<Ticket> actual = ticketRepository.findById(testTicketId);
@@ -101,7 +103,7 @@ public class TicketRepositoryImplTest {
         List<Ticket> tickets = new ArrayList<>();
         Collections.addAll(tickets, testTicket, secondTestTicket);
 
-        when(jdbcTemplate.query(eq(sql), eq(new Object[]{testUserId}), ticketRowMapper::mapTicket))
+        when(jdbcTemplate.query(eq(sql), eq(new Object[]{testUserId}), ticketRowMapper))
                 .thenReturn(tickets);
 
         List<Ticket> result = ticketRepository.findByUserId(testUserId);
@@ -113,7 +115,7 @@ public class TicketRepositoryImplTest {
         String sql = "SELECT * FROM tickets WHERE user_id = ?";
         testTicket.setUserId(testUserId);
 
-        when(jdbcTemplate.query(eq(sql), eq(new Object[]{testUserId}), ticketRowMapper::mapTicket))
+        when(jdbcTemplate.query(eq(sql), eq(new Object[]{testUserId}), ticketRowMapper))
                 .thenReturn(Collections.emptyList());
 
         List<Ticket> result = ticketRepository.findByUserId(testUserId);
@@ -238,12 +240,6 @@ public class TicketRepositoryImplTest {
         });
         verify(logger, times(1)).error("Error while saving/updating ticket", ex);
     }
-
-
-
-
-
-
 
 //    @Test
 //    public void findAllTest() {

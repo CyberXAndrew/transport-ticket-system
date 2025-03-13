@@ -1,4 +1,4 @@
-package exception.ticket;
+package com.github.cyberxandrew.exception.ticket;
 
 public class TicketAvailabilityException extends RuntimeException {
     public TicketAvailabilityException(String message, Throwable cause) {

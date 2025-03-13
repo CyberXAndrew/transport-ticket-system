@@ -1,4 +1,4 @@
-package exception.ticket;
+package com.github.cyberxandrew.exception.ticket;
 
 public class TicketNotFoundException extends RuntimeException {
     public TicketNotFoundException(String message, Throwable cause) {

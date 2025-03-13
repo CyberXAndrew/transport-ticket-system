@@ -1,4 +1,4 @@
-package model;
+package com.github.cyberxandrew.model;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
@@ -15,12 +15,12 @@ import java.time.LocalDateTime;
 
 
 @Data
-@Entity
-@Table(name = "tickets")
+//@Entity
+//@Table(name = "tickets")
 public class Ticket {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+//    @Id
+//    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 //    @Future
     private LocalDateTime dateTime;

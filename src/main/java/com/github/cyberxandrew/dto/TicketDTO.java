@@ -1,4 +1,4 @@
-package dto;
+package com.github.cyberxandrew.dto;
 
 import lombok.Data;
 

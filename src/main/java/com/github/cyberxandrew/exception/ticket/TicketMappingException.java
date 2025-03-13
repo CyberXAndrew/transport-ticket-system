@@ -1,4 +1,4 @@
-package exception.ticket;
+package com.github.cyberxandrew.exception.ticket;
 
 public class TicketMappingException  extends RuntimeException {
     public TicketMappingException(String message, Throwable cause) {

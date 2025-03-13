@@ -1,11 +1,13 @@
-package repository;
+package com.github.cyberxandrew.repository;
 
-import dto.TicketDTO;
-import exception.ticket.TicketAvailabilityException;
-import exception.ticket.TicketDeleteException;
-import exception.ticket.TicketNotFoundException;
-import exception.ticket.TicketSaveException;
-import mapper.TicketRowMapper;
+import com.github.cyberxandrew.mapper.TicketDtoRowMapper;
+import com.github.cyberxandrew.model.Ticket;
+import com.github.cyberxandrew.dto.TicketDTO;
+import com.github.cyberxandrew.mapper.TicketRowMapper;
+import com.github.cyberxandrew.exception.ticket.TicketAvailabilityException;
+import com.github.cyberxandrew.exception.ticket.TicketDeleteException;
+import com.github.cyberxandrew.exception.ticket.TicketNotFoundException;
+import com.github.cyberxandrew.exception.ticket.TicketSaveException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -25,7 +27,6 @@ import org.springframework.data.domain.Pageable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import model.Ticket;
 
 @Repository
 public class TicketRepositoryImpl implements TicketRepository {
@@ -34,12 +35,14 @@ public class TicketRepositoryImpl implements TicketRepository {
     private JdbcTemplate jdbcTemplate;
     @Autowired
     private TicketRowMapper ticketRowMapper;
+    @Autowired
+    private TicketDtoRowMapper ticketDtoRowMapper;
 
     @Override
     public Optional<Ticket> findById(Long ticketId) {
         String sql = "SELECT * FROM tickets WHERE id = ?";
         try {
-            return Optional.of(jdbcTemplate.queryForObject(sql, new Object[]{ticketId}, ticketRowMapper::mapTicket));
+            return Optional.of(jdbcTemplate.queryForObject(sql, new Object[]{ticketId}, ticketRowMapper));
         } catch (EmptyResultDataAccessException ex) {
             logger.warn("Ticket with id {} not found", ticketId);
             return Optional.empty();
@@ -50,7 +53,7 @@ public class TicketRepositoryImpl implements TicketRepository {
     @Transactional(readOnly = true)
     public List<Ticket> findByUserId(Long userId) {
         String sql = "SELECT * FROM tickets WHERE user_id = ?";
-        List<Ticket> result = jdbcTemplate.query(sql, new Object[]{userId}, ticketRowMapper::mapTicket);
+        List<Ticket> result = jdbcTemplate.query(sql, new Object[]{userId}, ticketRowMapper);
         logger.debug("Found {} tickets for user with id: {}", result.size(), userId);
         return result;
     }
@@ -86,7 +89,7 @@ public class TicketRepositoryImpl implements TicketRepository {
             paginationParams.add(offset);
         }
 
-        return jdbcTemplate.query(sql, paginationParams.toArray(), ticketRowMapper::mapRow);
+        return jdbcTemplate.query(sql, paginationParams.toArray(), ticketDtoRowMapper);
     }
 
     @Override

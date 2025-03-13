@@ -10,10 +10,6 @@ repositories {
 }
 
 dependencies {
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.12.0'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.12.0'
-    testImplementation 'org.junit.platform:junit-platform-launcher:1.12.0'
-
     testImplementation 'org.mockito:mockito-core:5.16.0'
     testImplementation 'org.mockito:mockito-junit-jupiter:5.16.0'
     implementation 'org.slf4j:slf4j-api:2.0.17'
@@ -24,7 +20,7 @@ dependencies {
     compileOnly 'org.projectlombok:lombok:1.18.36'
     annotationProcessor 'org.projectlombok:lombok:1.18.36'
 
-    implementation 'org.springframework.data:spring-data-commons:4.0.0-M1'
+    implementation 'org.springframework.data:spring-data-commons:3.4.3'
 
     implementation 'org.springframework.boot:spring-boot-starter-web:3.4.3'
     implementation 'org.springframework.boot:spring-boot-starter-jdbc:3.4.3'

@@ -1,6 +1,6 @@
-package repository;
+package com.github.cyberxandrew.repository;
 
-import model.Ticket;
+import com.github.cyberxandrew.model.Ticket;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
