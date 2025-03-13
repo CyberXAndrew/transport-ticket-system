@@ -1,6 +1,7 @@
 package com.github.cyberxandrew.repository;
 
 import com.github.cyberxandrew.exception.ticket.TicketSaveException;
+import com.github.cyberxandrew.mapper.TicketDtoRowMapper;
 import com.github.cyberxandrew.model.Ticket;
 import com.github.cyberxandrew.mapper.TicketRowMapper;
 import com.github.cyberxandrew.exception.ticket.TicketAvailabilityException;
@@ -17,7 +18,6 @@ import static org.mockito.Mockito.*;
 
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import org.slf4j.Logger;
@@ -59,14 +59,14 @@ public class TicketRepositoryImplTest {
         testTicket = new Ticket();
         testTicket.setId(testTicketId);
 
-        jdbcTemplate.execute("DROP TABLE ID EXISTS tickets");
-        jdbcTemplate.execute("CREATE TABLE tickets (" +
-                "id BIGINT AUTO_INCREMENT PRIMARY_KEY," +
-                "date_time TIMESTAMP," +
-                "user_id BIGINT," +
-                "route_id BIGINT," +
-                "price DECIMAL (10,2)," +
-                "seat_number VARCHAR(255))");
+//        jdbcTemplate.execute("DROP TABLE ID EXISTS tickets");
+//        jdbcTemplate.execute("CREATE TABLE tickets (" +
+//                "id BIGINT AUTO_INCREMENT PRIMARY_KEY," +
+//                "date_time TIMESTAMP," +
+//                "user_id BIGINT," +
+//                "route_id BIGINT," +
+//                "price DECIMAL (10,2)," +
+//                "seat_number VARCHAR(255))");
     }
 
     @Test
@@ -84,7 +84,7 @@ public class TicketRepositoryImplTest {
     public void testFindByIdFailed() {
         String sql = "SELECT * FROM tickets WHERE id = ?";
 
-        when(jdbcTemplate.queryForObject(eq(sql), eq(new Object[]{testTicketId}), ticketRowMapper))
+        when(jdbcTemplate.queryForObject(eq(sql), eq(new Object[]{testTicketId}), any(TicketRowMapper.class)))
                 .thenThrow(new EmptyResultDataAccessException(1));
 
         Optional<Ticket> actual = ticketRepository.findById(testTicketId);
@@ -103,88 +103,24 @@ public class TicketRepositoryImplTest {
         List<Ticket> tickets = new ArrayList<>();
         Collections.addAll(tickets, testTicket, secondTestTicket);
 
-        when(jdbcTemplate.query(eq(sql), eq(new Object[]{testUserId}), ticketRowMapper))
+        when(jdbcTemplate.query(eq(sql), eq(new Object[]{testUserId}), any(TicketRowMapper.class)))
                 .thenReturn(tickets);
 
         List<Ticket> result = ticketRepository.findByUserId(testUserId);
         assertFalse(result.isEmpty());
         assertTrue(result.containsAll(Arrays.asList(testTicket, secondTestTicket)));
     }
+
     @Test
     public void testFindByUserIdFailed() {
         String sql = "SELECT * FROM tickets WHERE user_id = ?";
         testTicket.setUserId(testUserId);
 
-        when(jdbcTemplate.query(eq(sql), eq(new Object[]{testUserId}), ticketRowMapper))
+        when(jdbcTemplate.query(eq(sql), eq(new Object[]{testUserId}), any(TicketRowMapper.class)))
                 .thenReturn(Collections.emptyList());
 
         List<Ticket> result = ticketRepository.findByUserId(testUserId);
         assertTrue(result.isEmpty());
-    }
-
-    @Test
-    public void testDeleteByIdSuccessful() {
-        String sql = "DELETE FROM tickets WHERE id = ?";
-
-        when(ticketRepository.findById(testTicketId)).thenReturn(Optional.of(testTicket));
-
-        doNothing().when(jdbcTemplate).update(eq(sql), eq(testTicketId));
-
-        ticketRepository.deleteById(testTicketId);
-
-        verify(jdbcTemplate).update(eq(sql), eq(testTicketId));
-        verify(ticketRepository, times(1)).findById(testTicketId);
-    }
-    @Test
-    public void testDeleteByIdFailed() {
-        String sql = "DELETE FROM tickets WHERE id = ?";
-
-        when(ticketRepository.findById(testTicketId)).thenReturn(Optional.empty());
-        assertThrows(TicketNotFoundException.class,
-                () -> {ticketRepository.deleteById(testTicketId);});
-    }
-    @Test
-    public void testDeleteByIdDataBaseError() {
-        String sql = "DELETE FROM tickets WHERE id = ?";
-
-        when(ticketRepository.findById(testTicketId)).thenReturn(Optional.of(testTicket));
-        doThrow(new EmptyResultDataAccessException(1)).when(jdbcTemplate).update(eq(sql), eq(testTicketId));
-
-        assertThrows(TicketDeleteException.class, () -> {
-            ticketRepository.deleteById(testTicketId);
-        });
-    }
-
-    @Test
-    public void testIsTicketAvailableTrue() {
-        String sql = "SELECT EXISTS (SELECT 1 FROM tickets WHERE id = ? AND user_id IS NULL)";
-
-        when(jdbcTemplate.queryForObject(eq(sql), eq(new Object[]{testTicketId}), Boolean.class))
-                .thenReturn(Boolean.TRUE);
-
-        boolean result = ticketRepository.isTicketAvailable(testTicketId);
-        assertTrue(result);
-    }
-    @Test
-    public void testIsTicketAvailableFalse() {
-        String sql = "SELECT EXISTS (SELECT 1 FROM tickets WHERE id = ? AND user_id IS NULL)";
-
-        when(jdbcTemplate.queryForObject(eq(sql), eq(new Object[]{testTicketId}), Boolean.class))
-                .thenReturn(Boolean.FALSE);
-
-        boolean result = ticketRepository.isTicketAvailable(testTicketId);
-        assertFalse(result);
-    }
-    @Test
-    public void testIsTicketAvailableDoesNotExists() {
-        String sql = "SELECT EXISTS (SELECT 1 FROM tickets WHERE id = ? AND user_id IS NULL)";
-
-        doThrow(new EmptyResultDataAccessException(1)).when(jdbcTemplate)
-                .queryForObject(eq(sql), eq(new Object[]{testTicketId}), Boolean.class);
-
-        assertThrows(TicketAvailabilityException.class, () -> {
-           ticketRepository.isTicketAvailable(testTicketId);
-        });
     }
 
     @Test
@@ -205,7 +141,6 @@ public class TicketRepositoryImplTest {
         verify(logger, times(1))
                 .debug("Updating ticket with id: {} is successful", testTicket.getId());
     }
-
     @Test
     public void testSaveTicketNotFoundUpdate() {
         String sql = "UPDATE tickets SET date_time = ?, user_id = ?, route_id = ?, price = ?, seat_number = ?" +
@@ -239,6 +174,75 @@ public class TicketRepositoryImplTest {
             ticketRepository.save(testTicket);
         });
         verify(logger, times(1)).error("Error while saving/updating ticket", ex);
+    }
+
+    @Test
+    public void testDeleteByIdSuccessful() {
+        String sql = "DELETE FROM tickets WHERE id = ?";
+
+        when(ticketRepository.findById(eq(testTicketId))).thenReturn(Optional.of(testTicket));
+
+        doNothing().when(jdbcTemplate).update(eq(sql), eq(testTicketId));
+
+        ticketRepository.deleteById(testTicketId);
+
+        verify(jdbcTemplate).update(eq(sql), eq(testTicketId));
+        verify(ticketRepository, times(1)).findById(testTicketId);
+    }
+
+    @Test
+    public void testDeleteByIdFailed() {
+        String sql = "DELETE FROM tickets WHERE id = ?";
+
+        when(ticketRepository.findById(testTicketId)).thenReturn(Optional.empty());
+        assertThrows(TicketNotFoundException.class,
+                () -> {ticketRepository.deleteById(testTicketId);});
+    }
+
+    @Test
+    public void testDeleteByIdDataBaseError() {
+        String sql = "DELETE FROM tickets WHERE id = ?";
+
+        when(ticketRepository.findById(testTicketId)).thenReturn(Optional.of(testTicket));
+        doThrow(new EmptyResultDataAccessException(1)).when(jdbcTemplate).update(eq(sql), eq(testTicketId));
+
+        assertThrows(TicketDeleteException.class, () -> {
+            ticketRepository.deleteById(testTicketId);
+        });
+    }
+
+    @Test
+    public void testIsTicketAvailableTrue() {
+        String sql = "SELECT EXISTS (SELECT 1 FROM tickets WHERE id = ? AND user_id IS NULL)";
+
+        when(jdbcTemplate.queryForObject(eq(sql), eq(new Object[]{testTicketId}), Boolean.class))
+                .thenReturn(Boolean.TRUE);
+
+        boolean result = ticketRepository.isTicketAvailable(testTicketId);
+        assertTrue(result);
+    }
+
+    @Test
+    public void testIsTicketAvailableFalse() {
+        String sql = "SELECT EXISTS (SELECT 1 FROM tickets WHERE id = ? AND user_id IS NULL)";
+
+        when(jdbcTemplate.queryForObject(eq(sql), eq(new Object[]{testTicketId}), Boolean.class))
+                .thenReturn(Boolean.FALSE);
+
+        boolean result = ticketRepository.isTicketAvailable(testTicketId);
+        assertFalse(result);
+    }
+
+    @Test
+    public void testIsTicketAvailableDoesNotExists() {
+        String sql = "SELECT EXISTS (SELECT 1 FROM tickets WHERE id = ? AND user_id IS NULL)";
+
+        doThrow(new EmptyResultDataAccessException(1)).when(jdbcTemplate)
+                .queryForObject(eq(sql), eq(new Object[]{testTicketId}), Boolean.class);
+
+        assertThrows(TicketAvailabilityException.class, () -> {
+            ticketRepository.isTicketAvailable(testTicketId);
+        });
     }
 
 //    @Test

@@ -1,6 +1,5 @@
 package com.github.cyberxandrew.mapper;
 
-import com.github.cyberxandrew.dto.TicketDTO;
 import com.github.cyberxandrew.exception.ticket.TicketMappingException;
 import com.github.cyberxandrew.model.Ticket;
 import org.springframework.jdbc.core.RowMapper;

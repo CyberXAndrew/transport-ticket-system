@@ -10,14 +10,14 @@ import java.util.Optional;
 
 public interface TicketRepository {
     Optional<Ticket> findById(Long ticketId);
+    List<Ticket> findByUserId(Long userId);
     List<TicketDTO> findAll();
+
     List<TicketDTO> findAll(Pageable pageable,
                             LocalDateTime dateTime,
                             String departurePoint,
                             String destinationPoint,
                             String carrierName);
-
-    List<Ticket> findByUserId(Long userId);
     Ticket save(Ticket ticket);
     void deleteById(Long ticketId);
     boolean isTicketAvailable(Long ticketId);
