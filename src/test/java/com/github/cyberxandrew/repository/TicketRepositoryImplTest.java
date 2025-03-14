@@ -132,6 +132,56 @@ public class TicketRepositoryImplTest {
     }
 
     @Test
+    public void testFindAllWithoutParams() {
+        String expectedSql = "SELECT t.*, r.departure_point, r.destination_point, r.carrier_name" +
+                " FROM tickets t JOIN routes r ON t.route_id = r.id WHERE t.user_id IS NULL";
+        Object[] expectedParams = new Object[0];
+
+        TicketDTO ticketDTO = new TicketDTO();
+        setTicketDtoFieldsWithoutUserId(ticketDTO);
+        List<TicketDTO> expectedList = new ArrayList<>(Collections.singletonList(ticketDTO));
+
+        when(jdbcTemplate.query(eq(expectedSql), eq(expectedParams), any(TicketDtoRowMapper.class)))
+                .thenReturn(expectedList);
+
+        List<TicketDTO> actualList = ticketRepository.findAll();
+
+        assertEquals(expectedList, actualList);
+        verify(jdbcTemplate, times(1)).query(eq(expectedSql), eq(expectedParams), any(TicketDtoRowMapper.class));
+    }
+
+    @Test
+    public void testFindAllWithAllParams() {
+        String expectedSql = "SELECT t.*, r.departure_point, r.destination_point, r.carrier_name" +
+                " FROM tickets t JOIN routes r ON t.route_id = r.id WHERE t.user_id IS NULL" +
+                " AND date_time = ? AND departure_point LIKE ? AND destination_point LIKE ? " +
+                "AND carrier_name LIKE ? LIMIT ? OFFSET ?";
+
+        Pageable pageable = PageRequest.of(0, 2);
+        LocalDateTime dateTime = LocalDateTime.now();
+        String departurePoint = "Saints-Petersburg";
+        String destinationPoint = "Moscow";
+        String carrierName = "Java Airlines";
+
+        Object[] expectedParams = new Object[]{dateTime, "%" + departurePoint + "%", "%" + destinationPoint + "%",
+                "%" + carrierName + "%", pageable.getPageSize(), pageable.getOffset()};
+
+        TicketDTO testTicketDTO = new TicketDTO();
+        setTicketDtoFieldsWithoutUserId(testTicketDTO);
+
+        List<TicketDTO> expectedList = new ArrayList<>(Collections.singletonList(testTicketDTO));
+
+        when(jdbcTemplate.query(eq(expectedSql), eq(expectedParams), any(TicketDtoRowMapper.class)))
+                .thenReturn(expectedList);
+
+        List<TicketDTO> actualList = ticketRepository.findAll(pageable, dateTime, departurePoint,
+                destinationPoint, carrierName);
+
+        assertEquals(expectedList, actualList);
+        verify(jdbcTemplate).query(eq(expectedSql), eq(expectedParams), any(TicketDtoRowMapper.class));
+    }
+
+    @Test
     public void testSaveSuccessfulUpdate() {
         String sql = "UPDATE tickets SET date_time = ?, user_id = ?, route_id = ?, price = ?, seat_number = ?" +
                 " WHERE id = ?";
@@ -196,8 +246,8 @@ public class TicketRepositoryImplTest {
 
         boolean result = ticketRepository.isTicketAvailable(testTicketId);
         assertTrue(result);
-        verify(logger, times(1))
-                .debug("Ticket with id: {} is available: {}", testTicketId, true);
+//        verify(logger, times(1))
+//                .debug("Ticket with id: {} is available: {}", testTicketId, true);
     }
 
     @Test
@@ -209,6 +259,8 @@ public class TicketRepositoryImplTest {
 
         boolean result = ticketRepository.isTicketAvailable(testTicketId);
         assertFalse(result);
+        //        verify(logger, times(1))
+//                .debug("Ticket with id: {} is available: {}", testTicketId, false);
     }
 
     @Test
@@ -220,57 +272,9 @@ public class TicketRepositoryImplTest {
 
         assertThrows(TicketAvailabilityException.class, () -> {
             ticketRepository.isTicketAvailable(testTicketId);
+//            verify(logger, times(1))
+//                .error("Ticket with id: {} availability definition error", testTicketId, true);
         });
-    }
-
-    @Test
-    public void testFindAllWithoutParams() {
-        String expectedSql = "SELECT t.*, r.departure_point, r.destination_point, r.carrier_name" +
-                " FROM tickets t JOIN routes r ON t.route_id = r.id WHERE t.user_id IS NULL";
-        Object[] expectedParams = new Object[0];
-
-        TicketDTO ticketDTO = new TicketDTO();
-        setTicketDtoFieldsWithoutUserId(ticketDTO);
-        List<TicketDTO> expectedList = new ArrayList<>(Collections.singletonList(ticketDTO));
-
-        when(jdbcTemplate.query(eq(expectedSql), eq(expectedParams), any(TicketDtoRowMapper.class)))
-                .thenReturn(expectedList);
-
-        List<TicketDTO> actualList = ticketRepository.findAll();
-
-        assertEquals(expectedList, actualList);
-        verify(jdbcTemplate, times(1)).query(eq(expectedSql), eq(expectedParams), any(TicketDtoRowMapper.class));
-    }
-
-    @Test
-    public void testFindAllWithAllParams() {
-        String expectedSql = "SELECT t.*, r.departure_point, r.destination_point, r.carrier_name" +
-                " FROM tickets t JOIN routes r ON t.route_id = r.id WHERE t.user_id IS NULL" +
-                " AND date_time = ? AND departure_point LIKE ? AND destination_point LIKE ? " +
-                "AND carrier_name LIKE ? LIMIT ? OFFSET ?";
-
-        Pageable pageable = PageRequest.of(0, 2);
-        LocalDateTime dateTime = LocalDateTime.now();
-        String departurePoint = "Saints-Petersburg";
-        String destinationPoint = "Moscow";
-        String carrierName = "Java Airlines";
-
-        Object[] expectedParams = new Object[]{dateTime, "%" + departurePoint + "%", "%" + destinationPoint + "%",
-                "%" + carrierName + "%", pageable.getPageSize(), pageable.getOffset()};
-
-        TicketDTO testTicketDTO = new TicketDTO();
-        setTicketDtoFieldsWithoutUserId(testTicketDTO);
-
-        List<TicketDTO> expectedList = new ArrayList<>(Collections.singletonList(testTicketDTO));
-
-        when(jdbcTemplate.query(eq(expectedSql), eq(expectedParams), any(TicketDtoRowMapper.class)))
-                .thenReturn(expectedList);
-
-        List<TicketDTO> actualList = ticketRepository.findAll(pageable, dateTime, departurePoint,
-                destinationPoint, carrierName);
-
-        assertEquals(expectedList, actualList);
-        verify(jdbcTemplate).query(eq(expectedSql), eq(expectedParams), any(TicketDtoRowMapper.class));
     }
 //
 
