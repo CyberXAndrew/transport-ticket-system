@@ -30,13 +30,10 @@ import org.slf4j.LoggerFactory;
 
 @Repository
 public class TicketRepositoryImpl implements TicketRepository {
-    private static final Logger logger = LoggerFactory.getLogger(TicketRepository.class);
-    @Autowired
-    private JdbcTemplate jdbcTemplate;
-    @Autowired
-    private TicketRowMapper ticketRowMapper;
-    @Autowired
-    private TicketDtoRowMapper ticketDtoRowMapper;
+    private static final Logger logger = LoggerFactory.getLogger(TicketRepositoryImpl.class);
+    @Autowired private JdbcTemplate jdbcTemplate;
+    @Autowired private TicketRowMapper ticketRowMapper;
+    @Autowired private TicketDtoRowMapper ticketDtoRowMapper;
 
     @Override
     public Optional<Ticket> findById(Long ticketId) {
@@ -88,12 +85,7 @@ public class TicketRepositoryImpl implements TicketRepository {
             paginationParams.add(pageSize);
             paginationParams.add(offset);
         }
-        System.out.println(sql + "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW");
-        System.out.println(ticketRowMapper.toString() + "YYYYYYYYYYYYYYYYYYYYYYYY");
-        System.out.println(ticketDtoRowMapper.toString() + "YYYYYYYYYYYYYYYYYYYYYYYY");
-        System.out.println(paginationParams.toArray() + "YYYYYYYYYYYYYYYYYYYYYYYY");
         List<TicketDTO> query = jdbcTemplate.query(sql, paginationParams.toArray(), ticketDtoRowMapper);
-        System.out.println(query + "OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO");
         return query;
     }
 

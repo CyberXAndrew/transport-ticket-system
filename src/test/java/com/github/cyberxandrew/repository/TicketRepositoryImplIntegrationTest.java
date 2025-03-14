@@ -24,14 +24,29 @@ import java.util.Optional;
 @SpringBootTest
 @ActiveProfiles("test")
 public class TicketRepositoryImplIntegrationTest {
+    @Autowired private JdbcTemplate jdbcTemplate;
+    @Autowired private TicketRepositoryImpl ticketRepository;
     private final Long NOT_EXISTING_ID = 9999999L;
-    @Autowired
-    private TicketRepositoryImpl ticketRepository;
-    @Autowired
-    private JdbcTemplate jdbcTemplate;
-
+    private Long testTicketId;
+    private Long testUserId;
+    private Long testRouteId;
+    private BigDecimal testPrice;
+    private String testSeatNumber;
+    private String testDeparturePoint;
+    private String testDestinationPoint;
+    private String testCarrierName;
+    private Ticket testTicket;
     @BeforeEach
-    void  setUp() {
+    void beforeEach() {
+        testTicketId = 1L;
+        testUserId = 2L;
+        testRouteId = 3L;
+        testPrice = new BigDecimal("123.45");
+        testSeatNumber = "1A";
+        testDeparturePoint = "Saints-Petersburg";
+        testDestinationPoint = "Moscow";
+        testCarrierName = "Java Airlines";
+
         jdbcTemplate.execute("DROP TABLE IF EXISTS tickets;");
         jdbcTemplate.execute("DROP TABLE IF EXISTS users;");
         jdbcTemplate.execute("CREATE TABLE users (" +
@@ -112,10 +127,10 @@ public class TicketRepositoryImplIntegrationTest {
         Ticket ticket = new Ticket();
         ticket.setId(null);
         ticket.setDateTime(LocalDateTime.now());
-        ticket.setUserId(null);
-        ticket.setRouteId(3L);
-        ticket.setPrice(new BigDecimal("15.5"));
-        ticket.setSeatNumber("1A");
+        ticket.setUserId(testUserId);
+        ticket.setRouteId(testRouteId);
+        ticket.setPrice(testPrice);
+        ticket.setSeatNumber(testSeatNumber);
         return ticket;
     }
 }

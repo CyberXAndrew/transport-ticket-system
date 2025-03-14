@@ -29,7 +29,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import org.slf4j.Logger;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.PageRequest;
@@ -46,22 +45,34 @@ import java.util.*;
 @ActiveProfiles("test")
 @ExtendWith(MockitoExtension.class)
 public class TicketRepositoryImplTest {
-    @Mock
-    private Logger logger;
-    @Mock
-    private JdbcTemplate jdbcTemplate;
-    @Mock
-    private TicketRowMapper ticketRowMapper;
+    @Mock private Logger logger;
+    @Mock private JdbcTemplate jdbcTemplate;
+    @SuppressWarnings("unused")
+    @Mock private TicketRowMapper ticketRowMapper;
+    @Mock private TicketDtoRowMapper ticketDtoRowMapper;
     @InjectMocks
     private TicketRepositoryImpl ticketRepository;
 
     private Long testUserId;
     private Long testTicketId;
+    private Long testRouteId;
+    private BigDecimal testPrice;
+    private String testSeatNumber;
+    private String testDeparturePoint;
+    private String testDestinationPoint;
+    private String testCarrierName;
     private Ticket testTicket;
     @BeforeEach
     void beforeEach() {
-        testUserId = 1L;
         testTicketId = 1L;
+        testUserId = 2L;
+        testRouteId = 3L;
+        testPrice = new BigDecimal("123.45");
+        testSeatNumber = "1A";
+        testDeparturePoint = "Saints-Petersburg";
+        testDestinationPoint = "Moscow";
+        testCarrierName = "Java Airlines";
+
         testTicket = new Ticket();
         testTicket.setId(testTicketId);
     }
@@ -186,7 +197,7 @@ public class TicketRepositoryImplTest {
         boolean result = ticketRepository.isTicketAvailable(testTicketId);
         assertTrue(result);
         verify(logger, times(1))
-                .debug("Ticket with id: {} is available: {}", testTicketId, result);
+                .debug("Ticket with id: {} is available: {}", testTicketId, true);
     }
 
     @Test
@@ -205,11 +216,30 @@ public class TicketRepositoryImplTest {
         String sql = "SELECT EXISTS (SELECT 1 FROM tickets WHERE id = ? AND user_id IS NULL)";
 
         doThrow(new EmptyResultDataAccessException(1)).when(jdbcTemplate)
-                .queryForObject(eq(sql), eq(new Object[]{testTicketId}), Boolean.class);
+                .queryForObject(eq(sql), eq(new Object[]{testTicketId}), eq(Boolean.class));
 
         assertThrows(TicketAvailabilityException.class, () -> {
             ticketRepository.isTicketAvailable(testTicketId);
         });
+    }
+
+    @Test
+    public void testFindAllWithoutParams() {
+        String expectedSql = "SELECT t.*, r.departure_point, r.destination_point, r.carrier_name" +
+                " FROM tickets t JOIN routes r ON t.route_id = r.id WHERE t.user_id IS NULL";
+        Object[] expectedParams = new Object[0];
+
+        TicketDTO ticketDTO = new TicketDTO();
+        setTicketDtoFieldsWithoutUserId(ticketDTO);
+        List<TicketDTO> expectedList = new ArrayList<>(Collections.singletonList(ticketDTO));
+
+        when(jdbcTemplate.query(eq(expectedSql), eq(expectedParams), any(TicketDtoRowMapper.class)))
+                .thenReturn(expectedList);
+
+        List<TicketDTO> actualList = ticketRepository.findAll();
+
+        assertEquals(expectedList, actualList);
+        verify(jdbcTemplate, times(1)).query(eq(expectedSql), eq(expectedParams), any(TicketDtoRowMapper.class));
     }
 
     @Test
@@ -219,7 +249,7 @@ public class TicketRepositoryImplTest {
                 " AND date_time = ? AND departure_point LIKE ? AND destination_point LIKE ? " +
                 "AND carrier_name LIKE ? LIMIT ? OFFSET ?";
 
-        Pageable pageable = PageRequest.of(0, 1);
+        Pageable pageable = PageRequest.of(0, 2);
         LocalDateTime dateTime = LocalDateTime.now();
         String departurePoint = "Saints-Petersburg";
         String destinationPoint = "Moscow";
@@ -229,8 +259,7 @@ public class TicketRepositoryImplTest {
                 "%" + carrierName + "%", pageable.getPageSize(), pageable.getOffset()};
 
         TicketDTO testTicketDTO = new TicketDTO();
-        setTicketDtoFieldsWithoutId(testTicketDTO);
-        testTicketDTO.setId(testTicketId);
+        setTicketDtoFieldsWithoutUserId(testTicketDTO);
 
         List<TicketDTO> expectedList = new ArrayList<>(Collections.singletonList(testTicketDTO));
 
@@ -244,41 +273,25 @@ public class TicketRepositoryImplTest {
         verify(jdbcTemplate).query(eq(expectedSql), eq(expectedParams), any(TicketDtoRowMapper.class));
     }
 //
-//    @Test
-//    public void findAllTestWithoutParams() {
-//        String expectedSql = "SELECT t.*, r.departure_point, r.destination_point, r.carrier_name" +
-//                " FROM tickets t JOIN routes r ON t.route_id = r.id WHERE t.user_id IS NULL";
-//        Object[] expectedParams = new Object[0];
-//        TicketDTO ticketDTO = new TicketDTO(1L, LocalDateTime.of(2019,02, 22,
-//                9, 40, 00), 1L, 1L, BigDecimal.valueOf(10), "1A",
-//                "Paris","Vienna", "Java Airlines");
-//        List<TicketDTO> expectedList = Collections.singletonList(ticketDTO);
-//
-//        when(jdbcTemplate.query(eq(expectedSql), eq(expectedParams), any(TicketRowMapper.class)))
-//                .thenReturn(expectedList);
-//
-//        List<TicketDTO> actualList = ticketRepository.findAll();
-//        assertEquals(expectedList, actualList);
-//        verify(jdbcTemplate).query(eq(expectedSql), eq(expectedParams), any(TicketRowMapper.class));
-//    }
 
     private void setTicketFieldsWithoutId(Ticket ticket) {
         ticket.setDateTime(LocalDateTime.now());
-        ticket.setUserId(2L);
-        ticket.setRouteId(3L);
-        ticket.setPrice(new BigDecimal("123.45"));
-        ticket.setSeatNumber("1A");
+        ticket.setUserId(testUserId);
+        ticket.setRouteId(testRouteId);
+        ticket.setPrice(testPrice);
+        ticket.setSeatNumber(testSeatNumber);
     }
 
-    private void setTicketDtoFieldsWithoutId(TicketDTO ticketDto) {
+    private void setTicketDtoFieldsWithoutUserId(TicketDTO ticketDto) {
+        ticketDto.setId(testTicketId);
         ticketDto.setDateTime(LocalDateTime.now());
         ticketDto.setUserId(null);
-        ticketDto.setRouteId(3L);
-        ticketDto.setPrice(new BigDecimal("123.45"));
-        ticketDto.setSeatNumber("1A");
+        ticketDto.setRouteId(testRouteId);
+        ticketDto.setPrice(testPrice);
+        ticketDto.setSeatNumber(testSeatNumber);
 
-        ticketDto.setDeparturePoint("Saints-Petersburg");
-        ticketDto.setDestinationPoint("Moscow");
-        ticketDto.setCarrierName("Java Airlines");
+        ticketDto.setDeparturePoint(testDeparturePoint);
+        ticketDto.setDestinationPoint(testDestinationPoint);
+        ticketDto.setCarrierName(testCarrierName);
     }
 }
