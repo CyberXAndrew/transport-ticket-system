@@ -15,12 +15,7 @@ import java.time.LocalDateTime;
 
 
 @Data
-//@Entity
-//@Table(name = "tickets")
 public class Ticket {
-
-//    @Id
-//    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 //    @Future
     private LocalDateTime dateTime;

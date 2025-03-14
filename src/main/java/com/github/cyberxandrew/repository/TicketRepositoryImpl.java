@@ -61,7 +61,7 @@ public class TicketRepositoryImpl implements TicketRepository {
     @Override
     public List<TicketDTO> findAll(Pageable pageable, LocalDateTime dateTime, String departurePoint,
                                    String destinationPoint, String carrierName) {
-        String sql = "SELECT t.*, r.departure_point, r.destination_point, r.career_name FROM tickets t " +
+        String sql = "SELECT t.*, r.departure_point, r.destination_point, r.carrier_name FROM tickets t " +
                 "JOIN routes r ON t.route_id = r.id WHERE t.user_id IS NULL";
         List<Object> paginationParams = new ArrayList<>();
 
@@ -88,12 +88,17 @@ public class TicketRepositoryImpl implements TicketRepository {
             paginationParams.add(pageSize);
             paginationParams.add(offset);
         }
-
-        return jdbcTemplate.query(sql, paginationParams.toArray(), ticketDtoRowMapper);
+        System.out.println(sql + "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW");
+        System.out.println(ticketRowMapper.toString() + "YYYYYYYYYYYYYYYYYYYYYYYY");
+        System.out.println(ticketDtoRowMapper.toString() + "YYYYYYYYYYYYYYYYYYYYYYYY");
+        System.out.println(paginationParams.toArray() + "YYYYYYYYYYYYYYYYYYYYYYYY");
+        List<TicketDTO> query = jdbcTemplate.query(sql, paginationParams.toArray(), ticketDtoRowMapper);
+        System.out.println(query + "OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO");
+        return query;
     }
 
     @Override
-    public List<TicketDTO> findAll() {
+    public List<TicketDTO> findAll() { //todo
         return findAll(Pageable.unpaged(), null, null,
                 null, null);
     }
@@ -170,9 +175,13 @@ public class TicketRepositoryImpl implements TicketRepository {
         try {
             Boolean result = jdbcTemplate.queryForObject(sql, new Object[]{ticketId}, Boolean.class);
             logger.debug("Ticket with id: {} is available: {}", ticketId, result);
+            System.out.println(logger.isWarnEnabled() + " ////////////////////////////////////");
+            System.out.println(logger.isDebugEnabled() + " ////////////////////////////////////");
+            System.out.println(logger.isErrorEnabled() + " ////////////////////////////////////");
             return result;
         } catch (EmptyResultDataAccessException ex) {
             logger.error("Ticket with id: {} availability definition error", ticketId, ex);
+            System.out.println(logger.isErrorEnabled() + " ////////////////////////////////////");
             throw new TicketAvailabilityException("Ticket availability definition error", ex);
         }
     }
