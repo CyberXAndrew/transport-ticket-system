@@ -3,8 +3,10 @@ package com.github.cyberxandrew.repository;
 import com.github.cyberxandrew.model.Ticket;
 import com.github.cyberxandrew.exception.ticket.TicketDeletionException;
 import com.github.cyberxandrew.exception.ticket.TicketNotFoundException;
+import com.github.cyberxandrew.utils.ModelGenerator;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
+import org.springframework.context.annotation.Bean;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -26,6 +28,7 @@ import java.util.Optional;
 public class TicketRepositoryImplIntegrationTest {
     @Autowired private JdbcTemplate jdbcTemplate;
     @Autowired private TicketRepositoryImpl ticketRepository;
+
     private final Long NOT_EXISTING_ID = 9999999L;
     private Long testTicketId;
     private Long testUserId;
@@ -70,7 +73,7 @@ public class TicketRepositoryImplIntegrationTest {
     @Test
     @Transactional
     public void testSave() {
-        Ticket ticketToSave = prepareTicketToSave();
+        Ticket ticketToSave = ModelGenerator.createTicketToSave();
 
         Ticket savedTicket = ticketRepository.save(ticketToSave);
 
@@ -85,7 +88,7 @@ public class TicketRepositoryImplIntegrationTest {
     @Test
     @Transactional
     public void testDeleteByIdSuccessful() {
-        Ticket ticketToSave = prepareTicketToSave();
+        Ticket ticketToSave = ModelGenerator.createTicketToSave();
         Ticket savedTicket = ticketRepository.save(ticketToSave);
 
         assertTrue(savedTicket.getId() != null && savedTicket.getId() > 0);
@@ -124,16 +127,5 @@ public class TicketRepositoryImplIntegrationTest {
 //        String sql = "DELETE FROM tickets WHERE id = ?";
 //
 //        assertThrows(TicketDeletionException.class, () -> ticketRepository.deleteById(testTicketId));
-    }
-
-    private Ticket prepareTicketToSave() {
-        Ticket ticket = new Ticket();
-        ticket.setId(null);
-        ticket.setDateTime(LocalDateTime.now());
-        ticket.setUserId(testUserId);
-        ticket.setRouteId(testRouteId);
-        ticket.setPrice(testPrice);
-        ticket.setSeatNumber(testSeatNumber);
-        return ticket;
     }
 }

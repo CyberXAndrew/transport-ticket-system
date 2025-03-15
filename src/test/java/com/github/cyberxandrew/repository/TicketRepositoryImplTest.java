@@ -6,6 +6,7 @@ import com.github.cyberxandrew.mapper.TicketRowMapper;
 import com.github.cyberxandrew.mapper.TicketDtoRowMapper;
 import com.github.cyberxandrew.exception.ticket.TicketSaveException;
 import com.github.cyberxandrew.exception.ticket.TicketAvailabilityException;
+import com.github.cyberxandrew.utils.ModelGenerator;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -138,7 +139,7 @@ public class TicketRepositoryImplTest {
         Object[] expectedParams = new Object[0];
 
         TicketDTO ticketDTO = new TicketDTO();
-        setTicketDtoFieldsWithoutUserId(ticketDTO);
+        ModelGenerator.setTicketDtoFieldsWithoutUserId(ticketDTO);
         List<TicketDTO> expectedList = new ArrayList<>(Collections.singletonList(ticketDTO));
 
         when(jdbcTemplate.query(eq(expectedSql), eq(expectedParams), any(TicketDtoRowMapper.class)))
@@ -167,7 +168,7 @@ public class TicketRepositoryImplTest {
                 "%" + carrierName + "%", pageable.getPageSize(), pageable.getOffset()};
 
         TicketDTO testTicketDTO = new TicketDTO();
-        setTicketDtoFieldsWithoutUserId(testTicketDTO);
+        ModelGenerator.setTicketDtoFieldsWithoutUserId(testTicketDTO);
 
         List<TicketDTO> expectedList = new ArrayList<>(Collections.singletonList(testTicketDTO));
 
@@ -187,7 +188,7 @@ public class TicketRepositoryImplTest {
                 " WHERE id = ?";
 
         testTicket.setId(testTicketId);
-        setTicketFieldsWithoutId(testTicket);
+        ModelGenerator.setTicketFieldsWithoutId(testTicket);
 
 //        when(logger.isDebugEnabled()).thenReturn(true);
 //        doNothing().when(logger).debug(anyString(), any(Object.class));//
@@ -208,7 +209,7 @@ public class TicketRepositoryImplTest {
                 " WHERE id = ?";
 
         testTicket.setId(testTicketId);
-        setTicketFieldsWithoutId(testTicket);
+        ModelGenerator.setTicketFieldsWithoutId(testTicket);
 
         when(jdbcTemplate.update(eq(sql), any(LocalDateTime.class), anyLong(), anyLong(),
                 any(BigInteger.class), anyString(), anyLong())).thenReturn(0);
@@ -226,7 +227,7 @@ public class TicketRepositoryImplTest {
                 " WHERE id = ?";
 
         testTicket.setId(testTicketId);
-        setTicketFieldsWithoutId(testTicket);
+        ModelGenerator.setTicketFieldsWithoutId(testTicket);
 
         when(jdbcTemplate.update(eq(sql), any(LocalDateTime.class), anyLong(), anyLong(),
                 any(BigInteger.class), anyString(), anyLong())).thenThrow(DataAccessException.class);
@@ -278,24 +279,24 @@ public class TicketRepositoryImplTest {
     }
 //
 
-    private void setTicketFieldsWithoutId(Ticket ticket) {
-        ticket.setDateTime(LocalDateTime.now());
-        ticket.setUserId(testUserId);
-        ticket.setRouteId(testRouteId);
-        ticket.setPrice(testPrice);
-        ticket.setSeatNumber(testSeatNumber);
-    }
+//    private void setTicketFieldsWithoutId(Ticket ticket) {
+//        ticket.setDateTime(LocalDateTime.now());
+//        ticket.setUserId(testUserId);
+//        ticket.setRouteId(testRouteId);
+//        ticket.setPrice(testPrice);
+//        ticket.setSeatNumber(testSeatNumber);
+//    }
 
-    private void setTicketDtoFieldsWithoutUserId(TicketDTO ticketDto) {
-        ticketDto.setId(testTicketId);
-        ticketDto.setDateTime(LocalDateTime.now());
-        ticketDto.setUserId(null);
-        ticketDto.setRouteId(testRouteId);
-        ticketDto.setPrice(testPrice);
-        ticketDto.setSeatNumber(testSeatNumber);
-
-        ticketDto.setDeparturePoint(testDeparturePoint);
-        ticketDto.setDestinationPoint(testDestinationPoint);
-        ticketDto.setCarrierName(testCarrierName);
-    }
+//    private void setTicketDtoFieldsWithoutUserId(TicketDTO ticketDto) {
+//        ticketDto.setId(testTicketId);
+//        ticketDto.setDateTime(LocalDateTime.now());
+//        ticketDto.setUserId(null);
+//        ticketDto.setRouteId(testRouteId);
+//        ticketDto.setPrice(testPrice);
+//        ticketDto.setSeatNumber(testSeatNumber);
+//
+//        ticketDto.setDeparturePoint(testDeparturePoint);
+//        ticketDto.setDestinationPoint(testDestinationPoint);
+//        ticketDto.setCarrierName(testCarrierName);
+//    }
 }
