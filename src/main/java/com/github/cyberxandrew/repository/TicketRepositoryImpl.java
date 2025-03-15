@@ -37,6 +37,7 @@ public class TicketRepositoryImpl implements TicketRepository {
 
     @Override
     public Optional<Ticket> findById(Long ticketId) {
+        if (ticketId == null) throw new NullPointerException("Ticket with id = null cannot be found in database");
         String sql = "SELECT * FROM tickets WHERE id = ?";
         try {
             return Optional.of(jdbcTemplate.queryForObject(sql, new Object[]{ticketId}, ticketRowMapper));
@@ -56,37 +57,39 @@ public class TicketRepositoryImpl implements TicketRepository {
     }
 
     @Override
+    @Transactional
     public List<TicketDTO> findAll(Pageable pageable, LocalDateTime dateTime, String departurePoint,
                                    String destinationPoint, String carrierName) {
-        String sql = "SELECT t.*, r.departure_point, r.destination_point, r.carrier_name FROM tickets t " +
-                "JOIN routes r ON t.route_id = r.id WHERE t.user_id IS NULL";
-        List<Object> paginationParams = new ArrayList<>();
+        StringBuilder sql = new StringBuilder("SELECT t.*, r.departure_point, r.destination_point, r.carrier_name" +
+                " FROM tickets t JOIN routes r ON t.route_id = r.id WHERE t.user_id IS NULL");
+        List<Object> filtrationParams = new ArrayList<>();
 
-        if (dateTime != null) {
-            sql += " AND date_time = ?";
-            paginationParams.add(dateTime);
-        }
-        if (departurePoint != null) {
-            sql += " AND departure_point LIKE ?";
-            paginationParams.add("%" + departurePoint + "%");
-        }
-        if (destinationPoint != null) {
-            sql += " AND destination_point LIKE ?";
-            paginationParams.add("%" + destinationPoint + "%");
-        }
-        if (carrierName != null) {
-            sql += " AND carrier_name LIKE ?";
-            paginationParams.add("%" + carrierName + "%");
-        }
+        addFilter(sql, filtrationParams, "date_time", dateTime);
+        addFilter(sql, filtrationParams, "departure_point", departurePoint);
+        addFilter(sql, filtrationParams, "destination_point", destinationPoint);
+        addFilter(sql, filtrationParams, "carrier_name", carrierName);
         if (pageable != null && pageable.isPaged()) {
-            sql += " LIMIT ? OFFSET ?";
+            sql.append(" LIMIT ? OFFSET ?");
             int pageSize = pageable.getPageSize();
             long offset = pageable.getOffset();
-            paginationParams.add(pageSize);
-            paginationParams.add(offset);
+            filtrationParams.add(pageSize);
+            filtrationParams.add(offset);
         }
-        List<TicketDTO> query = jdbcTemplate.query(sql, paginationParams.toArray(), ticketDtoRowMapper);
+
+        List<TicketDTO> query = jdbcTemplate.query(sql.toString(), filtrationParams.toArray(), ticketDtoRowMapper);
         return query;
+    }
+
+    private void addFilter(StringBuilder sql, List<Object> filtrationParams, String columnName, Object filter) {
+        if (filter != null) {
+            if (filter instanceof String) {
+                sql.append(" AND ").append(columnName).append(" LIKE ?");
+                filtrationParams.add("%" + filter + "%");
+            } else {
+                sql.append(" AND ").append(columnName).append(" = ?");
+                filtrationParams.add(filter);
+            }
+        }
     }
 
     public List<TicketDTO> findAll() {
