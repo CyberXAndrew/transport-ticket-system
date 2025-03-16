@@ -18,6 +18,8 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.PreparedStatement;
+import java.sql.Timestamp;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.ArrayList;
 import java.time.LocalDateTime;
@@ -31,11 +33,13 @@ import org.slf4j.LoggerFactory;
 @Repository
 public class TicketRepositoryImpl implements TicketRepository {
     private static final Logger logger = LoggerFactory.getLogger(TicketRepositoryImpl.class);
+    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'hh:mm:ss.SSSSSSSSS");
     @Autowired private JdbcTemplate jdbcTemplate;
     @Autowired private TicketRowMapper ticketRowMapper;
     @Autowired private TicketDtoRowMapper ticketDtoRowMapper;
 
     @Override
+    @Transactional(readOnly = true)
     public Optional<Ticket> findById(Long ticketId) {
         if (ticketId == null) throw new NullPointerException("Ticket with id = null cannot be found in database");
         String sql = "SELECT * FROM tickets WHERE id = ?";
@@ -105,10 +109,9 @@ public class TicketRepositoryImpl implements TicketRepository {
                 String sql = "INSERT INTO tickets (date_time, user_id, route_id, price, seat_number) " +
                         "VALUES (?, ?, ?, ?, ?)";
                 KeyHolder keyHolder = new GeneratedKeyHolder();
-
                 jdbcTemplate.update(connection -> {
                     PreparedStatement preparedStatement = connection.prepareStatement(sql, new String[]{"id"});
-                    preparedStatement.setObject(1, ticket.getDateTime());
+                    preparedStatement.setString(1, ticket.getDateTime().format(formatter));
                     preparedStatement.setObject(2, ticket.getUserId());
                     preparedStatement.setObject(3, ticket.getRouteId());
                     preparedStatement.setBigDecimal(4, ticket.getPrice());
@@ -118,18 +121,20 @@ public class TicketRepositoryImpl implements TicketRepository {
 
                 ticket.setId(keyHolder.getKey().longValue());
                 logger.debug("Ticket with id: {} successfully created", ticket.getId());
+
                 return ticket;
             } else {
                 String sql = "UPDATE tickets SET date_time = ?, user_id = ?, route_id = ?, price = ?, seat_number = ?" +
                         " WHERE id = ?";
-
+                System.out.println(" ZZZZZZZZZZZZZZ " + ticket);
                 int updated = jdbcTemplate.update(sql,
-                        ticket.getDateTime(),
+                        ticket.getDateTime().format(formatter),
                         ticket.getUserId(),
                         ticket.getRouteId(),
                         ticket.getPrice(),
                         ticket.getSeatNumber(),
                         ticket.getId());
+                System.out.println(" ZZZZZZZZZZZZZZ " + updated);
                 if (updated > 0) {
                     logger.debug("Updating ticket with id: {} is successful", ticket.getId());
                 } else {

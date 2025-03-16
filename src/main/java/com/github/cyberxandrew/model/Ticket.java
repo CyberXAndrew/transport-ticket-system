@@ -14,7 +14,6 @@ public class Ticket {
     private Long id;
 //    @Future
     private LocalDateTime dateTime;
-    @NotNull
     private Long userId;
     @NotNull
     private Long routeId;

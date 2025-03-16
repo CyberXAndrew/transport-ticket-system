@@ -30,15 +30,16 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import org.slf4j.Logger;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.dao.DataAccessException;
-import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.dao.*;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.jdbc.BadSqlGrammarException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -187,18 +188,19 @@ public class TicketRepositoryImplTest {
         String sql = "UPDATE tickets SET date_time = ?, user_id = ?, route_id = ?, price = ?, seat_number = ?" +
                 " WHERE id = ?";
 
-        testTicket.setId(testTicketId);
-        ModelGenerator.setTicketFieldsWithoutId(testTicket);
+        Ticket ticket = new Ticket();
+        ModelGenerator.setTicketFieldsWithoutId(ticket);
+        ticket.setId(testTicketId);
 
 //        when(logger.isDebugEnabled()).thenReturn(true);
 //        doNothing().when(logger).debug(anyString(), any(Object.class));//
 
-        when(jdbcTemplate.update(eq(sql), any(LocalDateTime.class), anyLong(), anyLong(),
+        when(jdbcTemplate.update(eq(sql), anyString(), anyLong(), anyLong(),
                 any(BigDecimal.class), anyString(), anyLong())).thenReturn(1);
 
-        Ticket updatedTicket = ticketRepository.save(testTicket);
+        Ticket updatedTicket = ticketRepository.save(ticket);
 
-        assertEquals(testTicket, updatedTicket); //?
+        assertEquals(ticket, updatedTicket); //?
 //        verify(logger, times(1))
 //                .debug("Updating ticket with id: {} is successful", testTicket.getId());
     }
@@ -208,11 +210,10 @@ public class TicketRepositoryImplTest {
         String sql = "UPDATE tickets SET date_time = ?, user_id = ?, route_id = ?, price = ?, seat_number = ?" +
                 " WHERE id = ?";
 
-        testTicket.setId(testTicketId);
         ModelGenerator.setTicketFieldsWithoutId(testTicket);
 
-        when(jdbcTemplate.update(eq(sql), any(LocalDateTime.class), anyLong(), anyLong(),
-                any(BigInteger.class), anyString(), anyLong())).thenReturn(0);
+        when(jdbcTemplate.update(eq(sql), anyString(), anyLong(), anyLong(),
+                any(BigDecimal.class), anyString(), anyLong())).thenReturn(0);
 
         assertThrows(TicketSaveException.class, () -> {
             ticketRepository.save(testTicket);
@@ -226,15 +227,18 @@ public class TicketRepositoryImplTest {
         String sql = "UPDATE tickets SET date_time = ?, user_id = ?, route_id = ?, price = ?, seat_number = ?" +
                 " WHERE id = ?";
 
-        testTicket.setId(testTicketId);
-        ModelGenerator.setTicketFieldsWithoutId(testTicket);
+        Ticket ticket = new Ticket();
+        ModelGenerator.setTicketFieldsWithoutId(ticket);
+        ticket.setId(testTicketId);
 
-        when(jdbcTemplate.update(eq(sql), any(LocalDateTime.class), anyLong(), anyLong(),
-                any(BigInteger.class), anyString(), anyLong())).thenThrow(DataAccessException.class);
+        when(jdbcTemplate.update(eq(sql), anyString(), anyLong(), anyLong(),
+                any(BigDecimal.class), anyString(), anyLong()))
+                .thenThrow(new QueryTimeoutException("Simulated QueryTimeoutException"));
 
-        DataAccessException ex = assertThrows(DataAccessException.class, () -> {
-            ticketRepository.save(testTicket);
+        TicketSaveException ex = assertThrows(TicketSaveException.class, () -> {
+            ticketRepository.save(ticket);
         });
+        assertEquals(ex.getMessage(), "Error while saving/updating ticket");
 //        verify(logger, times(1)).error("Error while saving/updating ticket", ex);
     }
 
@@ -277,26 +281,4 @@ public class TicketRepositoryImplTest {
 //                .error("Ticket with id: {} availability definition error", testTicketId, true);
         });
     }
-//
-
-//    private void setTicketFieldsWithoutId(Ticket ticket) {
-//        ticket.setDateTime(LocalDateTime.now());
-//        ticket.setUserId(testUserId);
-//        ticket.setRouteId(testRouteId);
-//        ticket.setPrice(testPrice);
-//        ticket.setSeatNumber(testSeatNumber);
-//    }
-
-//    private void setTicketDtoFieldsWithoutUserId(TicketDTO ticketDto) {
-//        ticketDto.setId(testTicketId);
-//        ticketDto.setDateTime(LocalDateTime.now());
-//        ticketDto.setUserId(null);
-//        ticketDto.setRouteId(testRouteId);
-//        ticketDto.setPrice(testPrice);
-//        ticketDto.setSeatNumber(testSeatNumber);
-//
-//        ticketDto.setDeparturePoint(testDeparturePoint);
-//        ticketDto.setDestinationPoint(testDestinationPoint);
-//        ticketDto.setCarrierName(testCarrierName);
-//    }
 }

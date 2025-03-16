@@ -6,14 +6,6 @@ import java.time.LocalDateTime;
 import com.github.cyberxandrew.dto.TicketDTO;
 import com.github.cyberxandrew.model.Ticket;
 
-import net.datafaker.Faker;
-import org.instancio.Instancio;
-import org.instancio.Model;
-import org.instancio.Select;
-import org.junit.jupiter.api.BeforeEach;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
 public class ModelGenerator {
 
     private static Long testTicketId;
@@ -26,7 +18,7 @@ public class ModelGenerator {
     private static String testCarrierName;
     private static Ticket testTicket;
 
-    void setUp() {
+    static {
         testTicketId = 1L;
         testUserId = 2L;
         testRouteId = 3L;

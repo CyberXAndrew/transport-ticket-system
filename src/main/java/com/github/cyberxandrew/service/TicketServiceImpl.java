@@ -7,12 +7,13 @@ import com.github.cyberxandrew.model.Ticket;
 import com.github.cyberxandrew.repository.TicketRepositoryImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
+@Service
 public class TicketServiceImpl implements TicketService {
-
     @Autowired private TicketRepositoryImpl ticketRepository;
 
     @Override
