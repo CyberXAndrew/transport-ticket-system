@@ -1,32 +1,21 @@
 package com.github.cyberxandrew.repository;
 
-import com.github.cyberxandrew.dto.TicketDTO;
+import com.github.cyberxandrew.dto.TicketCreateDTO;
 import com.github.cyberxandrew.model.Ticket;
-import com.github.cyberxandrew.exception.ticket.TicketDeletionException;
 import com.github.cyberxandrew.exception.ticket.TicketNotFoundException;
 import com.github.cyberxandrew.utils.ModelGenerator;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.springframework.context.annotation.Bean;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.dao.DataAccessException;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.reset;
-import static org.mockito.Mockito.when;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Optional;
 
 @SpringBootTest
@@ -60,23 +49,23 @@ public class TicketRepositoryImplIntegrationTest {
     @Test
     @Transactional
     public void testSave() {
-        Ticket ticketToSave = ModelGenerator.createTicketToSave();
+        TicketCreateDTO createDTO = ModelGenerator.createTicketToSave();
 
-        Ticket savedTicket = ticketRepository.save(ticketToSave);
+        Ticket savedTicket = ticketRepository.save(createDTO);
 
         assertNotNull(savedTicket.getId());
         assertTrue(savedTicket.getId() > 0);
-        assertEquals(savedTicket.getUserId(), ticketToSave.getUserId());
-        assertEquals(savedTicket.getRouteId(), ticketToSave.getRouteId());
-        assertEquals(savedTicket.getPrice(), ticketToSave.getPrice());
-        assertEquals(savedTicket.getSeatNumber(), ticketToSave.getSeatNumber());
+        assertEquals(savedTicket.getUserId(), createDTO.getUserId());
+        assertEquals(savedTicket.getRouteId(), createDTO.getRouteId());
+        assertEquals(savedTicket.getPrice(), createDTO.getPrice());
+        assertEquals(savedTicket.getSeatNumber(), createDTO.getSeatNumber());
     }
 
     @Test
     @Transactional
     public void testDeleteByIdSuccessful() {
-        Ticket ticketToSave = ModelGenerator.createTicketToSave();
-        Ticket savedTicket = ticketRepository.save(ticketToSave);
+        TicketCreateDTO createDTO = ModelGenerator.createTicketToSave();
+        Ticket savedTicket = ticketRepository.save(createDTO);
 
         assertTrue(savedTicket.getId() != null && savedTicket.getId() > 0);
 

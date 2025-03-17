@@ -1,15 +1,17 @@
 package com.github.cyberxandrew.service;
 
+import com.github.cyberxandrew.dto.TicketCreateDTO;
 import com.github.cyberxandrew.dto.TicketDTO;
+import com.github.cyberxandrew.dto.TicketUpdateDTO;
 import com.github.cyberxandrew.exception.ticket.TicketNotFoundException;
 import com.github.cyberxandrew.exception.ticket.TicketSaveException;
+import com.github.cyberxandrew.mapper.TicketMapper;
 import com.github.cyberxandrew.model.Ticket;
 import com.github.cyberxandrew.utils.ModelGenerator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.transaction.annotation.Transactional;
@@ -42,25 +44,25 @@ public class TicketServiceImplIntegrationTest {
 
     @Test
     public void testFindTicketById() {
-        Ticket ticketToSave = ModelGenerator.createTicketToSave();
-        Ticket savedTicket = ticketService.saveTicket(ticketToSave);
+        TicketCreateDTO createDTO = ModelGenerator.createTicketCreateDTO();
+        TicketDTO savedTicketDto = ticketService.saveTicket(createDTO);
 
-        Ticket ticketById = ticketService.findTicketById(savedTicket.getId());
+        TicketDTO ticketDto = ticketService.findTicketById(savedTicketDto.getId());
 
-        assertEquals(ticketById, savedTicket);
+        assertEquals(ticketDto, savedTicketDto);
         assertThrows(TicketNotFoundException.class, () -> ticketService.findTicketById(testAbsentId));
     }
 
     @Test
     public void testFindTicketByUserId() {
-        Ticket ticketToSave = ModelGenerator.createTicketToSave();
-        Ticket savedTicket = ticketService.saveTicket(ticketToSave);
+        TicketCreateDTO createDTO = ModelGenerator.createTicketCreateDTO();
+        TicketDTO savedTicketDTO = ticketService.saveTicket(createDTO);
 
-        List<Ticket> ticketList = ticketService.findTicketByUserId(savedTicket.getUserId());
+        List<TicketDTO> ticketList = ticketService.findTicketByUserId(savedTicketDTO.getUserId());
 
         assertFalse(ticketList.isEmpty());
         assertEquals(1, ticketList.size());
-        assertEquals(ticketList.get(0), savedTicket);
+        assertEquals(ticketList.get(0), savedTicketDTO);
     }
 
 //    @Test //TODO : cant implement while routes table does not exists
@@ -82,26 +84,27 @@ public class TicketServiceImplIntegrationTest {
 
     @Test
     public void testSave() { // UPDATES
-        Ticket ticketToSave = ModelGenerator.createTicketToSave();
+        TicketCreateDTO createDTO = ModelGenerator.createTicketCreateDTO();
 
-        Ticket savedTicket = ticketService.saveTicket(ticketToSave);
+        TicketDTO savedTicket = ticketService.saveTicket(createDTO);
 
         assertTrue(savedTicket.getId() != null && savedTicket.getId() > 0);
         assertThrows(TicketSaveException.class, () -> ticketService.saveTicket(null));
+    }
+    @Test
+    public void testUpdate() {
+        TicketUpdateDTO updateDTO = ModelGenerator.createTicketUpdateDTO();
+        updateDTO.setId(idOfSavedTicket);
 
-        Ticket ticketToUpdate = savedTicket;
-        ticketToUpdate.setSeatNumber("5C");
-        ticketToUpdate.setUserId(1L);
+        ticketService.updateTicket(updateDTO, idOfSavedTicket);
+        TicketDTO updatedTicketDto = ticketService.findTicketById(updateDTO.getId());
 
-        ticketService.saveTicket(ticketToUpdate);
-        Ticket updatedTicket = ticketService.findTicketById(savedTicket.getId());
-
-        assertEquals(updatedTicket.getId(), savedTicket.getId());
-        assertEquals(updatedTicket.getDateTime(), savedTicket.getDateTime());
-        assertEquals(updatedTicket.getUserId(), 1L );
-        assertEquals(updatedTicket.getRouteId(), savedTicket.getRouteId());
-        assertEquals(updatedTicket.getPrice(), savedTicket.getPrice());
-        assertEquals(updatedTicket.getSeatNumber(), "5C");
+        assertEquals(updatedTicketDto.getId(), updateDTO.getId());
+        assertEquals(updatedTicketDto.getDateTime(), updateDTO.getDateTime());
+        assertEquals(updatedTicketDto.getUserId(), updateDTO.getUserId() );
+        assertEquals(updatedTicketDto.getRouteId(), updateDTO.getRouteId());
+        assertEquals(updatedTicketDto.getPrice(), updateDTO.getPrice());
+        assertEquals(updatedTicketDto.getSeatNumber(), updateDTO.getSeatNumber());
     }
 
     @Test

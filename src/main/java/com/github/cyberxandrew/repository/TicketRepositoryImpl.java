@@ -1,13 +1,13 @@
 package com.github.cyberxandrew.repository;
 
+import com.github.cyberxandrew.dto.TicketCreateDTO;
+import com.github.cyberxandrew.dto.TicketUpdateDTO;
+import com.github.cyberxandrew.exception.ticket.*;
 import com.github.cyberxandrew.mapper.TicketDtoRowMapper;
+import com.github.cyberxandrew.mapper.TicketMapper;
 import com.github.cyberxandrew.model.Ticket;
-import com.github.cyberxandrew.dto.TicketDTO;
+import com.github.cyberxandrew.dto.TicketWithRouteDataDTO;
 import com.github.cyberxandrew.mapper.TicketRowMapper;
-import com.github.cyberxandrew.exception.ticket.TicketAvailabilityException;
-import com.github.cyberxandrew.exception.ticket.TicketDeletionException;
-import com.github.cyberxandrew.exception.ticket.TicketNotFoundException;
-import com.github.cyberxandrew.exception.ticket.TicketSaveException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -18,7 +18,6 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.PreparedStatement;
-import java.sql.Timestamp;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.ArrayList;
@@ -62,8 +61,8 @@ public class TicketRepositoryImpl implements TicketRepository {
 
     @Override
     @Transactional
-    public List<TicketDTO> findAll(Pageable pageable, LocalDateTime dateTime, String departurePoint,
-                                   String destinationPoint, String carrierName) {
+    public List<TicketWithRouteDataDTO> findAll(Pageable pageable, LocalDateTime dateTime, String departurePoint,
+                                                String destinationPoint, String carrierName) {
         StringBuilder sql = new StringBuilder("SELECT t.*, r.departure_point, r.destination_point, r.carrier_name" +
                 " FROM tickets t JOIN routes r ON t.route_id = r.id WHERE t.user_id IS NULL");
         List<Object> filtrationParams = new ArrayList<>();
@@ -80,7 +79,7 @@ public class TicketRepositoryImpl implements TicketRepository {
             filtrationParams.add(offset);
         }
 
-        List<TicketDTO> query = jdbcTemplate.query(sql.toString(), filtrationParams.toArray(), ticketDtoRowMapper);
+        List<TicketWithRouteDataDTO> query = jdbcTemplate.query(sql.toString(), filtrationParams.toArray(), ticketDtoRowMapper);
         return query;
     }
 
@@ -96,7 +95,7 @@ public class TicketRepositoryImpl implements TicketRepository {
         }
     }
 
-    public List<TicketDTO> findAll() {
+    public List<TicketWithRouteDataDTO> findAll() {
         return findAll(Pageable.unpaged(), null, null,
                 null, null);
     }
@@ -104,46 +103,53 @@ public class TicketRepositoryImpl implements TicketRepository {
     @Override
     @Transactional
     public Ticket save(Ticket ticket) {
+        String sql = "INSERT INTO tickets (date_time, user_id, route_id, price, seat_number) " +
+                "VALUES (?, ?, ?, ?, ?)";
         try {
-            if (ticket.getId() == null) {
-                String sql = "INSERT INTO tickets (date_time, user_id, route_id, price, seat_number) " +
-                        "VALUES (?, ?, ?, ?, ?)";
-                KeyHolder keyHolder = new GeneratedKeyHolder();
-                jdbcTemplate.update(connection -> {
-                    PreparedStatement preparedStatement = connection.prepareStatement(sql, new String[]{"id"});
-                    preparedStatement.setString(1, ticket.getDateTime().format(formatter));
-                    preparedStatement.setObject(2, ticket.getUserId());
-                    preparedStatement.setObject(3, ticket.getRouteId());
-                    preparedStatement.setBigDecimal(4, ticket.getPrice());
-                    preparedStatement.setString(5, ticket.getSeatNumber());
-                    return preparedStatement;
-                }, keyHolder);
+            KeyHolder keyHolder = new GeneratedKeyHolder();
 
-                ticket.setId(keyHolder.getKey().longValue());
-                logger.debug("Ticket with id: {} successfully created", ticket.getId());
+            jdbcTemplate.update(connection -> {
+                PreparedStatement preparedStatement = connection.prepareStatement(sql, new String[]{"id"});
+                preparedStatement.setString(1, ticket.getDateTime().format(formatter));
+                preparedStatement.setObject(2, ticket.getUserId());
+                preparedStatement.setObject(3, ticket.getRouteId());
+                preparedStatement.setBigDecimal(4, ticket.getPrice());
+                preparedStatement.setString(5, ticket.getSeatNumber());
+                return preparedStatement;
+            }, keyHolder);
 
-                return ticket;
-            } else {
-                String sql = "UPDATE tickets SET date_time = ?, user_id = ?, route_id = ?, price = ?, seat_number = ?" +
-                        " WHERE id = ?";
-                int updated = jdbcTemplate.update(sql,
-                        ticket.getDateTime().format(formatter),
-                        ticket.getUserId(),
-                        ticket.getRouteId(),
-                        ticket.getPrice(),
-                        ticket.getSeatNumber(),
-                        ticket.getId());
-                if (updated > 0) {
-                    logger.debug("Updating ticket with id: {} is successful", ticket.getId());
-                } else {
-                    logger.warn("Ticket with id: {} not found for updating", ticket.getId());
-                    throw new TicketSaveException("Ticket not found for updating");
-                }
-                return ticket;
-            }
+            ticket.setId(keyHolder.getKey().longValue());
+            logger.debug("Ticket with id: {} successfully created", ticket.getId());
+            return ticket;
         } catch (DataAccessException ex) {
-            logger.error("Error while saving/updating ticket with id: {}", ticket.getId());
-            throw new TicketSaveException("Error while saving/updating ticket", ex);
+            logger.error("Error while saving ticket: {}", ticket.toString());
+            throw new TicketSaveException("Error while saving ticket", ex);
+        }
+    }
+
+    @Override
+    @Transactional
+    public Ticket update(Ticket ticket) {
+        try {
+            String sql = "UPDATE tickets SET date_time = ?, user_id = ?, route_id = ?, price = ?, seat_number = ?" +
+                    " WHERE id = ?";
+            int updated = jdbcTemplate.update(sql,
+                    ticket.getDateTime().format(formatter),
+                    ticket.getUserId(),
+                    ticket.getRouteId(),
+                    ticket.getPrice(),
+                    ticket.getSeatNumber(),
+                    ticket.getId());
+            if (updated > 0) {
+                logger.debug("Updating ticket with id: {} is successful", ticket.getId());
+            } else {
+                logger.warn("Ticket with id: {} not found for updating", ticket.getId());
+                throw new TicketSaveException("Ticket not found for updating");
+            }
+            return ticket;
+        } catch (DataAccessException ex) {
+            logger.error("Error while updating ticket with id: {}", ticket.getId());
+            throw new TicketUpdateException("Error while updating ticket", ex);
         }
     }
 

@@ -1,7 +1,9 @@
 package com.github.cyberxandrew.repository;
 
+import com.github.cyberxandrew.dto.TicketCreateDTO;
+import com.github.cyberxandrew.dto.TicketUpdateDTO;
 import com.github.cyberxandrew.model.Ticket;
-import com.github.cyberxandrew.dto.TicketDTO;
+import com.github.cyberxandrew.dto.TicketWithRouteDataDTO;
 import com.github.cyberxandrew.mapper.TicketRowMapper;
 import com.github.cyberxandrew.mapper.TicketDtoRowMapper;
 import com.github.cyberxandrew.exception.ticket.TicketSaveException;
@@ -17,7 +19,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.when;
@@ -136,14 +137,14 @@ public class TicketRepositoryImplTest {
                 " FROM tickets t JOIN routes r ON t.route_id = r.id WHERE t.user_id IS NULL";
         Object[] expectedParams = new Object[0];
 
-        TicketDTO ticketDTO = new TicketDTO();
-        ModelGenerator.setTicketDtoFieldsWithoutUserId(ticketDTO);
-        List<TicketDTO> expectedList = new ArrayList<>(Collections.singletonList(ticketDTO));
+        TicketWithRouteDataDTO ticketWithRouteDataDTO = new TicketWithRouteDataDTO();
+        ModelGenerator.setTicketWithRouteDataDtoFieldsWithoutUserId(ticketWithRouteDataDTO);
+        List<TicketWithRouteDataDTO> expectedList = new ArrayList<>(Collections.singletonList(ticketWithRouteDataDTO));
 
         when(jdbcTemplate.query(eq(expectedSql), eq(expectedParams), any(TicketDtoRowMapper.class)))
                 .thenReturn(expectedList);
 
-        List<TicketDTO> actualList = ticketRepository.findAll();
+        List<TicketWithRouteDataDTO> actualList = ticketRepository.findAll();
 
         assertEquals(expectedList, actualList);
         verify(jdbcTemplate, times(1)).query(eq(expectedSql), eq(expectedParams), any(TicketDtoRowMapper.class));
@@ -165,15 +166,15 @@ public class TicketRepositoryImplTest {
         Object[] expectedParams = new Object[]{dateTime, "%" + departurePoint + "%", "%" + destinationPoint + "%",
                 "%" + carrierName + "%", pageable.getPageSize(), pageable.getOffset()};
 
-        TicketDTO testTicketDTO = new TicketDTO();
-        ModelGenerator.setTicketDtoFieldsWithoutUserId(testTicketDTO);
+        TicketWithRouteDataDTO testTicketWithRouteDataDTO = new TicketWithRouteDataDTO();
+        ModelGenerator.setTicketWithRouteDataDtoFieldsWithoutUserId(testTicketWithRouteDataDTO);
 
-        List<TicketDTO> expectedList = new ArrayList<>(Collections.singletonList(testTicketDTO));
+        List<TicketWithRouteDataDTO> expectedList = new ArrayList<>(Collections.singletonList(testTicketWithRouteDataDTO));
 
         when(jdbcTemplate.query(eq(expectedSql), eq(expectedParams), any(TicketDtoRowMapper.class)))
                 .thenReturn(expectedList);
 
-        List<TicketDTO> actualList = ticketRepository.findAll(pageable, dateTime, departurePoint,
+        List<TicketWithRouteDataDTO> actualList = ticketRepository.findAll(pageable, dateTime, departurePoint,
                 destinationPoint, carrierName);
 
         assertEquals(expectedList, actualList);
@@ -181,13 +182,13 @@ public class TicketRepositoryImplTest {
     }
 
     @Test
-    public void testSaveSuccessfulUpdate() {
+    public void testUpdateSuccessful() {
         String sql = "UPDATE tickets SET date_time = ?, user_id = ?, route_id = ?, price = ?, seat_number = ?" +
                 " WHERE id = ?";
 
-        Ticket ticket = new Ticket();
-        ModelGenerator.setTicketFieldsWithoutId(ticket);
-        ticket.setId(testTicketId);
+        Ticket ticketToUpdate = new Ticket();
+        ModelGenerator.setTicketFieldsWithoutId(ticketToUpdate);
+        ticketToUpdate.setId(testTicketId);
 
 //        when(logger.isDebugEnabled()).thenReturn(true);
 //        doNothing().when(logger).debug(anyString(), any(Object.class));//
@@ -195,15 +196,15 @@ public class TicketRepositoryImplTest {
         when(jdbcTemplate.update(eq(sql), anyString(), anyLong(), anyLong(),
                 any(BigDecimal.class), anyString(), anyLong())).thenReturn(1);
 
-        Ticket updatedTicket = ticketRepository.save(ticket);
+        Ticket updatedTicket = ticketRepository.update(ticketToUpdate);
 
-        assertEquals(ticket, updatedTicket); //?
+        assertEquals(ticketToUpdate, updatedTicket); //?
 //        verify(logger, times(1))
 //                .debug("Updating ticket with id: {} is successful", testTicket.getId());
     }
 
     @Test
-    public void testSaveTicketNotFoundUpdate() {
+    public void testUpdateTicketNotFound() {
         String sql = "UPDATE tickets SET date_time = ?, user_id = ?, route_id = ?, price = ?, seat_number = ?" +
                 " WHERE id = ?";
 
@@ -213,14 +214,14 @@ public class TicketRepositoryImplTest {
                 any(BigDecimal.class), anyString(), anyLong())).thenReturn(0);
 
         assertThrows(TicketSaveException.class, () -> {
-            ticketRepository.save(testTicket);
+            ticketRepository.update(testTicket);
         });
 //        verify(logger, times(1))
 //                .warn("Ticket with id: {} not found for updating", testTicket.getId());
     }
 
     @Test
-    public void testSaveDataBaseException() {
+    public void testUpdateDataBaseException() {
         String sql = "UPDATE tickets SET date_time = ?, user_id = ?, route_id = ?, price = ?, seat_number = ?" +
                 " WHERE id = ?";
 
@@ -233,10 +234,10 @@ public class TicketRepositoryImplTest {
                 .thenThrow(new QueryTimeoutException("Simulated QueryTimeoutException"));
 
         TicketSaveException ex = assertThrows(TicketSaveException.class, () -> {
-            ticketRepository.save(ticket);
+            ticketRepository.update(ticket);
         });
-        assertEquals(ex.getMessage(), "Error while saving/updating ticket");
-//        verify(logger, times(1)).error("Error while saving/updating ticket", ex);
+        assertEquals(ex.getMessage(), "Error while updating ticket");
+//        verify(logger, times(1)).error("Error while updating ticket", ex);
     }
 
     @Test

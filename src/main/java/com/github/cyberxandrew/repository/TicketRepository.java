@@ -1,6 +1,8 @@
 package com.github.cyberxandrew.repository;
 
-import com.github.cyberxandrew.dto.TicketDTO;
+import com.github.cyberxandrew.dto.TicketCreateDTO;
+import com.github.cyberxandrew.dto.TicketUpdateDTO;
+import com.github.cyberxandrew.dto.TicketWithRouteDataDTO;
 import com.github.cyberxandrew.model.Ticket;
 
 import org.springframework.data.domain.Pageable;
@@ -11,12 +13,13 @@ import java.util.Optional;
 public interface TicketRepository {
     Optional<Ticket> findById(Long ticketId);
     List<Ticket> findByUserId(Long userId);
-    List<TicketDTO> findAll(Pageable pageable,
-                            LocalDateTime dateTime,
-                            String departurePoint,
-                            String destinationPoint,
-                            String carrierName);
+    List<TicketWithRouteDataDTO> findAll(Pageable pageable,
+                                         LocalDateTime dateTime,
+                                         String departurePoint,
+                                         String destinationPoint,
+                                         String carrierName);
     Ticket save(Ticket ticket);
+    Ticket update(Ticket ticket);
     void deleteById(Long ticketId);
     boolean isTicketAvailable(Long ticketId);
 }

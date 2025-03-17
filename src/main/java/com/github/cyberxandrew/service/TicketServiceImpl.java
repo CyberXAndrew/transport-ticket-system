@@ -1,8 +1,13 @@
 package com.github.cyberxandrew.service;
 
+import com.github.cyberxandrew.dto.TicketCreateDTO;
 import com.github.cyberxandrew.dto.TicketDTO;
+import com.github.cyberxandrew.dto.TicketUpdateDTO;
+import com.github.cyberxandrew.dto.TicketWithRouteDataDTO;
 import com.github.cyberxandrew.exception.ticket.TicketNotFoundException;
 import com.github.cyberxandrew.exception.ticket.TicketSaveException;
+import com.github.cyberxandrew.exception.ticket.TicketUpdateException;
+import com.github.cyberxandrew.mapper.TicketMapper;
 import com.github.cyberxandrew.model.Ticket;
 import com.github.cyberxandrew.repository.TicketRepositoryImpl;
 import org.slf4j.Logger;
@@ -22,33 +27,45 @@ public class TicketServiceImpl implements TicketService {
 
     @Override
     @Transactional(readOnly = true)
-    public Ticket findTicketById(Long ticketId) {
-        return ticketRepository.findById(ticketId)
-                .orElseThrow(() -> new TicketNotFoundException("Ticket with id " + ticketId + " not found"));
+    public TicketDTO findTicketById(Long ticketId) {
+        return TicketMapper.INSTANCE.ticketToTicketDTO(ticketRepository.findById(ticketId)
+                .orElseThrow(() -> new TicketNotFoundException("Ticket with id " + ticketId + " not found")));
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List<Ticket> findTicketByUserId(Long userId) {
-        return ticketRepository.findByUserId(userId);
+    public List<TicketDTO> findTicketByUserId(Long userId) {
+        List<Ticket> tickets = ticketRepository.findByUserId(userId);
+        return tickets.stream().map(TicketMapper.INSTANCE::ticketToTicketDTO).toList();
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List<TicketDTO> findAllAccessibleTickets(Pageable pageable, LocalDateTime dateTime, String departurePoint,
-                                                    String destinationPoint, String carrierName) {
+    public List<TicketWithRouteDataDTO> findAllAccessibleTickets(Pageable pageable, LocalDateTime dateTime, String departurePoint,
+                                                                 String destinationPoint, String carrierName) {
         return ticketRepository.findAll(pageable, dateTime, departurePoint, destinationPoint, carrierName);
     }
 
-    public List<TicketDTO> findAllAccessibleTickets() { return ticketRepository.findAll(); }
+    public List<TicketWithRouteDataDTO> findAllAccessibleTickets() { return ticketRepository.findAll(); }
 
     @Override
     @Transactional
-    public Ticket saveTicket(Ticket ticket) {
-        if (ticket == null) {
+    public TicketDTO saveTicket(TicketCreateDTO createDTO) {
+        if (createDTO == null) {
             throw new TicketSaveException("Error while saving or updating Ticket: Ticket is null");
         }
-        return ticketRepository.save(ticket);
+        Ticket ticket = TicketMapper.INSTANCE.ticketCreateDTOToTicket(createDTO);
+        return TicketMapper.INSTANCE.ticketToTicketDTO(ticketRepository.save(ticket));
+    }
+
+    @Override
+    @Transactional
+    public TicketDTO updateTicket(TicketUpdateDTO updateDTO, Long id) {
+        if (id == null) {
+            throw new TicketUpdateException("Error while saving or updating Ticket: Ticket is null");
+        }
+        Ticket ticket = ticketRepository.findById(id).get();
+        return TicketMapper.INSTANCE.ticketToTicketDTO(ticketRepository.update(ticket));
     }
 
     @Override

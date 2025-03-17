@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 public class Ticket {
     private Long id;
 //    @Future
+    @NotNull
     private LocalDateTime dateTime;
     private Long userId;
     @NotNull

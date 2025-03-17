@@ -3,7 +3,9 @@ package com.github.cyberxandrew.utils;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-import com.github.cyberxandrew.dto.TicketDTO;
+import com.github.cyberxandrew.dto.TicketCreateDTO;
+import com.github.cyberxandrew.dto.TicketUpdateDTO;
+import com.github.cyberxandrew.dto.TicketWithRouteDataDTO;
 import com.github.cyberxandrew.model.Ticket;
 
 public class ModelGenerator {
@@ -33,7 +35,6 @@ public class ModelGenerator {
     public static Ticket createTicketToSave() {
         Ticket ticket = new Ticket();
 
-        ticket.setId(null);
         ticket.setDateTime(LocalDateTime.now());
         ticket.setUserId(testUserId);
         ticket.setRouteId(testRouteId);
@@ -41,6 +42,28 @@ public class ModelGenerator {
         ticket.setSeatNumber(testSeatNumber);
 
         return ticket;
+    }
+    public static TicketCreateDTO createTicketCreateDTO() {
+        TicketCreateDTO ticketCreateDTO = new TicketCreateDTO();
+
+        ticketCreateDTO.setDateTime(LocalDateTime.now());
+        ticketCreateDTO.setUserId(testUserId);
+        ticketCreateDTO.setRouteId(testRouteId);
+        ticketCreateDTO.setPrice(testPrice);
+        ticketCreateDTO.setSeatNumber(testSeatNumber);
+
+        return ticketCreateDTO;
+    }
+    public static TicketUpdateDTO createTicketUpdateDTO() {
+        TicketUpdateDTO updateDTO = new TicketUpdateDTO();
+
+        updateDTO.setDateTime(LocalDateTime.now());
+        updateDTO.setUserId(testUserId);
+        updateDTO.setRouteId(testRouteId);
+        updateDTO.setPrice(testPrice);
+        updateDTO.setSeatNumber(testSeatNumber);
+
+        return updateDTO;
     }
 
     public static void setTicketFieldsWithoutId(Ticket ticket) {
@@ -51,16 +74,16 @@ public class ModelGenerator {
         ticket.setSeatNumber(testSeatNumber);
     }
 
-    public static void setTicketDtoFieldsWithoutUserId(TicketDTO ticketDto) {
-        ticketDto.setId(testTicketId);
-        ticketDto.setDateTime(LocalDateTime.now());
-        ticketDto.setUserId(null);
-        ticketDto.setRouteId(testRouteId);
-        ticketDto.setPrice(testPrice);
-        ticketDto.setSeatNumber(testSeatNumber);
+    public static void setTicketWithRouteDataDtoFieldsWithoutUserId(TicketWithRouteDataDTO ticketWithRouteDataDto) {
+        ticketWithRouteDataDto.setId(testTicketId);
+        ticketWithRouteDataDto.setDateTime(LocalDateTime.now());
+        ticketWithRouteDataDto.setUserId(null);
+        ticketWithRouteDataDto.setRouteId(testRouteId);
+        ticketWithRouteDataDto.setPrice(testPrice);
+        ticketWithRouteDataDto.setSeatNumber(testSeatNumber);
 
-        ticketDto.setDeparturePoint(testDeparturePoint);
-        ticketDto.setDestinationPoint(testDestinationPoint);
-        ticketDto.setCarrierName(testCarrierName);
+        ticketWithRouteDataDto.setDeparturePoint(testDeparturePoint);
+        ticketWithRouteDataDto.setDestinationPoint(testDestinationPoint);
+        ticketWithRouteDataDto.setCarrierName(testCarrierName);
     }
 }
