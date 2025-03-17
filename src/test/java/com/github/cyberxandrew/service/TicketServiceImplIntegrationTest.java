@@ -46,12 +46,8 @@ public class TicketServiceImplIntegrationTest {
         Ticket savedTicket = ticketService.saveTicket(ticketToSave);
 
         Ticket ticketById = ticketService.findTicketById(savedTicket.getId());
-        ;
-        assertEquals(ticketById, savedTicket);
-    }
 
-    @Test
-    public void testFindTicketByIdThrowsException() {
+        assertEquals(ticketById, savedTicket);
         assertThrows(TicketNotFoundException.class, () -> ticketService.findTicketById(testAbsentId));
     }
 
@@ -63,9 +59,10 @@ public class TicketServiceImplIntegrationTest {
         List<Ticket> ticketList = ticketService.findTicketByUserId(savedTicket.getUserId());
 
         assertFalse(ticketList.isEmpty());
-        assertEquals(ticketList.size(), 1);
+        assertEquals(1, ticketList.size());
         assertEquals(ticketList.get(0), savedTicket);
     }
+
 //    @Test //TODO : cant implement while routes table does not exists
 //    public void testFindAllAccessibleTickets() {
 //        Ticket ticketToSave = ModelGenerator.createTicketToSave();
@@ -91,6 +88,20 @@ public class TicketServiceImplIntegrationTest {
 
         assertTrue(savedTicket.getId() != null && savedTicket.getId() > 0);
         assertThrows(TicketSaveException.class, () -> ticketService.saveTicket(null));
+
+        Ticket ticketToUpdate = savedTicket;
+        ticketToUpdate.setSeatNumber("5C");
+        ticketToUpdate.setUserId(1L);
+
+        ticketService.saveTicket(ticketToUpdate);
+        Ticket updatedTicket = ticketService.findTicketById(savedTicket.getId());
+
+        assertEquals(updatedTicket.getId(), savedTicket.getId());
+        assertEquals(updatedTicket.getDateTime(), savedTicket.getDateTime());
+        assertEquals(updatedTicket.getUserId(), 1L );
+        assertEquals(updatedTicket.getRouteId(), savedTicket.getRouteId());
+        assertEquals(updatedTicket.getPrice(), savedTicket.getPrice());
+        assertEquals(updatedTicket.getSeatNumber(), "5C");
     }
 
     @Test
