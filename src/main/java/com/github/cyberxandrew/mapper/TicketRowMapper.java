@@ -7,7 +7,9 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.Format;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,6 +21,8 @@ public class TicketRowMapper implements RowMapper<Ticket> {
 
     private static final Logger logger = LoggerFactory.getLogger(TicketRowMapper.class);
 
+    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSSSSS");
+
     @Override
     public Ticket mapRow(ResultSet rs, int rowNum) throws SQLException {
         Ticket ticket = new Ticket();
@@ -29,8 +33,9 @@ public class TicketRowMapper implements RowMapper<Ticket> {
                 logger.error("Ошибка при извлечении билета: id is NULL");
                 throw new TicketMappingException("Error while mapping ticket (to Ticket): id is NULL");
             }
+
             ticket.setId(id);
-            ticket.setDateTime(rs.getObject("date_time", LocalDateTime.class));
+            ticket.setDateTime(LocalDateTime.parse(rs.getString("date_time"), formatter));
             Long userId = rs.getLong("user_id");
             ticket.setUserId(rs.wasNull() ? null : userId);
             Long routeId = rs.getLong("route_id");

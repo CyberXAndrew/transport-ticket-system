@@ -1,12 +1,17 @@
 package com.github.cyberxandrew.repository;
 
+import com.github.cyberxandrew.dto.TicketDTO;
 import com.github.cyberxandrew.model.Ticket;
 import com.github.cyberxandrew.exception.ticket.TicketDeletionException;
 import com.github.cyberxandrew.exception.ticket.TicketNotFoundException;
 import com.github.cyberxandrew.utils.ModelGenerator;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.springframework.context.annotation.Bean;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -14,13 +19,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.dao.DataAccessException;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.when;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 @SpringBootTest
@@ -92,21 +98,6 @@ public class TicketRepositoryImplIntegrationTest {
     @Test
     @Transactional
     public void testDeleteByIdDataBaseError() {// TODO
-//        jdbcTemplate.execute("""
-//                INSERT INTO users (id, login, password, name, surname, middle_name)
-//                VALUES (1, 'testLogin', 'testPassword', 'testName', 'testSurname', 'testMiddleName');
-//                """);
-//
-//        jdbcTemplate.execute("""
-//                INSERT INTO tickets (id, date_time, user_id, route_id, price, seat_number)
-//                VALUES (2, '2999-01-01 00:00:00', 1, 1, 15.5, '1A');
-//                """);
-//        Ticket ticketToSave = prepareTicketToSave();
-//        ticketRepository.save(ticketToSave);
-//        ticketRepository.save(prepareTicketToSave());
-//
-//        String sql = "DELETE FROM tickets WHERE id = ?";
-//
-//        assertThrows(TicketDeletionException.class, () -> ticketRepository.deleteById(testTicketId));
+        // ? TODO
     }
 }

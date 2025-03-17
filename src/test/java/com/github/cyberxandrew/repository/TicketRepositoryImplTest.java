@@ -33,13 +33,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.*;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.jdbc.BadSqlGrammarException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.*;
 

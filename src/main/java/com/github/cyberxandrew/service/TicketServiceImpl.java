@@ -33,6 +33,8 @@ public class TicketServiceImpl implements TicketService {
         return ticketRepository.findAll(pageable, dateTime, departurePoint, destinationPoint, carrierName);
     }
 
+    public List<TicketDTO> findAllAccessibleTickets() { return ticketRepository.findAll(); }
+
     @Override
     public Ticket saveTicket(Ticket ticket) {
         if (ticket == null) throw new TicketSaveException("Error while saving or updating Ticket: Ticket is null");

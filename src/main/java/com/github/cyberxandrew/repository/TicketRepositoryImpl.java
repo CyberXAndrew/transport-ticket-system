@@ -33,7 +33,7 @@ import org.slf4j.LoggerFactory;
 @Repository
 public class TicketRepositoryImpl implements TicketRepository {
     private static final Logger logger = LoggerFactory.getLogger(TicketRepositoryImpl.class);
-    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'hh:mm:ss.SSSSSSSSS");
+    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSSSSS");
     @Autowired private JdbcTemplate jdbcTemplate;
     @Autowired private TicketRowMapper ticketRowMapper;
     @Autowired private TicketDtoRowMapper ticketDtoRowMapper;
@@ -126,7 +126,6 @@ public class TicketRepositoryImpl implements TicketRepository {
             } else {
                 String sql = "UPDATE tickets SET date_time = ?, user_id = ?, route_id = ?, price = ?, seat_number = ?" +
                         " WHERE id = ?";
-                System.out.println(" ZZZZZZZZZZZZZZ " + ticket);
                 int updated = jdbcTemplate.update(sql,
                         ticket.getDateTime().format(formatter),
                         ticket.getUserId(),
@@ -134,7 +133,6 @@ public class TicketRepositoryImpl implements TicketRepository {
                         ticket.getPrice(),
                         ticket.getSeatNumber(),
                         ticket.getId());
-                System.out.println(" ZZZZZZZZZZZZZZ " + updated);
                 if (updated > 0) {
                     logger.debug("Updating ticket with id: {} is successful", ticket.getId());
                 } else {
