@@ -49,23 +49,23 @@ public class TicketRepositoryImplIntegrationTest {
     @Test
     @Transactional
     public void testSave() {
-        TicketCreateDTO createDTO = ModelGenerator.createTicketToSave();
+        Ticket ticketToSave = ModelGenerator.createTicketToSave();
 
-        Ticket savedTicket = ticketRepository.save(createDTO);
+        Ticket savedTicket = ticketRepository.save(ticketToSave);
 
         assertNotNull(savedTicket.getId());
         assertTrue(savedTicket.getId() > 0);
-        assertEquals(savedTicket.getUserId(), createDTO.getUserId());
-        assertEquals(savedTicket.getRouteId(), createDTO.getRouteId());
-        assertEquals(savedTicket.getPrice(), createDTO.getPrice());
-        assertEquals(savedTicket.getSeatNumber(), createDTO.getSeatNumber());
+        assertEquals(savedTicket.getUserId(), ticketToSave.getUserId());
+        assertEquals(savedTicket.getRouteId(), ticketToSave.getRouteId());
+        assertEquals(savedTicket.getPrice(), ticketToSave.getPrice());
+        assertEquals(savedTicket.getSeatNumber(), ticketToSave.getSeatNumber());
     }
 
     @Test
     @Transactional
     public void testDeleteByIdSuccessful() {
-        TicketCreateDTO createDTO = ModelGenerator.createTicketToSave();
-        Ticket savedTicket = ticketRepository.save(createDTO);
+        Ticket ticketToSave = ModelGenerator.createTicketToSave();
+        Ticket savedTicket = ticketRepository.save(ticketToSave);
 
         assertTrue(savedTicket.getId() != null && savedTicket.getId() > 0);
 

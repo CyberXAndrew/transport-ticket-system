@@ -5,7 +5,9 @@ import com.github.cyberxandrew.dto.TicketDTO;
 import com.github.cyberxandrew.dto.TicketUpdateDTO;
 import com.github.cyberxandrew.model.Ticket;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
+
 
 @Mapper
 public interface TicketMapper {
@@ -16,4 +18,5 @@ public interface TicketMapper {
     Ticket ticketDTOToTicket(TicketDTO ticketDTO);
     Ticket ticketCreateDTOToTicket(TicketCreateDTO createDTO);
     Ticket ticketUpdateDTOToTicket(TicketUpdateDTO updateDTO);
+    TicketUpdateDTO ticketDTOToUpdateDTO(TicketDTO ticketDTO);
 }

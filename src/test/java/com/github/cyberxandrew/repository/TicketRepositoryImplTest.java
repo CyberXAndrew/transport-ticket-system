@@ -2,6 +2,7 @@ package com.github.cyberxandrew.repository;
 
 import com.github.cyberxandrew.dto.TicketCreateDTO;
 import com.github.cyberxandrew.dto.TicketUpdateDTO;
+import com.github.cyberxandrew.exception.ticket.TicketUpdateException;
 import com.github.cyberxandrew.model.Ticket;
 import com.github.cyberxandrew.dto.TicketWithRouteDataDTO;
 import com.github.cyberxandrew.mapper.TicketRowMapper;
@@ -213,7 +214,7 @@ public class TicketRepositoryImplTest {
         when(jdbcTemplate.update(eq(sql), anyString(), anyLong(), anyLong(),
                 any(BigDecimal.class), anyString(), anyLong())).thenReturn(0);
 
-        assertThrows(TicketSaveException.class, () -> {
+        assertThrows(TicketUpdateException.class, () -> {
             ticketRepository.update(testTicket);
         });
 //        verify(logger, times(1))
@@ -233,7 +234,7 @@ public class TicketRepositoryImplTest {
                 any(BigDecimal.class), anyString(), anyLong()))
                 .thenThrow(new QueryTimeoutException("Simulated QueryTimeoutException"));
 
-        TicketSaveException ex = assertThrows(TicketSaveException.class, () -> {
+        TicketUpdateException ex = assertThrows(TicketUpdateException.class, () -> {
             ticketRepository.update(ticket);
         });
         assertEquals(ex.getMessage(), "Error while updating ticket");

@@ -8,8 +8,8 @@ import java.time.LocalDateTime;
 
 @Data
 public class TicketUpdateDTO {
-    @NotNull
-    private Long id;
+//    @NotNull
+//    private Long id;
     @NotNull
     private LocalDateTime dateTime;
 

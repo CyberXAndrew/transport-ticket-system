@@ -22,10 +22,11 @@ import java.util.List;
 public class TicketController {
 
     @Autowired TicketServiceImpl ticketService;
-    // Входные данные REST методов должны валидироваться.
-    // В случае ошибки валидации должна возвращаться HTTP ошибка 400,
-    // а в теле ответа – сообщение об ошибке (нужно придумать любой формат тела ответа,
-    // отличный от стандартного в Spring Web).
+    /* TODO : Входные данные REST методов должны валидироваться.
+         В случае ошибки валидации должна возвращаться HTTP ошибка 400,
+          а в теле ответа – сообщение об ошибке (нужно придумать любой формат тела ответа,
+           отличный от стандартного в Spring Web */
+
     @GetMapping(path = "/{id}")
     @ResponseStatus(HttpStatus.OK)
     public TicketDTO show(@Valid @PathVariable Long id) {
@@ -62,12 +63,4 @@ public class TicketController {
     public void delete(@Valid @PathVariable Long id) {
         ticketService.deleteTicket(id);
     }
-
-
-
-
-
-
-
-
 }

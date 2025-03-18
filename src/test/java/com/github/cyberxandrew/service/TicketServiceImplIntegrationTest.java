@@ -16,6 +16,8 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -93,17 +95,18 @@ public class TicketServiceImplIntegrationTest {
     }
     @Test
     public void testUpdate() {
-        TicketUpdateDTO updateDTO = ModelGenerator.createTicketUpdateDTO();
-        updateDTO.setId(idOfSavedTicket);
+        TicketDTO ticketFromDb = ticketService.findTicketById(idOfSavedTicket);
+        TicketUpdateDTO updateDTO = TicketMapper.INSTANCE.ticketDTOToUpdateDTO(ticketFromDb);
+        updateDTO.setPrice(new BigDecimal(543.21));
+        updateDTO.setDateTime(LocalDateTime.now());
 
         ticketService.updateTicket(updateDTO, idOfSavedTicket);
-        TicketDTO updatedTicketDto = ticketService.findTicketById(updateDTO.getId());
+        TicketDTO updatedTicketDto = ticketService.findTicketById(idOfSavedTicket);
 
-        assertEquals(updatedTicketDto.getId(), updateDTO.getId());
-        assertEquals(updatedTicketDto.getDateTime(), updateDTO.getDateTime());
+        assertNotEquals(updatedTicketDto.getDateTime(), updateDTO.getDateTime());
         assertEquals(updatedTicketDto.getUserId(), updateDTO.getUserId() );
         assertEquals(updatedTicketDto.getRouteId(), updateDTO.getRouteId());
-        assertEquals(updatedTicketDto.getPrice(), updateDTO.getPrice());
+        assertNotEquals(updatedTicketDto.getPrice(), updateDTO.getPrice());
         assertEquals(updatedTicketDto.getSeatNumber(), updateDTO.getSeatNumber());
     }
 

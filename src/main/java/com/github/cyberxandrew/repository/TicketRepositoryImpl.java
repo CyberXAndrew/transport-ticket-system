@@ -144,7 +144,7 @@ public class TicketRepositoryImpl implements TicketRepository {
                 logger.debug("Updating ticket with id: {} is successful", ticket.getId());
             } else {
                 logger.warn("Ticket with id: {} not found for updating", ticket.getId());
-                throw new TicketSaveException("Ticket not found for updating");
+                throw new TicketUpdateException("Ticket not found for updating");
             }
             return ticket;
         } catch (DataAccessException ex) {
