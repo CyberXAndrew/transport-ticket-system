@@ -11,9 +11,5 @@ public class User {
     @NotBlank
     private String password;
     @NotBlank
-    private String name;
-    @NotBlank
-    private String surname;
-
-    private String middleName;
+    private String fullName;
 }

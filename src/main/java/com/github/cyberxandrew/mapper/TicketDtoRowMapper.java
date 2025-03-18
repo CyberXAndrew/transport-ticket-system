@@ -35,7 +35,7 @@ public class TicketDtoRowMapper implements RowMapper<TicketWithRouteDataDTO> {
                     "Unknown"));
             ticketWithRouteDataDTO.setDestinationPoint(StringUtils.defaultString(rs.getString("destination_point"),
                     "Unknown"));
-            ticketWithRouteDataDTO.setCarrierName(StringUtils.defaultString(rs.getString("carrier_name"),
+            ticketWithRouteDataDTO.setCarrierName(StringUtils.defaultString(rs.getString("name"),
                     "Unknown"));
         } catch (SQLException ex) {
             logger.error("Ошибка при извлечении билета с id: {}", id, ex);

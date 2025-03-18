@@ -60,8 +60,8 @@ public class TicketRepositoryImpl implements TicketRepository {
     @Transactional
     public List<TicketWithRouteDataDTO> findAll(Pageable pageable, LocalDateTime dateTime, String departurePoint,
                                                 String destinationPoint, String carrierName) {
-        StringBuilder sql = new StringBuilder("SELECT t.*, r.departure_point, r.destination_point, r.carrier_name" +
-                " FROM tickets t JOIN routes r ON t.route_id = r.id WHERE t.user_id IS NULL");
+        StringBuilder sql = new StringBuilder("SELECT t.*, r.departure_point, r.destination_point, c.name" +
+                " FROM tickets t JOIN routes r ON t.route_id = r.id JOIN carriers c ON r.carrier_id = c.id WHERE t.user_id IS NULL");
         List<Object> filtrationParams = new ArrayList<>();
 
         addFilter(sql, filtrationParams, "date_time", dateTime);
