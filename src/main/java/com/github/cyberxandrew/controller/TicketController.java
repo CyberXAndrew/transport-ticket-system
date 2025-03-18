@@ -1,17 +1,13 @@
 package com.github.cyberxandrew.controller;
 
-import com.github.cyberxandrew.dto.TicketCreateDTO;
-import com.github.cyberxandrew.dto.TicketDTO;
-import com.github.cyberxandrew.dto.TicketUpdateDTO;
-import com.github.cyberxandrew.dto.TicketWithRouteDataDTO;
-import com.github.cyberxandrew.mapper.TicketMapper;
-import com.github.cyberxandrew.model.Ticket;
+import com.github.cyberxandrew.dto.*;
 import com.github.cyberxandrew.service.TicketServiceImpl;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -28,10 +24,10 @@ public class TicketController {
            отличный от стандартного в Spring Web */
 
     @GetMapping(path = "/{id}")
-    @ResponseStatus(HttpStatus.OK)
-    public TicketDTO show(@Valid @PathVariable Long id) {
+    public TicketDTO show(@PathVariable Long id) {
         return ticketService.findTicketById(id);
     }
+
     @GetMapping(path = "")
     public ResponseEntity<List<TicketWithRouteDataDTO>> index(@Valid @RequestParam(required = false) Pageable pageable,
                                                                 @RequestParam(required = false) LocalDateTime dateTime,
@@ -48,19 +44,19 @@ public class TicketController {
 
     @PostMapping(path = "")
     @ResponseStatus(HttpStatus.CREATED)
-    public TicketDTO create(@Valid @RequestParam TicketCreateDTO ticketCreateDTO) {
+    public TicketDTO create(@Valid @RequestBody TicketCreateDTO ticketCreateDTO) {
         return ticketService.saveTicket(ticketCreateDTO);
     }
 
     @PutMapping(path = "/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public TicketDTO update(@Valid @RequestParam TicketUpdateDTO updateDTO, @PathVariable Long id) {
+    public TicketDTO update(@Valid @RequestBody TicketUpdateDTO updateDTO, @PathVariable Long id) {
         return ticketService.updateTicket(updateDTO, id);
     }
 
     @DeleteMapping(path = "/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete(@Valid @PathVariable Long id) {
+    public void delete(@PathVariable Long id) {
         ticketService.deleteTicket(id);
     }
 }
