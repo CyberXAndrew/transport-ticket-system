@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -16,19 +15,13 @@ import java.util.List;
 @RestController
 @RequestMapping(path = "/api/tickets")
 public class TicketController {
-
     @Autowired TicketServiceImpl ticketService;
-    /* TODO : Входные данные REST методов должны валидироваться.
-         В случае ошибки валидации должна возвращаться HTTP ошибка 400,
-          а в теле ответа – сообщение об ошибке (нужно придумать любой формат тела ответа,
-           отличный от стандартного в Spring Web */
-
     @GetMapping(path = "/{id}")
     public TicketDTO show(@PathVariable Long id) {
         return ticketService.findTicketById(id);
     }
 
-    @GetMapping(path = "")
+    @GetMapping(path = "") // todo: fix request params
     public ResponseEntity<List<TicketWithRouteDataDTO>> index(@Valid @RequestParam(required = false) Pageable pageable,
                                                                 @RequestParam(required = false) LocalDateTime dateTime,
                                                                 @RequestParam(required = false) String departurePoint,
@@ -40,7 +33,6 @@ public class TicketController {
                 .header("X-Total-Count", String.valueOf(allAccessibleTickets.size()))
                 .body(allAccessibleTickets);
     }
-
 
     @PostMapping(path = "")
     @ResponseStatus(HttpStatus.CREATED)

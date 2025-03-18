@@ -1,10 +1,7 @@
 package com.github.cyberxandrew.repository;
 
-import com.github.cyberxandrew.dto.TicketCreateDTO;
-import com.github.cyberxandrew.dto.TicketUpdateDTO;
 import com.github.cyberxandrew.exception.ticket.*;
 import com.github.cyberxandrew.mapper.TicketDtoRowMapper;
-import com.github.cyberxandrew.mapper.TicketMapper;
 import com.github.cyberxandrew.model.Ticket;
 import com.github.cyberxandrew.dto.TicketWithRouteDataDTO;
 import com.github.cyberxandrew.mapper.TicketRowMapper;
@@ -79,8 +76,7 @@ public class TicketRepositoryImpl implements TicketRepository {
             filtrationParams.add(offset);
         }
 
-        List<TicketWithRouteDataDTO> query = jdbcTemplate.query(sql.toString(), filtrationParams.toArray(), ticketDtoRowMapper);
-        return query;
+        return jdbcTemplate.query(sql.toString(), filtrationParams.toArray(), ticketDtoRowMapper);
     }
 
     private void addFilter(StringBuilder sql, List<Object> filtrationParams, String columnName, Object filter) {

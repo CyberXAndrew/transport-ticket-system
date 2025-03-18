@@ -18,7 +18,6 @@ public class Ticket {
     private Long userId;
     @NotNull
     private Long routeId;
-
     @DecimalMin("0.00")
     @NotNull
     private BigDecimal price;
