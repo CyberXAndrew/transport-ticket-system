@@ -64,7 +64,9 @@ public class TicketRepositoryImpl implements TicketRepository {
                 " FROM tickets t JOIN routes r ON t.route_id = r.id JOIN carriers c ON r.carrier_id = c.id WHERE t.user_id IS NULL");
         List<Object> filtrationParams = new ArrayList<>();
 
-        addFilter(sql, filtrationParams, "date_time", dateTime);
+        String stringDateTime = null;
+        if (dateTime != null) { stringDateTime = String.valueOf(dateTime); }
+        addFilter(sql, filtrationParams, "date_time", stringDateTime);
         addFilter(sql, filtrationParams, "departure_point", departurePoint);
         addFilter(sql, filtrationParams, "destination_point", destinationPoint);
         addFilter(sql, filtrationParams, "carrier_name", carrierName);
@@ -84,9 +86,6 @@ public class TicketRepositoryImpl implements TicketRepository {
             if (filter instanceof String) {
                 sql.append(" AND ").append(columnName).append(" LIKE ?");
                 filtrationParams.add("%" + filter + "%");
-            } else {
-                sql.append(" AND ").append(columnName).append(" = ?");
-                filtrationParams.add(filter);
             }
         }
     }

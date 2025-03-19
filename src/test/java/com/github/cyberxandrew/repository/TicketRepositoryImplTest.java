@@ -134,8 +134,9 @@ public class TicketRepositoryImplTest {
 
     @Test
     public void testFindAllWithoutParams() {
-        String expectedSql = "SELECT t.*, r.departure_point, r.destination_point, r.carrier_name" +
-                " FROM tickets t JOIN routes r ON t.route_id = r.id WHERE t.user_id IS NULL";
+        String expectedSql = "SELECT t.*, r.departure_point, r.destination_point, c.name " +
+                "FROM tickets t JOIN routes r ON t.route_id = r.id JOIN carriers c ON r.carrier_id = c.id " +
+                "WHERE t.user_id IS NULL";
         Object[] expectedParams = new Object[0];
 
         TicketWithRouteDataDTO ticketWithRouteDataDTO = new TicketWithRouteDataDTO();
@@ -153,10 +154,10 @@ public class TicketRepositoryImplTest {
 
     @Test
     public void testFindAllWithAllParams() {
-        String expectedSql = "SELECT t.*, r.departure_point, r.destination_point, r.carrier_name" +
-                " FROM tickets t JOIN routes r ON t.route_id = r.id WHERE t.user_id IS NULL" +
-                " AND date_time = ? AND departure_point LIKE ? AND destination_point LIKE ? " +
-                "AND carrier_name LIKE ? LIMIT ? OFFSET ?";
+        String expectedSql = "SELECT t.*, r.departure_point, r.destination_point, c.name " +
+                "FROM tickets t JOIN routes r ON t.route_id = r.id JOIN carriers c ON r.carrier_id = c.id " +
+                "WHERE t.user_id IS NULL AND date_time LIKE ? AND departure_point LIKE ? " +
+                "AND destination_point LIKE ? AND carrier_name LIKE ? LIMIT ? OFFSET ?";
 
         Pageable pageable = PageRequest.of(0, 2);
         LocalDateTime dateTime = LocalDateTime.now();
@@ -164,8 +165,8 @@ public class TicketRepositoryImplTest {
         String destinationPoint = "Moscow";
         String carrierName = "Java Airlines";
 
-        Object[] expectedParams = new Object[]{dateTime, "%" + departurePoint + "%", "%" + destinationPoint + "%",
-                "%" + carrierName + "%", pageable.getPageSize(), pageable.getOffset()};
+        Object[] expectedParams = new Object[]{"%" + String.valueOf(dateTime) + "%", "%" + departurePoint + "%",
+                "%" + destinationPoint + "%", "%" + carrierName + "%", pageable.getPageSize(), pageable.getOffset()};
 
         TicketWithRouteDataDTO testTicketWithRouteDataDTO = new TicketWithRouteDataDTO();
         ModelGenerator.setTicketWithRouteDataDtoFieldsWithoutUserId(testTicketWithRouteDataDTO);
