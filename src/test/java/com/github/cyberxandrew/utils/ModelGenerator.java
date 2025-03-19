@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 import com.github.cyberxandrew.dto.TicketCreateDTO;
+import com.github.cyberxandrew.dto.TicketDTO;
 import com.github.cyberxandrew.dto.TicketUpdateDTO;
 import com.github.cyberxandrew.dto.TicketWithRouteDataDTO;
 import com.github.cyberxandrew.model.Ticket;
@@ -43,6 +44,20 @@ public class ModelGenerator {
 
         return ticket;
     }
+
+    public static TicketDTO createTicketDTO() {
+        TicketDTO ticketDTO = new TicketDTO();
+
+        ticketDTO.setId(testTicketId);
+        ticketDTO.setDateTime(LocalDateTime.now());
+        ticketDTO.setUserId(testUserId);
+        ticketDTO.setRouteId(testRouteId);
+        ticketDTO.setPrice(testPrice);
+        ticketDTO.setSeatNumber(testSeatNumber);
+
+        return ticketDTO;
+    }
+
     public static TicketCreateDTO createTicketCreateDTO() {
         TicketCreateDTO ticketCreateDTO = new TicketCreateDTO();
 
@@ -54,6 +69,7 @@ public class ModelGenerator {
 
         return ticketCreateDTO;
     }
+
     public static TicketUpdateDTO createTicketUpdateDTO() {
         TicketUpdateDTO updateDTO = new TicketUpdateDTO();
 

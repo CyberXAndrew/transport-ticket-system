@@ -6,6 +6,7 @@ import com.github.cyberxandrew.dto.TicketUpdateDTO;
 import com.github.cyberxandrew.exception.ticket.TicketNotFoundException;
 import com.github.cyberxandrew.exception.ticket.TicketSaveException;
 import com.github.cyberxandrew.mapper.TicketMapper;
+import com.github.cyberxandrew.model.Ticket;
 import com.github.cyberxandrew.utils.ModelGenerator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -68,22 +69,22 @@ public class TicketServiceImplIntegrationTest {
         assertEquals(ticketList.get(0), savedTicketDTO);
     }
 
-//    @Test //TODO : cant implement while routes table does not exists
-//    public void testFindAllAccessibleTickets() {
-//        Ticket ticketToSave = ModelGenerator.createTicketToSave();
-//        Ticket savedTicket = ticketService.saveTicket(ticketToSave);
-//
-//        List<TicketDTO> allAccessibleTickets = ticketService.findAllAccessibleTickets();
-//
-//        assertFalse(allAccessibleTickets.isEmpty());
-//        assertTrue(allAccessibleTickets.contains(savedTicket));
-//
-//        List<TicketDTO> allAccessibleTickets2 = ticketService.findAllAccessibleTickets(
-//                PageRequest.of(0, 2),
-//                ticketToSave.getDateTime(),
-//                  // paste some test routes to routes table
-//                );
-//    }
+    @Test //TODO : cant implement while routes table does not exists
+    public void testFindAllAccessibleTickets() {
+        TicketCreateDTO createDTO = ModelGenerator.createTicketCreateDTO();
+        TicketDTO savedTicket = ticketService.saveTicket(createDTO);
+
+        List<TicketDTO> allAccessibleTickets = ticketService.findAllAccessibleTickets();
+
+        assertFalse(allAccessibleTickets.isEmpty());
+        assertTrue(allAccessibleTickets.contains(savedTicket));
+
+        List<TicketDTO> allAccessibleTickets2 = ticketService.findAllAccessibleTickets(
+                PageRequest.of(0, 2),
+                ticketToSave.getDateTime(),
+                  // paste some test routes to routes table
+                );
+    }
 
     @Test
     public void testSave() { // UPDATES

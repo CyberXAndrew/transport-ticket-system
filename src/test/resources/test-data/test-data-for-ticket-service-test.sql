@@ -10,7 +10,8 @@ INSERT INTO routes (departure_point, destination_point, carrier_id, duration_in_
 ('Vienna', 'Saints-Petersburg', 1, 260),
 ('Saints-Petersburg', 'Vienna', 2, 260),
 ('Moscow', 'Saints-Petersburg', 3, 110),
-('Saints-Petersburg', 'Tokyo', 4, 410),
+('Saints-Petersburg', 'Moscow', 4, 410),
+('Saints-Petersburg', 'Moscow', 2, 410),
 ('Tokyo', 'Moscow', 2, 420),
 ('Moscow', 'Vienna', 3, 190);
 

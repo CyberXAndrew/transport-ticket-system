@@ -16,6 +16,8 @@ public interface TicketMapper {
     TicketDTO ticketToTicketDTO(Ticket ticket);
     Ticket ticketDTOToTicket(TicketDTO ticketDTO);
     Ticket ticketCreateDTOToTicket(TicketCreateDTO createDTO);
+    TicketDTO ticketCreateDTOToTicketDTO(TicketCreateDTO createDTO);
     Ticket ticketUpdateDTOToTicket(TicketUpdateDTO updateDTO);
+    TicketDTO ticketUpdateDTOToTicketDTO(TicketUpdateDTO updateDTO);
     TicketUpdateDTO ticketDTOToUpdateDTO(TicketDTO ticketDTO);
 }

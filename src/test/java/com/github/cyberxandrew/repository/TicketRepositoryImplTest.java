@@ -56,23 +56,11 @@ public class TicketRepositoryImplTest {
 
     private Long testUserId;
     private Long testTicketId;
-    private Long testRouteId;
-    private BigDecimal testPrice;
-    private String testSeatNumber;
-    private String testDeparturePoint;
-    private String testDestinationPoint;
-    private String testCarrierName;
     private Ticket testTicket;
     @BeforeEach
     void beforeEach() {
         testTicketId = 1L;
         testUserId = 2L;
-        testRouteId = 3L;
-        testPrice = new BigDecimal("123.45");
-        testSeatNumber = "1A";
-        testDeparturePoint = "Saints-Petersburg";
-        testDestinationPoint = "Moscow";
-        testCarrierName = "Java Airlines";
 
         testTicket = new Ticket();
         testTicket.setId(testTicketId);

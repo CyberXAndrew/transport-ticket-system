@@ -3,9 +3,12 @@ package com.github.cyberxandrew.controller;
 import com.github.cyberxandrew.dto.*;
 import com.github.cyberxandrew.service.TicketServiceImpl;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,17 +19,22 @@ import java.util.List;
 @RequestMapping(path = "/api/tickets")
 public class TicketController {
     @Autowired TicketServiceImpl ticketService;
+
     @GetMapping(path = "/{id}")
+    @ResponseStatus(HttpStatus.OK)
     public TicketDTO show(@PathVariable Long id) {
         return ticketService.findTicketById(id);
     }
 
-    @GetMapping(path = "") // todo: fix request params
-    public ResponseEntity<List<TicketWithRouteDataDTO>> index(@Valid @RequestParam(required = false) Pageable pageable,
-                                                                @RequestParam(required = false) LocalDateTime dateTime,
-                                                                @RequestParam(required = false) String departurePoint,
-                                                                @RequestParam(required = false) String destinationPoint,
-                                                                @RequestParam(required = false) String carrierName) {
+    @GetMapping(path = "")
+    public ResponseEntity<List<TicketWithRouteDataDTO>> index(@RequestParam(required = false) Integer page,
+                                                              @RequestParam(required = false) Integer size,
+                                                              @RequestParam(required = false) LocalDateTime dateTime,
+                                                              @RequestParam(required = false) String departurePoint,
+                                                              @RequestParam(required = false) String destinationPoint,
+                                                              @RequestParam(required = false) String carrierName) {
+        Pageable pageable = null;
+        if (page != null && size != null) pageable = PageRequest.of(page, size);
         List<TicketWithRouteDataDTO> allAccessibleTickets = ticketService.findAllAccessibleTickets(pageable, dateTime,
                 departurePoint, destinationPoint, carrierName);
         return ResponseEntity.ok()

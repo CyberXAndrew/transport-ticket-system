@@ -27,26 +27,6 @@ public class TicketRepositoryImplIntegrationTest {
     @Autowired private TicketRepositoryImpl ticketRepository;
 
     private final Long NOT_EXISTING_ID = 9999999L;
-    private Long testTicketId;
-    private Long testUserId;
-    private Long testRouteId;
-    private BigDecimal testPrice;
-    private String testSeatNumber;
-    private String testDeparturePoint;
-    private String testDestinationPoint;
-    private String testCarrierName;
-    private Ticket testTicket;
-    @BeforeEach
-    void beforeEach() {
-        testTicketId = 1L;
-        testUserId = 2L;
-        testRouteId = 3L;
-        testPrice = new BigDecimal("123.45");
-        testSeatNumber = "1A";
-        testDeparturePoint = "Saints-Petersburg";
-        testDestinationPoint = "Moscow";
-        testCarrierName = "Java Airlines";
-    }
 
     @Test
     @Transactional
