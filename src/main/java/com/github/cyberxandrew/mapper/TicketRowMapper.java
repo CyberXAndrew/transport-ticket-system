@@ -2,19 +2,16 @@ package com.github.cyberxandrew.mapper;
 
 import com.github.cyberxandrew.exception.ticket.TicketMappingException;
 import com.github.cyberxandrew.model.Ticket;
-import org.springframework.jdbc.core.RowMapper;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.jdbc.core.RowMapper;
+import org.springframework.stereotype.Component;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.text.Format;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import com.github.cyberxandrew.repository.TicketRepository;
-import org.springframework.stereotype.Component;
 
 @Component
 public class TicketRowMapper implements RowMapper<Ticket> {

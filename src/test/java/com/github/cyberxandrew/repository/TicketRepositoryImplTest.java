@@ -1,15 +1,31 @@
 package com.github.cyberxandrew.repository;
 
-import com.github.cyberxandrew.exception.ticket.TicketUpdateException;
-import com.github.cyberxandrew.model.Ticket;
 import com.github.cyberxandrew.dto.TicketWithRouteDataDTO;
-import com.github.cyberxandrew.mapper.TicketRowMapper;
-import com.github.cyberxandrew.mapper.TicketDtoRowMapper;
 import com.github.cyberxandrew.exception.ticket.TicketAvailabilityException;
+import com.github.cyberxandrew.exception.ticket.TicketUpdateException;
+import com.github.cyberxandrew.mapper.TicketDtoRowMapper;
+import com.github.cyberxandrew.mapper.TicketRowMapper;
+import com.github.cyberxandrew.model.Ticket;
 import com.github.cyberxandrew.utils.ModelGenerator;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.slf4j.Logger;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.dao.QueryTimeoutException;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.test.context.ActiveProfiles;
+
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.*;
+
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -22,26 +38,6 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.anyLong;
 import static org.mockito.Mockito.anyString;
-
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-
-import org.slf4j.Logger;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.dao.*;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.test.context.ActiveProfiles;
-
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Arrays;
-import java.util.Optional;
 
 @SpringBootTest
 @ActiveProfiles("test")

@@ -4,7 +4,6 @@ import com.github.cyberxandrew.dto.TicketCreateDTO;
 import com.github.cyberxandrew.dto.TicketDTO;
 import com.github.cyberxandrew.dto.TicketUpdateDTO;
 import com.github.cyberxandrew.dto.TicketWithRouteDataDTO;
-import com.github.cyberxandrew.model.Ticket;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
