@@ -5,8 +5,10 @@ out/
 
 # Gradle
 !gradle/wrapper/gradle-wrapper.jar
-/build
 .gradle
+/build/*
+!/build/reports/jacoco/
+!/build/reports/jacoco/**/*
 
 # Compiled class file
 *.class
