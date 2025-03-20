@@ -1,3 +1,5 @@
+[![Coverage Status](https://img.shields.io/badge/coverage-0.00%25-red.svg)](https://github.com/cyberxandrew/transport-ticket-system/actions)
+
 ### Description
 Microservice application that allow users to purchase transportation tickets.
 ### Technologies used

@@ -141,8 +141,8 @@ public class TicketRepositoryImplTest {
     public void testFindAllWithAllParams() {
         String expectedSql = "SELECT t.*, r.departure_point, r.destination_point, c.name " +
                 "FROM tickets t JOIN routes r ON t.route_id = r.id JOIN carriers c ON r.carrier_id = c.id " +
-                "WHERE t.user_id IS NULL AND date_time LIKE ? AND departure_point LIKE ? " +
-                "AND destination_point LIKE ? AND carrier_name LIKE ? LIMIT ? OFFSET ?";
+                "WHERE t.user_id IS NULL AND t.date_time LIKE ? AND r.departure_point LIKE ? " +
+                "AND r.destination_point LIKE ? AND c.name LIKE ? LIMIT ? OFFSET ?";
 
         Pageable pageable = PageRequest.of(0, 2);
         LocalDateTime dateTime = LocalDateTime.now();
@@ -150,7 +150,7 @@ public class TicketRepositoryImplTest {
         String destinationPoint = "Moscow";
         String carrierName = "Java Airlines";
 
-        Object[] expectedParams = new Object[]{"%" + String.valueOf(dateTime) + "%", "%" + departurePoint + "%",
+        Object[] expectedParams = new Object[]{"%" + dateTime + "%", "%" + departurePoint + "%",
                 "%" + destinationPoint + "%", "%" + carrierName + "%", pageable.getPageSize(), pageable.getOffset()};
 
         TicketWithRouteDataDTO testTicketWithRouteDataDTO = new TicketWithRouteDataDTO();
@@ -200,9 +200,7 @@ public class TicketRepositoryImplTest {
         when(jdbcTemplate.update(eq(sql), anyString(), anyLong(), anyLong(),
                 any(BigDecimal.class), anyString(), anyLong())).thenReturn(0);
 
-        assertThrows(TicketUpdateException.class, () -> {
-            ticketRepository.update(testTicket);
-        });
+        assertThrows(TicketUpdateException.class, () -> ticketRepository.update(testTicket));
 //        verify(logger, times(1))
 //                .warn("Ticket with id: {} not found for updating", testTicket.getId());
     }
@@ -220,9 +218,7 @@ public class TicketRepositoryImplTest {
                 any(BigDecimal.class), anyString(), anyLong()))
                 .thenThrow(new QueryTimeoutException("Simulated QueryTimeoutException"));
 
-        TicketUpdateException ex = assertThrows(TicketUpdateException.class, () -> {
-            ticketRepository.update(ticket);
-        });
+        TicketUpdateException ex = assertThrows(TicketUpdateException.class, () -> ticketRepository.update(ticket));
         assertEquals(ex.getMessage(), "Error while updating ticket");
 //        verify(logger, times(1)).error("Error while updating ticket", ex);
     }

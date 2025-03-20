@@ -33,13 +33,12 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 @SpringBootTest
 @Transactional
 @ActiveProfiles("test")
+@Sql(scripts = "classpath:/schema.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_CLASS)
 @Sql(scripts = "/test-data/test-data-for-ticket-service-test.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_CLASS)
 @Sql(scripts = "/test-data/delete-data-for-ticket-service-test.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_CLASS)
 public class TicketServiceImplIntegrationTest {
-    @Autowired
-    private JdbcTemplate jdbcTemplate;
-    @Autowired
-    private TicketServiceImpl ticketService;
+    @Autowired private JdbcTemplate jdbcTemplate;
+    @Autowired private TicketServiceImpl ticketService;
     private Long testAbsentId;
     private Long availableTicketId;
     private Long unavailableTicketId;
