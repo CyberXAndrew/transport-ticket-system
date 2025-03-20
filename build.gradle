@@ -59,7 +59,7 @@ jacocoTestReport {
     group = "Reporting"
     description = "Generate Jacoco coverage reports after running tests."
     reports {
-        xml.required.set(true)
-        html.required(true)
+        xml.required = true
+        html.required = true
     }
 }
