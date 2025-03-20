@@ -1,4 +1,4 @@
-[![JaCoCo Coverage](https://github.com/CyberXAndrew/transport-ticket-system/actions/workflows/jacoco.yml/badge.svg)](https://github.com/CyberXAndrew/transport-ticket-system/actions/workflows/jacoco.yml)
+<img src="" alt="JaCoCo coverage"/>
 
 ### Description
 Microservice application that allow users to purchase transportation tickets.
