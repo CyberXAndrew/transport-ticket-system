@@ -28,4 +28,4 @@ jobs:
         uses: yiiu2/action-update-readme-badge@v1.0
         with:
           readme_path: README.md
-          known_badge: '[![Coverage Status](https://img.shields.io/badge/coverage-0.00%25-red.svg)](https://github.com/cyberxandrew/transport-ticket-system/actions)'
+          known_badge: [![JaCoCo Coverage](https://github.com/CyberXAndrew/transport-ticket-system/actions/workflows/jacoco.yml/badge.svg)](https://github.com/CyberXAndrew/transport-ticket-system/actions/workflows/jacoco.yml)

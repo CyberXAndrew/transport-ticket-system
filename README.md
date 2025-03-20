@@ -1,4 +1,4 @@
-[![Coverage Status](https://img.shields.io/badge/coverage-0.00%25-red.svg)](https://github.com/cyberxandrew/transport-ticket-system/actions)
+[![JaCoCo Coverage](https://github.com/CyberXAndrew/transport-ticket-system/actions/workflows/jacoco.yml/badge.svg)](https://github.com/CyberXAndrew/transport-ticket-system/actions/workflows/jacoco.yml)
 
 ### Description
 Microservice application that allow users to purchase transportation tickets.
