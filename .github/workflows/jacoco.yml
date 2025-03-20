@@ -34,5 +34,4 @@ jobs:
         with:
           badge: ${{ steps.jacoco_badge.outputs.coverage-badge }}
           readme_path: README.md
-          known_badge: '[![Coverage Status](https://img.shields.io/badge/coverage-0.00%25-red.svg)]
-          (https://github.com/cyberxandrew/transport-ticket-system/actions)'
+          known_badge: '[![Coverage Status](https://img.shields.io/badge/coverage-0.00%25-red.svg)](https://github.com/cyberxandrew/transport-ticket-system/actions)'

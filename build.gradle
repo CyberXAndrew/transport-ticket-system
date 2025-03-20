@@ -47,7 +47,7 @@ tasks.withType(JavaCompile) {
 }
 
 jacoco {
-    toolVersion = "0.8.13"
+    toolVersion = "0.8.12"
 }
 
 test {
@@ -56,7 +56,10 @@ test {
 
 jacocoTestReport {
     dependsOn test
+    group = "Reporting"
+    description = "Generate Jacoco coverage reports after running tests."
     reports {
         xml.required.set(true)
+        html.required(true)
     }
 }
