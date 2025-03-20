@@ -24,8 +24,15 @@ jobs:
         run: chmod +x gradlew
       - name: Build with Gradle and Generate Coverage Report
         run: ./gradlew clean build jacocoTestReport
+      - name: Generate JaCoCo badge
+        id: jacoco_badge
+        uses: cicirello/jacoco-badge-generator@v2.5
+        with:
+          jacoco-source-files: build/reports/jacoco/jacocoTestReport/jacocoTestReport.xml
+          svg-file-name: jacoco-coverage.svg # Имя SVG-файла, который будет создан
       - name: Update README with Coverage Badge
         uses: yiiu2/action-update-readme-badge@v1.0
         with:
+          badge: '<img src="" alt="JaCoCo coverage"/>'
           readme_path: README.md
-          known_badge: [![JaCoCo Coverage](https://github.com/CyberXAndrew/transport-ticket-system/actions/workflows/jacoco.yml/badge.svg)](https://github.com/CyberXAndrew/transport-ticket-system/actions/workflows/jacoco.yml)
+          known_badge: '<img src="" alt="JaCoCo coverage"/>'
