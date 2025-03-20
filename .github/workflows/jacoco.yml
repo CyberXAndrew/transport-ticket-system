@@ -21,17 +21,11 @@ jobs:
           distribution: 'temurin'
           cache: gradle
       - name: Grant execute permission for gradlew
-        run: chmod +x gradlew  # Make gradlew executable
+        run: chmod +x gradlew
       - name: Build with Gradle and Generate Coverage Report
         run: ./gradlew clean build jacocoTestReport
-      - name: Generate JaCoCo badge
-        id: jacoco_badge
-        uses: cicirello/jacoco-badge-generator@v2.5
-        with:
-          jacoco-source-files: build/reports/jacoco/jacocoTestReport/jacocoTestReport.xml
       - name: Update README with Coverage Badge
         uses: yiiu2/action-update-readme-badge@v1.0
         with:
-          badge: ${{ steps.jacoco_badge.outputs.coverage-badge }}
           readme_path: README.md
           known_badge: '[![Coverage Status](https://img.shields.io/badge/coverage-0.00%25-red.svg)](https://github.com/cyberxandrew/transport-ticket-system/actions)'
