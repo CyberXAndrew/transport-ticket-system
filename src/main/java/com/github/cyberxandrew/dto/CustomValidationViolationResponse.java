@@ -14,7 +14,7 @@ public class CustomValidationViolationResponse {
     private String timestamp;
     private int status;
     private String error;
-    private String massage;
+    private String message;
     private List<String> errors;
 
     private String path;

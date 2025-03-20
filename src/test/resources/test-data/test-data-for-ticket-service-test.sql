@@ -10,7 +10,7 @@ INSERT INTO routes (departure_point, destination_point, carrier_id, duration_in_
 ('Vienna', 'Saints-Petersburg', 1, 260),
 ('Saints-Petersburg', 'Vienna', 2, 260),
 ('Moscow', 'Saints-Petersburg', 3, 110),
-('Saints-Petersburg', 'Moscow', 4, 410),
+('Saints-Petersburg', 'Moscow', 2, 420),
 ('Saints-Petersburg', 'Moscow', 2, 410),
 ('Tokyo', 'Moscow', 2, 420),
 ('Moscow', 'Vienna', 3, 190);
@@ -21,7 +21,7 @@ INSERT INTO users (login, password, full_name) VALUES
 ('login3', 'password3', 'Romanov Andrey Vladimirovich');
 
 INSERT INTO tickets (date_time, user_id, route_id, price, seat_number) VALUES
-('2025-03-17T10:20:30.123456789', NULL, 3, 10.0, '1A'),
+('2025-03-17T10:20:30.123456789', NULL, 5, 10.0, '1A'),
 ('2025-05-19T15:25:10.123456789', NULL, 5, 10.0, '2B'),
 ('2025-05-19T15:25:10.123456789', NULL, 3, 10.0, '2B'),
 ('2025-04-18T20:10:30.123456789', 1, 4, 11.0, '1A');

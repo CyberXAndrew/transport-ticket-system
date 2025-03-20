@@ -66,10 +66,10 @@ public class TicketRepositoryImpl implements TicketRepository {
 
         String stringDateTime = null;
         if (dateTime != null) { stringDateTime = String.valueOf(dateTime); }
-        addFilter(sql, filtrationParams, "date_time", stringDateTime);
-        addFilter(sql, filtrationParams, "departure_point", departurePoint);
-        addFilter(sql, filtrationParams, "destination_point", destinationPoint);
-        addFilter(sql, filtrationParams, "carrier_name", carrierName);
+        addFilter(sql, filtrationParams, "t.date_time", stringDateTime);
+        addFilter(sql, filtrationParams, "r.departure_point", departurePoint);
+        addFilter(sql, filtrationParams, "r.destination_point", destinationPoint);
+        addFilter(sql, filtrationParams, "c.name", carrierName);
         if (pageable != null && pageable.isPaged()) {
             sql.append(" LIMIT ? OFFSET ?");
             int pageSize = pageable.getPageSize();

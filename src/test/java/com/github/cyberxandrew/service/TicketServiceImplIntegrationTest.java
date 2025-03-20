@@ -3,15 +3,17 @@ package com.github.cyberxandrew.service;
 import com.github.cyberxandrew.dto.TicketCreateDTO;
 import com.github.cyberxandrew.dto.TicketDTO;
 import com.github.cyberxandrew.dto.TicketUpdateDTO;
+import com.github.cyberxandrew.dto.TicketWithRouteDataDTO;
 import com.github.cyberxandrew.exception.ticket.TicketNotFoundException;
 import com.github.cyberxandrew.exception.ticket.TicketSaveException;
 import com.github.cyberxandrew.mapper.TicketMapper;
-import com.github.cyberxandrew.model.Ticket;
 import com.github.cyberxandrew.utils.ModelGenerator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
@@ -19,9 +21,14 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest
 @Transactional
@@ -69,25 +76,36 @@ public class TicketServiceImplIntegrationTest {
         assertEquals(ticketList.get(0), savedTicketDTO);
     }
 
-    @Test //TODO : cant implement while routes table does not exists
-    public void testFindAllAccessibleTickets() {
-        TicketCreateDTO createDTO = ModelGenerator.createTicketCreateDTO();
-        TicketDTO savedTicket = ticketService.saveTicket(createDTO);
+    @Test
+    public void testFindAllAccessibleTicketsWithAllParams() {
+        Pageable pageable = PageRequest.of(1, 1);
 
-        List<TicketDTO> allAccessibleTickets = ticketService.findAllAccessibleTickets();
+        List<TicketWithRouteDataDTO> allAccessibleTickets = ticketService.findAllAccessibleTickets(pageable, null, "Saints-Petersburg",
+                "Moscow", "J7");
 
         assertFalse(allAccessibleTickets.isEmpty());
-        assertTrue(allAccessibleTickets.contains(savedTicket));
-
-        List<TicketDTO> allAccessibleTickets2 = ticketService.findAllAccessibleTickets(
-                PageRequest.of(0, 2),
-                ticketToSave.getDateTime(),
-                  // paste some test routes to routes table
-                );
+        assertEquals(1, allAccessibleTickets.size());
+        assertEquals("Saints-Petersburg", allAccessibleTickets.get(0).getDeparturePoint());
+        assertEquals("Moscow", allAccessibleTickets.get(0).getDestinationPoint());
+        assertEquals("J7", allAccessibleTickets.get(0).getCarrierName());
     }
 
     @Test
-    public void testSave() { // UPDATES
+    public void testFindAllAccessibleTicketsWithoutParams() {
+        List<TicketWithRouteDataDTO> allAccessibleTickets = ticketService.findAllAccessibleTickets();
+
+        List<Object> objects = new ArrayList<>();
+        for (TicketWithRouteDataDTO ticket : allAccessibleTickets) {
+            if (ticket.getUserId() == null) objects.add(ticket);
+        }
+
+        assertFalse(allAccessibleTickets.isEmpty());
+        assertEquals(objects.size(), allAccessibleTickets.size());
+        assertEquals(objects, allAccessibleTickets);
+    }
+
+    @Test
+    public void testSave() {
         TicketCreateDTO createDTO = ModelGenerator.createTicketCreateDTO();
 
         TicketDTO savedTicket = ticketService.saveTicket(createDTO);

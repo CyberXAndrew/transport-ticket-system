@@ -1,13 +1,10 @@
 package com.github.cyberxandrew.repository;
 
-import com.github.cyberxandrew.dto.TicketCreateDTO;
-import com.github.cyberxandrew.dto.TicketUpdateDTO;
 import com.github.cyberxandrew.exception.ticket.TicketUpdateException;
 import com.github.cyberxandrew.model.Ticket;
 import com.github.cyberxandrew.dto.TicketWithRouteDataDTO;
 import com.github.cyberxandrew.mapper.TicketRowMapper;
 import com.github.cyberxandrew.mapper.TicketDtoRowMapper;
-import com.github.cyberxandrew.exception.ticket.TicketSaveException;
 import com.github.cyberxandrew.exception.ticket.TicketAvailabilityException;
 import com.github.cyberxandrew.utils.ModelGenerator;
 import org.junit.jupiter.api.Test;
@@ -40,7 +37,11 @@ import org.springframework.test.context.ActiveProfiles;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Arrays;
+import java.util.Optional;
 
 @SpringBootTest
 @ActiveProfiles("test")

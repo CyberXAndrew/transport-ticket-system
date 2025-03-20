@@ -27,7 +27,7 @@ public class TicketDtoRowMapper implements RowMapper<TicketWithRouteDataDTO> {
             }
             ticketWithRouteDataDTO.setId(id);
             ticketWithRouteDataDTO.setDateTime(rs.getObject("date_time", LocalDateTime.class));
-            ticketWithRouteDataDTO.setUserId(rs.getLong("user_id"));
+            ticketWithRouteDataDTO.setUserId(rs.getObject("user_id", Long.class));
             ticketWithRouteDataDTO.setRouteId(rs.getLong("route_id"));
             ticketWithRouteDataDTO.setPrice(rs.getBigDecimal("price"));
             ticketWithRouteDataDTO.setSeatNumber(StringUtils.defaultString(rs.getString("seat_number"), "Unknown"));
