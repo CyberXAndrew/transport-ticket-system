@@ -1,6 +1,6 @@
-[![codecov](https://codecov.io/gh/CyberXAndrew/transport-ticket-system/graph/badge.svg?token=I5AEBG3WVJ)](https://codecov.io/gh/CyberXAndrew/transport-ticket-system)
 [![Maintainability](https://qlty.sh/badges/3628cde9-b84c-4c87-8b92-113381302e33/maintainability.png)](https://qlty.sh/gh/CyberXAndrew/projects/transport-ticket-system)
-<a href="https://qlty.sh/gh/CyberXAndrew/projects/transport-ticket-system"><img src="https://qlty.sh/badges/3628cde9-b84c-4c87-8b92-113381302e33/test_coverage.png" alt="Code Coverage" /></a>
+[![codecov](https://codecov.io/gh/CyberXAndrew/transport-ticket-system/graph/badge.svg?token=I5AEBG3WVJ)](https://codecov.io/gh/CyberXAndrew/transport-ticket-system)
+
 ### Description
 Microservice application that allow users to purchase transportation tickets.
 ### Technologies used
