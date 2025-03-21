@@ -1,5 +1,3 @@
-<img src="" alt="JaCoCo coverage"/>
-
 [![codecov](https://codecov.io/gh/CyberXAndrew/transport-ticket-system/graph/badge.svg?token=I5AEBG3WVJ)](https://codecov.io/gh/CyberXAndrew/transport-ticket-system)
 
 ### Description
