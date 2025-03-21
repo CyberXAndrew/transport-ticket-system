@@ -30,9 +30,9 @@ jobs:
         with:
           jacoco-source-files: build/reports/jacoco/test/jacocoTestReport.xml
           svg-file-name: jacoco-coverage.svg
-      - name: Update README with Coverage Badge
+      # - name: Update README with Coverage Badge
         # uses: yiiu2/action-update-readme-badge@v1.0
-        with:
-          badge: '<img src="" alt="JaCoCo coverage"/>'
-          readme_path: README.md
-          known_badge: '<img src="" alt="JaCoCo coverage"/>'
+        # with:
+        #   badge: '<img src="" alt="JaCoCo coverage"/>'
+        #   readme_path: README.md
+        #   known_badge: '<img src="" alt="JaCoCo coverage"/>'
