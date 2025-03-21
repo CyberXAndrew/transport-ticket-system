@@ -1,13 +1,13 @@
 package com.github.cyberxandrew.utils;
 
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
-
 import com.github.cyberxandrew.dto.TicketCreateDTO;
 import com.github.cyberxandrew.dto.TicketDTO;
 import com.github.cyberxandrew.dto.TicketUpdateDTO;
 import com.github.cyberxandrew.dto.TicketWithRouteDataDTO;
 import com.github.cyberxandrew.model.Ticket;
+
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 public class ModelGenerator {
 
@@ -19,7 +19,6 @@ public class ModelGenerator {
     private static String testDeparturePoint;
     private static String testDestinationPoint;
     private static String testCarrierName;
-    private static Ticket testTicket;
 
     static {
         testTicketId = 1L;

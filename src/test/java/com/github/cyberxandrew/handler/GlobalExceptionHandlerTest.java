@@ -2,9 +2,9 @@ package com.github.cyberxandrew.handler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.cyberxandrew.controller.TicketController;
-import com.github.cyberxandrew.dto.CustomValidationViolationResponse;
 import com.github.cyberxandrew.dto.TicketCreateDTO;
 import com.github.cyberxandrew.service.TicketServiceImpl;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -12,21 +12,15 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.validation.Validator;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.Errors;
-import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
-import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.validation.Validator;
 
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Locale;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import java.util.Locale;
-import org.junit.jupiter.api.BeforeEach;
 
 @WebMvcTest(TicketController.class)
 @ActiveProfiles("test")
