@@ -1,38 +1,28 @@
-name: JaCoCo Coverage
+name: Run tests and upload coverage
 
-on:
-  push:
-    branches:
-      - main
-  pull_request:
-    branches:
-      - main
+on: 
+  push
 
 jobs:
-  build:
+  test:
+    name: Run tests and collect coverage
     runs-on: ubuntu-latest
-
     steps:
-      - uses: actions/checkout@v4
-      - name: Set up JDK 21
-        uses: actions/setup-java@v4
+      - name: Checkout
+        uses: actions/checkout@v4
         with:
-          java-version: '21'
-          distribution: 'temurin'
-          cache: gradle
-      - name: Grant execute permission for gradlew
-        run: chmod +x gradlew
-      - name: Build with Gradle and Generate Coverage Report
-        run: ./gradlew clean build jacocoTestReport
-      - name: Generate JaCoCo badge
-        id: jacoco_badge
-        uses: cicirello/jacoco-badge-generator@v2.11.0
+          fetch-depth: 2
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run tests
+        run: npx jest --coverage
+
+      - name: Upload results to Codecov
+        uses: codecov/codecov-action@v5
         with:
-          jacoco-source-files: build/reports/jacoco/test/jacocoTestReport.xml
-          svg-file-name: jacoco-coverage.svg
-      # - name: Update README with Coverage Badge
-        # uses: yiiu2/action-update-readme-badge@v1.0
-        # with:
-        #   badge: '<img src="" alt="JaCoCo coverage"/>'
-        #   readme_path: README.md
-        #   known_badge: '<img src="" alt="JaCoCo coverage"/>'
+          token: ${{ secrets.CODECOV_TOKEN }}
