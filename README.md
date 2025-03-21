@@ -1,5 +1,7 @@
 <img src="" alt="JaCoCo coverage"/>
 
+[![codecov](https://codecov.io/gh/CyberXAndrew/transport-ticket-system/graph/badge.svg?token=I5AEBG3WVJ)](https://codecov.io/gh/CyberXAndrew/transport-ticket-system)
+
 ### Description
 Microservice application that allow users to purchase transportation tickets.
 ### Technologies used
