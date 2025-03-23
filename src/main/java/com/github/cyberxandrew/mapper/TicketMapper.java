@@ -4,20 +4,23 @@ import com.github.cyberxandrew.dto.TicketCreateDTO;
 import com.github.cyberxandrew.dto.TicketDTO;
 import com.github.cyberxandrew.dto.TicketUpdateDTO;
 import com.github.cyberxandrew.model.Ticket;
-import org.mapstruct.Mapper;
+import org.mapstruct.*;
 import org.mapstruct.factory.Mappers;
 
 
-@Mapper
+@Mapper(uses = { JsonNullableMapper.class },
+nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
+componentModel = MappingConstants.ComponentModel.SPRING,
+unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface TicketMapper {
 
     TicketMapper INSTANCE = Mappers.getMapper(TicketMapper.class);
 
     TicketDTO ticketToTicketDTO(Ticket ticket);
-    Ticket ticketDTOToTicket(TicketDTO ticketDTO);
     Ticket ticketCreateDTOToTicket(TicketCreateDTO createDTO);
     TicketDTO ticketCreateDTOToTicketDTO(TicketCreateDTO createDTO);
-    Ticket ticketUpdateDTOToTicket(TicketUpdateDTO updateDTO);
     TicketDTO ticketUpdateDTOToTicketDTO(TicketUpdateDTO updateDTO);
     TicketUpdateDTO ticketDTOToUpdateDTO(TicketDTO ticketDTO);
+    @Mapping(target = "id", ignore = true)
+    void update(TicketUpdateDTO updateDTO, @MappingTarget Ticket ticket); //TODO exclude null values
 }

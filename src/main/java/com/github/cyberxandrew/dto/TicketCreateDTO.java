@@ -1,5 +1,7 @@
 package com.github.cyberxandrew.dto;
 
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
@@ -15,7 +17,8 @@ public class TicketCreateDTO {
     @NotNull
     private Long routeId;
     @NotNull
+    @DecimalMin("0.00")
     private BigDecimal price;
-    @NotNull
+    @NotBlank
     private String seatNumber;
 }

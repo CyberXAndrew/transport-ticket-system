@@ -10,6 +10,7 @@ import com.github.cyberxandrew.mapper.TicketMapper;
 import com.github.cyberxandrew.utils.ModelGenerator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.openapitools.jackson.nullable.JsonNullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.PageRequest;
@@ -114,10 +115,10 @@ public class TicketServiceImplIntegrationTest {
     }
     @Test
     public void testUpdate() {
-        TicketDTO ticketFromDb = ticketService.findTicketById(idOfSavedTicket);
-        TicketUpdateDTO updateDTO = TicketMapper.INSTANCE.ticketDTOToUpdateDTO(ticketFromDb);
-        updateDTO.setPrice(new BigDecimal(543.21));
-        updateDTO.setDateTime(LocalDateTime.now());
+        TicketDTO ticketDTOFromDb = ticketService.findTicketById(idOfSavedTicket);
+        TicketUpdateDTO updateDTO = TicketMapper.INSTANCE.ticketDTOToUpdateDTO(ticketDTOFromDb);
+        updateDTO.setPrice(JsonNullable.of(new BigDecimal(543.21)));
+        updateDTO.setDateTime(JsonNullable.of(LocalDateTime.now()));
 
         ticketService.updateTicket(updateDTO, idOfSavedTicket);
         TicketDTO updatedTicketDto = ticketService.findTicketById(idOfSavedTicket);

@@ -15,9 +15,7 @@ import java.time.format.DateTimeFormatter;
 
 @Component
 public class TicketRowMapper implements RowMapper<Ticket> {
-
     private static final Logger logger = LoggerFactory.getLogger(TicketRowMapper.class);
-
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSSSSS");
 
     @Override

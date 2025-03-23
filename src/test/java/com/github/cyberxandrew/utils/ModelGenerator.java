@@ -5,6 +5,7 @@ import com.github.cyberxandrew.dto.TicketDTO;
 import com.github.cyberxandrew.dto.TicketUpdateDTO;
 import com.github.cyberxandrew.dto.TicketWithRouteDataDTO;
 import com.github.cyberxandrew.model.Ticket;
+import org.openapitools.jackson.nullable.JsonNullable;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -72,11 +73,11 @@ public class ModelGenerator {
     public static TicketUpdateDTO createTicketUpdateDTO() {
         TicketUpdateDTO updateDTO = new TicketUpdateDTO();
 
-        updateDTO.setDateTime(LocalDateTime.now());
-        updateDTO.setUserId(testUserId);
-        updateDTO.setRouteId(testRouteId);
-        updateDTO.setPrice(testPrice);
-        updateDTO.setSeatNumber(testSeatNumber);
+        updateDTO.setDateTime(JsonNullable.of(LocalDateTime.now()));
+        updateDTO.setUserId(JsonNullable.of(testUserId));
+        updateDTO.setRouteId(JsonNullable.of(testRouteId));
+        updateDTO.setPrice(JsonNullable.of(testPrice));
+        updateDTO.setSeatNumber(JsonNullable.of(testSeatNumber));
 
         return updateDTO;
     }

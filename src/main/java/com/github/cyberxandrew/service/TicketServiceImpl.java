@@ -52,7 +52,7 @@ public class TicketServiceImpl implements TicketService {
     @Transactional
     public TicketDTO saveTicket(TicketCreateDTO createDTO) {
         if (createDTO == null) {
-            throw new TicketSaveException("Error while saving or updating Ticket: Ticket is null");
+            throw new TicketSaveException("Error while saving Ticket: Ticket to save is null");
         }
         Ticket ticket = TicketMapper.INSTANCE.ticketCreateDTOToTicket(createDTO);
         return TicketMapper.INSTANCE.ticketToTicketDTO(ticketRepository.save(ticket));
@@ -61,10 +61,10 @@ public class TicketServiceImpl implements TicketService {
     @Override
     @Transactional
     public TicketDTO updateTicket(TicketUpdateDTO updateDTO, Long id) {
-        if (id == null) {
-            throw new TicketUpdateException("Error while saving or updating Ticket: Ticket is null");
-        }
-        Ticket ticket = ticketRepository.findById(id).get();
+        Ticket ticket = ticketRepository.findById(id).orElseThrow(() ->
+            new TicketUpdateException("Error while updating Ticket: Ticket by id is null"));
+
+        TicketMapper.INSTANCE.update(updateDTO, ticket);
         return TicketMapper.INSTANCE.ticketToTicketDTO(ticketRepository.update(ticket));
     }
 
