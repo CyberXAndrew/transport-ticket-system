@@ -1,5 +1,6 @@
 package com.github.cyberxandrew.dto;
 
+import jakarta.validation.constraints.DecimalMin;
 import lombok.Data;
 
 import java.math.BigDecimal;
@@ -11,6 +12,7 @@ public class TicketDTO {
     private LocalDateTime dateTime;
     private Long userId;
     private Long routeId;
+//    @DecimalMin("0.00")
     private BigDecimal price;
     private String seatNumber;
 }

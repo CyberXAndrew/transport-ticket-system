@@ -4,22 +4,24 @@ import org.mapstruct.Condition;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingConstants;
 import org.openapitools.jackson.nullable.JsonNullable;
+import org.springframework.stereotype.Component;
 
 @Mapper(
         componentModel = MappingConstants.ComponentModel.SPRING
 )
+//@Component
 public abstract class JsonNullableMapper {
 
-    public <T> JsonNullable<T> wrap(T entity) {
+    public <E> JsonNullable<E> wrap(E entity) {
         return JsonNullable.of(entity);
     }
 
-    public <T> T unwrap(JsonNullable<T> jsonNullable) {
+    public <E> E unwrap(JsonNullable<E> jsonNullable) {
         return jsonNullable == null ? null : jsonNullable.orElse(null);
     }
 
     @Condition
-    public <T> boolean isPresent(JsonNullable<T> nullable) {
+    public <E> boolean isPresent(JsonNullable<E> nullable) {
         return nullable != null && nullable.isPresent();
     }
 }

@@ -39,11 +39,13 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 @Sql(scripts = "/test-data/delete-data-for-ticket-service-test.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_CLASS)
 public class TicketServiceImplIntegrationTest {
     @Autowired private JdbcTemplate jdbcTemplate;
+    @Autowired private TicketMapper ticketMapper;
     @Autowired private TicketServiceImpl ticketService;
     private Long testAbsentId;
     private Long availableTicketId;
     private Long unavailableTicketId;
     private Long idOfSavedTicket;
+
 
     @BeforeEach
     public void setUp() {
@@ -116,18 +118,20 @@ public class TicketServiceImplIntegrationTest {
     @Test
     public void testUpdate() {
         TicketDTO ticketDTOFromDb = ticketService.findTicketById(idOfSavedTicket);
-        TicketUpdateDTO updateDTO = TicketMapper.INSTANCE.ticketDTOToUpdateDTO(ticketDTOFromDb);
-        updateDTO.setPrice(JsonNullable.of(new BigDecimal(543.21)));
+
+        TicketUpdateDTO updateDTO = new TicketUpdateDTO();
         updateDTO.setDateTime(JsonNullable.of(LocalDateTime.now()));
+        updateDTO.setPrice(JsonNullable.of(new BigDecimal(567.78)));
 
         ticketService.updateTicket(updateDTO, idOfSavedTicket);
         TicketDTO updatedTicketDto = ticketService.findTicketById(idOfSavedTicket);
 
-        assertNotEquals(updatedTicketDto.getDateTime(), updateDTO.getDateTime());
-        assertEquals(updatedTicketDto.getUserId(), updateDTO.getUserId() );
-        assertEquals(updatedTicketDto.getRouteId(), updateDTO.getRouteId());
-        assertNotEquals(updatedTicketDto.getPrice(), updateDTO.getPrice());
-        assertEquals(updatedTicketDto.getSeatNumber(), updateDTO.getSeatNumber());
+        assertEquals(updatedTicketDto.getUserId(), ticketDTOFromDb.getUserId() );
+        assertNotEquals(updatedTicketDto.getDateTime(), ticketDTOFromDb.getDateTime());
+        assertEquals(updatedTicketDto.getRouteId(), ticketDTOFromDb.getRouteId());
+        assertEquals(updatedTicketDto.getUserId(), ticketDTOFromDb.getUserId());
+        assertNotEquals(updatedTicketDto.getPrice(), ticketDTOFromDb.getPrice());
+        assertEquals(updatedTicketDto.getSeatNumber(), ticketDTOFromDb.getSeatNumber());
     }
 
     @Test

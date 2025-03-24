@@ -24,12 +24,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(TicketController.class)
 @ActiveProfiles("test")
-class GlobalExceptionHandlerTest {
+public class GlobalExceptionHandlerTest {
     @Autowired MockMvc mockMvc;
     @Autowired Validator validator;
     @Autowired ObjectMapper objectMapper;
-    @MockitoBean
-    TicketServiceImpl ticketService;
+    @MockitoBean TicketServiceImpl ticketService;
 
     @BeforeEach
     void setUp() {
@@ -56,7 +55,7 @@ class GlobalExceptionHandlerTest {
                 .andExpect(content().string(org.hamcrest.Matchers.containsString("\"message\":\"Validation failed\"")))
                 .andExpect(content().string(org.hamcrest.Matchers.containsString("routeId: must not be null")))
                 .andExpect(content().string(org.hamcrest.Matchers.containsString("dateTime: must not be null")))
-                .andExpect(content().string(org.hamcrest.Matchers.containsString("seatNumber: must not be null")))
+                .andExpect(content().string(org.hamcrest.Matchers.containsString("seatNumber: must not be blank")))
                 .andExpect(content().string(org.hamcrest.Matchers.containsString("price: must not be null")));
     }
 }

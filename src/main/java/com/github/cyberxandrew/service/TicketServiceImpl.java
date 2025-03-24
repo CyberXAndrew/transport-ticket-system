@@ -22,13 +22,14 @@ import java.util.List;
 
 @Service
 public class TicketServiceImpl implements TicketService {
+    @Autowired private TicketMapper ticketMapper;
     @Autowired private TicketRepositoryImpl ticketRepository;
     private static Logger logger = LoggerFactory.getLogger(TicketServiceImpl.class);
 
     @Override
     @Transactional(readOnly = true)
     public TicketDTO findTicketById(Long ticketId) {
-        return TicketMapper.INSTANCE.ticketToTicketDTO(ticketRepository.findById(ticketId)
+        return ticketMapper.ticketToTicketDTO(ticketRepository.findById(ticketId)
                 .orElseThrow(() -> new TicketNotFoundException("Ticket with id " + ticketId + " not found")));
     }
 
@@ -36,7 +37,7 @@ public class TicketServiceImpl implements TicketService {
     @Transactional(readOnly = true)
     public List<TicketDTO> findTicketByUserId(Long userId) {
         List<Ticket> tickets = ticketRepository.findByUserId(userId);
-        return tickets.stream().map(TicketMapper.INSTANCE::ticketToTicketDTO).toList();
+        return tickets.stream().map(ticketMapper::ticketToTicketDTO).toList();
     }
 
     @Override
@@ -54,8 +55,8 @@ public class TicketServiceImpl implements TicketService {
         if (createDTO == null) {
             throw new TicketSaveException("Error while saving Ticket: Ticket to save is null");
         }
-        Ticket ticket = TicketMapper.INSTANCE.ticketCreateDTOToTicket(createDTO);
-        return TicketMapper.INSTANCE.ticketToTicketDTO(ticketRepository.save(ticket));
+        Ticket ticket = ticketMapper.ticketCreateDTOToTicket(createDTO);
+        return ticketMapper.ticketToTicketDTO(ticketRepository.save(ticket));
     }
 
     @Override
@@ -64,8 +65,8 @@ public class TicketServiceImpl implements TicketService {
         Ticket ticket = ticketRepository.findById(id).orElseThrow(() ->
             new TicketUpdateException("Error while updating Ticket: Ticket by id is null"));
 
-        TicketMapper.INSTANCE.update(updateDTO, ticket);
-        return TicketMapper.INSTANCE.ticketToTicketDTO(ticketRepository.update(ticket));
+        ticketMapper.update(updateDTO, ticket);
+        return ticketMapper.ticketToTicketDTO(ticketRepository.update(ticket));
     }
 
     @Override

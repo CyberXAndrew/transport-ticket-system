@@ -56,7 +56,7 @@ public class TicketController {
         return ticketService.saveTicket(ticketCreateDTO);
     }
 
-    @PatchMapping(path = "/{id}")
+    @PutMapping(path = "/{id}")
     @ResponseStatus(HttpStatus.OK)
     public TicketDTO update(@Valid @RequestBody TicketUpdateDTO updateDTO, @PathVariable Long id) {
         return ticketService.updateTicket(updateDTO, id);

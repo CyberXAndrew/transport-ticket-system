@@ -1,17 +1,23 @@
 package com.github.cyberxandrew.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.cyberxandrew.config.JacksonConfig;
 import com.github.cyberxandrew.dto.TicketCreateDTO;
 import com.github.cyberxandrew.dto.TicketDTO;
 import com.github.cyberxandrew.dto.TicketUpdateDTO;
 import com.github.cyberxandrew.dto.TicketWithRouteDataDTO;
+import com.github.cyberxandrew.mapper.JsonNullableMapper;
+import com.github.cyberxandrew.mapper.JsonNullableMapperImpl;
 import com.github.cyberxandrew.mapper.TicketMapper;
+import com.github.cyberxandrew.mapper.TicketMapperImpl;//Fix: !!!
 import com.github.cyberxandrew.service.TicketServiceImpl;
 import com.github.cyberxandrew.utils.ModelGenerator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.openapitools.jackson.nullable.JsonNullableModule;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
@@ -34,16 +40,19 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @WebMvcTest(TicketController.class)
+@Import({TicketMapperImpl.class, JsonNullableMapperImpl.class, JacksonConfig.class})
 @ActiveProfiles("test")
-class TicketControllerTest {
-    @Autowired MockMvc mockMvc;
-    @Autowired ObjectMapper objectMapper;
-    @MockitoBean TicketServiceImpl ticketService;
+public class TicketControllerTest {
+    @Autowired private MockMvc mockMvc;
+    @Autowired private ObjectMapper objectMapper;
+    @Autowired private TicketMapper ticketMapper;
+    @MockitoBean private TicketServiceImpl ticketService;
     private Long testTicketId;
 
     @BeforeEach
     void setUp() {
         testTicketId = 1L;
+//        objectMapper.registerModule(new JsonNullableModule());
     }
 
     @Test
@@ -107,7 +116,7 @@ class TicketControllerTest {
     @Test
     public void testCreate() throws Exception {
         TicketCreateDTO ticketCreateDTO = ModelGenerator.createTicketCreateDTO();
-        TicketDTO ticketDTO = TicketMapper.INSTANCE.ticketCreateDTOToTicketDTO(ticketCreateDTO);
+        TicketDTO ticketDTO = ticketMapper.ticketCreateDTOToTicketDTO(ticketCreateDTO);
         ticketDTO.setId(testTicketId);
 
         when(ticketService.saveTicket(ticketCreateDTO)).thenReturn(ticketDTO);
@@ -123,7 +132,7 @@ class TicketControllerTest {
     @Test
     public void testUpdate() throws Exception {
         TicketUpdateDTO ticketUpdateDTO = ModelGenerator.createTicketUpdateDTO();
-        TicketDTO ticketDTO = TicketMapper.INSTANCE.ticketUpdateDTOToTicketDTO(ticketUpdateDTO);
+        TicketDTO ticketDTO = ticketMapper.ticketUpdateDTOToTicketDTO(ticketUpdateDTO);
         ticketDTO.setId(testTicketId);
 
         when(ticketService.updateTicket(ticketUpdateDTO, testTicketId)).thenReturn(ticketDTO);

@@ -14,7 +14,7 @@ componentModel = MappingConstants.ComponentModel.SPRING,
 unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface TicketMapper {
 
-    TicketMapper INSTANCE = Mappers.getMapper(TicketMapper.class);
+//    TicketMapper INSTANCE = Mappers.getMapper(TicketMapper.class); //Fix: DELETE THIS
 
     TicketDTO ticketToTicketDTO(Ticket ticket);
     Ticket ticketCreateDTOToTicket(TicketCreateDTO createDTO);
@@ -22,5 +22,5 @@ public interface TicketMapper {
     TicketDTO ticketUpdateDTOToTicketDTO(TicketUpdateDTO updateDTO);
     TicketUpdateDTO ticketDTOToUpdateDTO(TicketDTO ticketDTO);
     @Mapping(target = "id", ignore = true)
-    void update(TicketUpdateDTO updateDTO, @MappingTarget Ticket ticket); //TODO exclude null values
+    void update(TicketUpdateDTO updateDTO, @MappingTarget Ticket ticket);
 }
