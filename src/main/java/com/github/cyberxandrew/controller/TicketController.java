@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -31,7 +30,8 @@ public class TicketController {
     @GetMapping(path = "/{id}")
     @ResponseStatus(HttpStatus.OK)
     public TicketDTO show(@PathVariable Long id) {
-        return ticketService.findTicketById(id);
+        TicketDTO ticket = ticketService.findTicketById(id);
+        return ticket;
     }
 
     @GetMapping(path = "")

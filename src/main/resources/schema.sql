@@ -31,7 +31,7 @@ CREATE TABLE tickets (
     user_id BIGINT,
     route_id BIGINT NOT NULL,
     price DECIMAL (10,2) NOT NULL,
-    seat_number VARCHAR(10) NOT NULL,
+    seat_number VARCHAR(20) NOT NULL,
     FOREIGN KEY (user_id) REFERENCES users(id),
     FOREIGN KEY (route_id) REFERENCES routes(id)
 );

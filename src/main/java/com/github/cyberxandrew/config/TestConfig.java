@@ -1,6 +1,7 @@
 package com.github.cyberxandrew.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.openapitools.jackson.nullable.JsonNullableModule;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,6 +16,7 @@ public class TestConfig {
     public ObjectMapper objectMapper() {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JsonNullableModule());
+        objectMapper.registerModule( new JavaTimeModule());
         objectMapper.configure(SerializationFeature.WRITE_NULL_MAP_VALUES, false); //Optional but recommended
         return objectMapper;
     }

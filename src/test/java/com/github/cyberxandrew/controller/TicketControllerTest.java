@@ -1,27 +1,30 @@
 package com.github.cyberxandrew.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.github.cyberxandrew.config.JacksonConfig;
 import com.github.cyberxandrew.dto.TicketCreateDTO;
 import com.github.cyberxandrew.dto.TicketDTO;
 import com.github.cyberxandrew.dto.TicketUpdateDTO;
 import com.github.cyberxandrew.dto.TicketWithRouteDataDTO;
-import com.github.cyberxandrew.mapper.JsonNullableMapper;
 import com.github.cyberxandrew.mapper.JsonNullableMapperImpl;
 import com.github.cyberxandrew.mapper.TicketMapper;
-import com.github.cyberxandrew.mapper.TicketMapperImpl;//Fix: !!!
+import com.github.cyberxandrew.mapper.TicketMapperImpl;
 import com.github.cyberxandrew.service.TicketServiceImpl;
 import com.github.cyberxandrew.utils.ModelGenerator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.openapitools.jackson.nullable.JsonNullableModule;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -41,6 +44,8 @@ import java.util.List;
 
 @WebMvcTest(TicketController.class)
 @Import({TicketMapperImpl.class, JsonNullableMapperImpl.class, JacksonConfig.class})
+//@SpringBootTest
+//@AutoConfigureMockMvc
 @ActiveProfiles("test")
 public class TicketControllerTest {
     @Autowired private MockMvc mockMvc;
@@ -52,7 +57,6 @@ public class TicketControllerTest {
     @BeforeEach
     void setUp() {
         testTicketId = 1L;
-//        objectMapper.registerModule(new JsonNullableModule());
     }
 
     @Test

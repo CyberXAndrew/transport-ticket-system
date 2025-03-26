@@ -37,10 +37,12 @@ public class TicketRowMapper implements RowMapper<Ticket> {
             ticket.setRouteId(rs.wasNull() ? null : routeId);
             ticket.setPrice(rs.getBigDecimal("price"));
             ticket.setSeatNumber(StringUtils.defaultString(rs.getString("seat_number"), "Unknown"));
+
         } catch (SQLException ex) {
             logger.error("Ошибка при извлечении билета с id: {}", id, ex);
             throw new TicketMappingException("Error while mapping ticket with id: " + id, ex);
         }
+
         return ticket;
     }
 }

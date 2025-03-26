@@ -1,7 +1,6 @@
 package com.github.cyberxandrew.dto;
 
 import jakarta.validation.constraints.DecimalMin;
-import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import org.openapitools.jackson.nullable.JsonNullable;
 
