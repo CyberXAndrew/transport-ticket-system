@@ -26,7 +26,7 @@ public class TicketRowMapper implements RowMapper<Ticket> {
             id = rs.getLong("id");
             if (rs.wasNull()) {
                 logger.error("Ошибка при извлечении билета: id is NULL");
-                throw new TicketMappingException("Error while mapping ticket (to Ticket): id is NULL");
+                throw new TicketMappingException("Error while mapping ticket: id is NULL");
             }
 
             ticket.setId(id);

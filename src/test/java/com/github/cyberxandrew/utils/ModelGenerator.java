@@ -4,6 +4,7 @@ import com.github.cyberxandrew.dto.TicketCreateDTO;
 import com.github.cyberxandrew.dto.TicketDTO;
 import com.github.cyberxandrew.dto.TicketUpdateDTO;
 import com.github.cyberxandrew.dto.TicketWithRouteDataDTO;
+import com.github.cyberxandrew.model.Carrier;
 import com.github.cyberxandrew.model.Ticket;
 import org.openapitools.jackson.nullable.JsonNullable;
 
@@ -101,5 +102,9 @@ public class ModelGenerator {
         ticketWithRouteDataDto.setDeparturePoint(testDeparturePoint);
         ticketWithRouteDataDto.setDestinationPoint(testDestinationPoint);
         ticketWithRouteDataDto.setCarrierName(testCarrierName);
+    }
+
+    public static void setCarrierFieldsWithoutId(Carrier carrier) {
+        carrier.setName("");
     }
 }

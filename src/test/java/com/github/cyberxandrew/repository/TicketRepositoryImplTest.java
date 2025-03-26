@@ -75,9 +75,11 @@ public class TicketRepositoryImplTest {
                 .thenReturn(testTicket);
 
         Optional<Ticket> actual = ticketRepository.findById(testTicketId);
+
         assertTrue(actual.isPresent());
         assertEquals(actual.get(), testTicket);
     }
+
     @Test
     public void testFindByIdFailed() {
         String sql = "SELECT * FROM tickets WHERE id = ?";
@@ -229,7 +231,7 @@ public class TicketRepositoryImplTest {
 
     @Test
     public void testIsTicketAvailableTrue() {
-        String sql = "SELECT EXISTS (SELECT 1 FROM tickets WHERE id = ? AND user_id IS NULL)";
+        String sql = "SELECT EXISTS (SELECT * FROM tickets WHERE id = ? AND user_id IS NULL)";
 
         when(jdbcTemplate.queryForObject(eq(sql), eq(new Object[]{testTicketId}), eq(Boolean.class)))
                 .thenReturn(true);
@@ -242,7 +244,7 @@ public class TicketRepositoryImplTest {
 
     @Test
     public void testIsTicketAvailableFalse() {
-        String sql = "SELECT EXISTS (SELECT 1 FROM tickets WHERE id = ? AND user_id IS NULL)";
+        String sql = "SELECT EXISTS (SELECT * FROM tickets WHERE id = ? AND user_id IS NULL)";
 
         when(jdbcTemplate.queryForObject(eq(sql), eq(new Object[]{testTicketId}), eq(Boolean.class)))
                 .thenReturn(false);
@@ -255,7 +257,7 @@ public class TicketRepositoryImplTest {
 
     @Test
     public void testIsTicketAvailableDoesNotExists() {
-        String sql = "SELECT EXISTS (SELECT 1 FROM tickets WHERE id = ? AND user_id IS NULL)";
+        String sql = "SELECT EXISTS (SELECT * FROM tickets WHERE id = ? AND user_id IS NULL)";
 
         doThrow(new EmptyResultDataAccessException(1)).when(jdbcTemplate)
                 .queryForObject(eq(sql), eq(new Object[]{testTicketId}), eq(Boolean.class));

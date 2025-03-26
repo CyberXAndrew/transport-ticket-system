@@ -127,9 +127,9 @@ public class TicketRepositoryImpl implements TicketRepository {
     @Override
     @Transactional
     public Ticket update(Ticket ticket) {
+        String sql = "UPDATE tickets SET date_time = ?, user_id = ?, route_id = ?, price = ?, seat_number = ?" +
+                " WHERE id = ?";
         try {
-            String sql = "UPDATE tickets SET date_time = ?, user_id = ?, route_id = ?, price = ?, seat_number = ?" +
-                    " WHERE id = ?";
             int updated = jdbcTemplate.update(sql,
                     ticket.getDateTime().format(formatter),
                     ticket.getUserId(),
@@ -171,7 +171,7 @@ public class TicketRepositoryImpl implements TicketRepository {
     @Override
     @Transactional(readOnly = true)
     public boolean isTicketAvailable(Long ticketId) {
-        String sql = "SELECT EXISTS (SELECT 1 FROM tickets WHERE id = ? AND user_id IS NULL)";
+        String sql = "SELECT EXISTS (SELECT * FROM tickets WHERE id = ? AND user_id IS NULL)";
         try {
             Boolean result = jdbcTemplate.queryForObject(sql, new Object[]{ticketId}, Boolean.class);
             logger.debug("Ticket with id: {} is available: {}", ticketId, result);
