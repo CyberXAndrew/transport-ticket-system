@@ -25,11 +25,11 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest
 @Transactional
@@ -38,14 +38,11 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 @Sql(scripts = "/test-data/test-data-for-ticket-service-test.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_CLASS)
 @Sql(scripts = "/test-data/delete-data-for-ticket-service-test.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_CLASS)
 public class TicketServiceImplIntegrationTest {
-    @Autowired private JdbcTemplate jdbcTemplate;
-    @Autowired private TicketMapper ticketMapper;
     @Autowired private TicketServiceImpl ticketService;
     private Long testAbsentId;
     private Long availableTicketId;
     private Long unavailableTicketId;
     private Long idOfSavedTicket;
-
 
     @BeforeEach
     public void setUp() {

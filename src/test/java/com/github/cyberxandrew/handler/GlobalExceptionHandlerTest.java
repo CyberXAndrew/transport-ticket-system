@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.cyberxandrew.controller.TicketController;
 import com.github.cyberxandrew.dto.TicketCreateDTO;
 import com.github.cyberxandrew.service.TicketServiceImpl;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -15,8 +14,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
-
-import java.util.Locale;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -29,11 +26,6 @@ public class GlobalExceptionHandlerTest {
     @Autowired Validator validator;
     @Autowired ObjectMapper objectMapper;
     @MockitoBean TicketServiceImpl ticketService;
-
-    @BeforeEach
-    void setUp() {
-        Locale.setDefault(new Locale("ru", "RU"));
-    }
 
     @Test
     void handleMethodArgumentNotValidException() throws Exception {

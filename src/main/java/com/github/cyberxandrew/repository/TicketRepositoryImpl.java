@@ -1,7 +1,11 @@
 package com.github.cyberxandrew.repository;
 
 import com.github.cyberxandrew.dto.TicketWithRouteDataDTO;
-import com.github.cyberxandrew.exception.ticket.*;
+import com.github.cyberxandrew.exception.ticket.TicketAvailabilityException;
+import com.github.cyberxandrew.exception.ticket.TicketDeletionException;
+import com.github.cyberxandrew.exception.ticket.TicketNotFoundException;
+import com.github.cyberxandrew.exception.ticket.TicketSaveException;
+import com.github.cyberxandrew.exception.ticket.TicketUpdateException;
 import com.github.cyberxandrew.mapper.TicketDtoRowMapper;
 import com.github.cyberxandrew.mapper.TicketRowMapper;
 import com.github.cyberxandrew.model.Ticket;

@@ -12,7 +12,7 @@ public class TicketDTO {
     private LocalDateTime dateTime;
     private Long userId;
     private Long routeId;
-    //    @DecimalMin("0.00")
+    @DecimalMin("0.00")
     private BigDecimal price;
     private String seatNumber;
 }
