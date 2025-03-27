@@ -52,9 +52,7 @@ public class TicketServiceImpl implements TicketService {
     @Override
     @Transactional
     public TicketDTO saveTicket(TicketCreateDTO createDTO) {
-        if (createDTO == null) {
-            throw new TicketSaveException("Error while saving Ticket: Ticket to save is null");
-        }
+        if (createDTO == null) throw new TicketSaveException("Error while saving Ticket: Ticket to save is null");
         Ticket ticket = ticketMapper.ticketCreateDTOToTicket(createDTO);
         return ticketMapper.ticketToTicketDTO(ticketRepository.save(ticket));
     }
