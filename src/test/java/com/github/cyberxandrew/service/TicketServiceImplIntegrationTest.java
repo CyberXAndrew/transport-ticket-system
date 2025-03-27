@@ -6,8 +6,7 @@ import com.github.cyberxandrew.dto.TicketUpdateDTO;
 import com.github.cyberxandrew.dto.TicketWithRouteDataDTO;
 import com.github.cyberxandrew.exception.ticket.TicketNotFoundException;
 import com.github.cyberxandrew.exception.ticket.TicketSaveException;
-import com.github.cyberxandrew.mapper.TicketMapper;
-import com.github.cyberxandrew.utils.ModelGenerator;
+import com.github.cyberxandrew.utils.TicketFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.openapitools.jackson.nullable.JsonNullable;
@@ -15,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.transaction.annotation.Transactional;
@@ -54,7 +52,7 @@ public class TicketServiceImplIntegrationTest {
 
     @Test
     public void testFindTicketById() {
-        TicketCreateDTO createDTO = ModelGenerator.createTicketCreateDTO();
+        TicketCreateDTO createDTO = TicketFactory.createTicketCreateDTO();
         TicketDTO savedTicketDto = ticketService.saveTicket(createDTO);
 
         TicketDTO ticketDto = ticketService.findTicketById(savedTicketDto.getId());
@@ -65,7 +63,7 @@ public class TicketServiceImplIntegrationTest {
 
     @Test
     public void testFindTicketByUserId() {
-        TicketCreateDTO createDTO = ModelGenerator.createTicketCreateDTO();
+        TicketCreateDTO createDTO = TicketFactory.createTicketCreateDTO();
         TicketDTO savedTicketDTO = ticketService.saveTicket(createDTO);
 
         List<TicketDTO> ticketList = ticketService.findTicketByUserId(savedTicketDTO.getUserId());
@@ -105,7 +103,7 @@ public class TicketServiceImplIntegrationTest {
 
     @Test
     public void testSave() {
-        TicketCreateDTO createDTO = ModelGenerator.createTicketCreateDTO();
+        TicketCreateDTO createDTO = TicketFactory.createTicketCreateDTO();
 
         TicketDTO savedTicket = ticketService.saveTicket(createDTO);
 

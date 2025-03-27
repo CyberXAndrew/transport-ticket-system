@@ -1,5 +1,7 @@
 package com.github.cyberxandrew.repository;
 
+import com.github.cyberxandrew.exception.carrier.CarrierDeletionException;
+import com.github.cyberxandrew.exception.carrier.CarrierNotFoundException;
 import com.github.cyberxandrew.exception.carrier.CarrierUpdateException;
 import com.github.cyberxandrew.mapper.CarrierRowMapper;
 import com.github.cyberxandrew.model.Carrier;
@@ -10,11 +12,14 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.slf4j.Logger;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.dao.DataAccessException;
+import org.springframework.dao.DataAccessResourceFailureException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.jdbc.Sql;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -29,6 +34,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.anyLong;
 import static org.mockito.Mockito.anyString;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -37,6 +43,8 @@ import static org.mockito.Mockito.when;
 @SpringBootTest
 @ActiveProfiles("test")
 //@ExtendWith(MockitoExtension.class) //fixme ADD EXTENDS WITH ?
+//@Sql(scripts = "/test-data/test-data-for-ticket-service-test.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_CLASS)
+//@Sql(scripts = "/test-data/delete-data-for-ticket-service-test.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_CLASS)
 class CarrierRepositoryImplTest {
 
     @Mock private Logger logger;
@@ -44,12 +52,14 @@ class CarrierRepositoryImplTest {
     @Mock private CarrierRowMapper carrierRowMapper;
     @InjectMocks private CarrierRepositoryImpl carrierRepository;
 
+    private Long nonExistingId;
     private Long carrierId1;
     private Long carrierId2;
     private Carrier testCarrier;
 
     @BeforeEach
     void beforeEach() {
+        nonExistingId = 999L;
         carrierId1 = 1L;
         carrierId2 = 2L;
 
@@ -148,5 +158,51 @@ class CarrierRepositoryImplTest {
 
         assertThrows(CarrierUpdateException.class, () -> carrierRepository.updateCarrier(carrierToUpdate));
 //        verify(logger, times(1)).warn(anyString(), anyLong());
+    }
+
+    @Test
+    public void testDeleteByIdSuccessful() {
+        Carrier carrier = new CarrierFactory.CarrierBuilder()
+                .withCarrierId(carrierId1)
+                .withCarrierName("name")
+                .withCarrierPhoneNumber("123456789").build();
+        String sql1 = "SELECT * FROM carriers WHERE id = ?";
+        String sql2 = "DELETE FROM carriers WHERE id = ?";
+
+        when(jdbcTemplate.queryForObject(eq(sql1), eq(new Object[]{carrierId1}), any(CarrierRowMapper.class)))
+                .thenReturn(carrier);
+        when(jdbcTemplate.update(eq(sql2), eq(carrierId1))).thenReturn(1);
+
+        carrierRepository.deleteById(carrierId1);
+
+        verify(jdbcTemplate, times(1)).update(eq(sql2), eq(carrierId1));
+//        verify(logger, times(1)).debug(anyString(), eq(carrierId));
+    }
+
+    @Test
+    public void testDeleteByIdFailed() {
+        String sql1 = "SELECT * FROM carriers WHERE id = ?";
+        String sql2 = "DELETE FROM carriers WHERE id = ?";
+
+        when(jdbcTemplate.queryForObject(eq(sql1), eq(new Object[]{nonExistingId}), any(CarrierRowMapper.class)))
+                .thenThrow(EmptyResultDataAccessException.class);
+
+        assertThrows(CarrierNotFoundException.class, () -> carrierRepository.deleteById(nonExistingId));
+        verify(jdbcTemplate, times(0)).update(eq(sql2), eq(nonExistingId));
+//        verify(logger, times(1)).warn(anyString(), anyLong());
+    }
+
+    @Test
+    public void testDeleteByIdDatabaseError() {
+        Carrier carrier = new Carrier();
+        String sql1 = "SELECT * FROM carriers WHERE id = ?";
+        String sql2 = "DELETE FROM carriers WHERE id = ?";
+
+        when(jdbcTemplate.queryForObject(eq(sql1), eq(new Object[]{carrierId1}), any(CarrierRowMapper.class)))
+                .thenReturn(carrier);
+
+        when(jdbcTemplate.update(eq(sql2), eq(carrierId1))).thenThrow(DataAccessResourceFailureException.class);
+
+        assertThrows(CarrierDeletionException.class, () -> carrierRepository.deleteById(carrierId1));
     }
 }

@@ -11,7 +11,7 @@ import org.openapitools.jackson.nullable.JsonNullable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-public class ModelGenerator {
+public class TicketFactory {
 
     private static Long testTicketId;
     private static Long testUserId;
@@ -106,5 +106,55 @@ public class ModelGenerator {
 
     public static void setCarrierFieldsWithoutId(Carrier carrier) {
         carrier.setName("");
+    }
+
+    public static class TicketBuilder {
+        private Long id = 1L;
+        private LocalDateTime dateTime = LocalDateTime.now();
+        private Long userId = null;
+        private Long routeId = 2L;
+        private BigDecimal price = new BigDecimal(123.45);
+        private String seatNumber = "1A";
+
+        public TicketBuilder withId(Long id) {
+            this.id = id;
+            return this;
+        }
+
+        public TicketBuilder withDateTime(LocalDateTime dateTime) {
+            this.dateTime = dateTime;
+            return this;
+        }
+
+        public TicketBuilder withUserId(Long userId) {
+            this.userId = userId;
+            return this;
+        }
+
+        public TicketBuilder withRouteId(Long routeId) {
+            this.routeId = routeId;
+            return this;
+        }
+
+        public TicketBuilder withPrice(BigDecimal price) {
+            this.price = price;
+            return this;
+        }
+
+        public TicketBuilder withSeatNumber(String seatNumber) {
+            this.seatNumber = seatNumber;
+            return this;
+        }
+
+        public Ticket build() {
+            Ticket ticket = new Ticket();
+            ticket.setId(id);
+            ticket.setDateTime(dateTime);
+            ticket.setUserId(userId);
+            ticket.setRouteId(routeId);
+            ticket.setPrice(price);
+            ticket.setSeatNumber(seatNumber);
+            return ticket;
+        }
     }
 }

@@ -1,10 +1,9 @@
 package com.github.cyberxandrew.repository;
 
 import com.github.cyberxandrew.exception.carrier.CarrierDeletionException;
+import com.github.cyberxandrew.exception.carrier.CarrierNotFoundException;
 import com.github.cyberxandrew.exception.carrier.CarrierSaveException;
 import com.github.cyberxandrew.exception.carrier.CarrierUpdateException;
-import com.github.cyberxandrew.exception.ticket.TicketNotFoundException;
-import com.github.cyberxandrew.exception.ticket.TicketUpdateException;
 import com.github.cyberxandrew.mapper.CarrierRowMapper;
 import com.github.cyberxandrew.model.Carrier;
 import org.slf4j.Logger;
@@ -97,7 +96,7 @@ public class CarrierRepositoryImpl implements CarrierRepository {
             Optional<Carrier> carrier = findById(carrierId);
             if (carrier.isEmpty()) {
                 logger.warn("Carrier with id: {} not found", carrierId);
-                throw new TicketNotFoundException("Carrier not found while deletion");
+                throw new CarrierNotFoundException("Carrier not found while deletion");
             }
             String sql = "DELETE FROM carriers WHERE id = ?";
             jdbcTemplate.update(sql, carrierId);

@@ -10,7 +10,7 @@ import com.github.cyberxandrew.mapper.JsonNullableMapperImpl;
 import com.github.cyberxandrew.mapper.TicketMapper;
 import com.github.cyberxandrew.mapper.TicketMapperImpl;
 import com.github.cyberxandrew.service.TicketServiceImpl;
-import com.github.cyberxandrew.utils.ModelGenerator;
+import com.github.cyberxandrew.utils.TicketFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,7 +54,7 @@ public class TicketControllerTest {
 
     @Test
     void testShow() throws Exception {
-        TicketDTO ticketDTO = ModelGenerator.createTicketDTO();
+        TicketDTO ticketDTO = TicketFactory.createTicketDTO();
         ticketDTO.setId(testTicketId);
 
         when(ticketService.findTicketById(testTicketId)).thenReturn(ticketDTO);
@@ -101,9 +101,9 @@ public class TicketControllerTest {
 
     private static List<TicketWithRouteDataDTO> getTicketWithRouteDataDTOS() {
         TicketWithRouteDataDTO ticketWithRouteDataDTO1 = new TicketWithRouteDataDTO();
-        ModelGenerator.setTicketWithRouteDataDtoFieldsWithoutUserId(ticketWithRouteDataDTO1);
+        TicketFactory.setTicketWithRouteDataDtoFieldsWithoutUserId(ticketWithRouteDataDTO1);
         TicketWithRouteDataDTO ticketWithRouteDataDTO2 = new TicketWithRouteDataDTO();
-        ModelGenerator.setTicketWithRouteDataDtoFieldsWithoutUserId(ticketWithRouteDataDTO2);
+        TicketFactory.setTicketWithRouteDataDtoFieldsWithoutUserId(ticketWithRouteDataDTO2);
         ticketWithRouteDataDTO2.setRouteId(2L);
         ticketWithRouteDataDTO2.setSeatNumber("2B");
 
@@ -112,7 +112,7 @@ public class TicketControllerTest {
 
     @Test
     public void testCreate() throws Exception {
-        TicketCreateDTO ticketCreateDTO = ModelGenerator.createTicketCreateDTO();
+        TicketCreateDTO ticketCreateDTO = TicketFactory.createTicketCreateDTO();
         TicketDTO ticketDTO = ticketMapper.ticketCreateDTOToTicketDTO(ticketCreateDTO);
         ticketDTO.setId(testTicketId);
 
@@ -128,7 +128,7 @@ public class TicketControllerTest {
 
     @Test
     public void testUpdate() throws Exception {
-        TicketUpdateDTO ticketUpdateDTO = ModelGenerator.createTicketUpdateDTO();
+        TicketUpdateDTO ticketUpdateDTO = TicketFactory.createTicketUpdateDTO();
         TicketDTO ticketDTO = ticketMapper.ticketUpdateDTOToTicketDTO(ticketUpdateDTO);
         ticketDTO.setId(testTicketId);
 

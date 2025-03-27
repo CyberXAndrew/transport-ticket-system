@@ -2,7 +2,7 @@ package com.github.cyberxandrew.repository;
 
 import com.github.cyberxandrew.exception.ticket.TicketNotFoundException;
 import com.github.cyberxandrew.model.Ticket;
-import com.github.cyberxandrew.utils.ModelGenerator;
+import com.github.cyberxandrew.utils.TicketFactory;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -29,7 +29,7 @@ public class TicketRepositoryImplIntegrationTest {
     @Test
     @Transactional
     public void testSave() {
-        Ticket ticketToSave = ModelGenerator.createTicketToSave();
+        Ticket ticketToSave = TicketFactory.createTicketToSave();
 
         Ticket savedTicket = ticketRepository.save(ticketToSave);
 
@@ -44,7 +44,7 @@ public class TicketRepositoryImplIntegrationTest {
     @Test
     @Transactional
     public void testDeleteByIdSuccessful() {
-        Ticket ticketToSave = ModelGenerator.createTicketToSave();
+        Ticket ticketToSave = TicketFactory.createTicketToSave();
         Ticket savedTicket = ticketRepository.save(ticketToSave);
 
         assertTrue(savedTicket.getId() != null && savedTicket.getId() > 0);

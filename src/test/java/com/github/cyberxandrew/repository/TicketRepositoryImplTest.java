@@ -1,12 +1,18 @@
 package com.github.cyberxandrew.repository;
 
 import com.github.cyberxandrew.dto.TicketWithRouteDataDTO;
+import com.github.cyberxandrew.exception.carrier.CarrierDeletionException;
+import com.github.cyberxandrew.exception.carrier.CarrierNotFoundException;
 import com.github.cyberxandrew.exception.ticket.TicketAvailabilityException;
+import com.github.cyberxandrew.exception.ticket.TicketDeletionException;
+import com.github.cyberxandrew.exception.ticket.TicketNotFoundException;
 import com.github.cyberxandrew.exception.ticket.TicketUpdateException;
+import com.github.cyberxandrew.mapper.CarrierRowMapper;
 import com.github.cyberxandrew.mapper.TicketDtoRowMapper;
 import com.github.cyberxandrew.mapper.TicketRowMapper;
+import com.github.cyberxandrew.model.Carrier;
 import com.github.cyberxandrew.model.Ticket;
-import com.github.cyberxandrew.utils.ModelGenerator;
+import com.github.cyberxandrew.utils.TicketFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -15,11 +21,14 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.slf4j.Logger;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.dao.DataAccessResourceFailureException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.dao.QueryTimeoutException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.PreparedStatementCreator;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.math.BigDecimal;
@@ -37,6 +46,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.anyLong;
 import static org.mockito.Mockito.anyString;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.times;
@@ -55,6 +65,7 @@ public class TicketRepositoryImplTest {
     @InjectMocks
     private TicketRepositoryImpl ticketRepository;
 
+    private Long nonExistingId;
     private Long testUserId;
     private Long testTicketId;
     private Ticket testTicket;
@@ -62,6 +73,7 @@ public class TicketRepositoryImplTest {
     void beforeEach() {
         testTicketId = 1L;
         testUserId = 2L;
+        nonExistingId = 999L;
 
         testTicket = new Ticket();
         testTicket.setId(testTicketId);
@@ -131,7 +143,7 @@ public class TicketRepositoryImplTest {
         Object[] expectedParams = new Object[0];
 
         TicketWithRouteDataDTO ticketWithRouteDataDTO = new TicketWithRouteDataDTO();
-        ModelGenerator.setTicketWithRouteDataDtoFieldsWithoutUserId(ticketWithRouteDataDTO);
+        TicketFactory.setTicketWithRouteDataDtoFieldsWithoutUserId(ticketWithRouteDataDTO);
         List<TicketWithRouteDataDTO> expectedList = new ArrayList<>(Collections.singletonList(ticketWithRouteDataDTO));
 
         when(jdbcTemplate.query(eq(expectedSql), eq(expectedParams), any(TicketDtoRowMapper.class)))
@@ -160,7 +172,7 @@ public class TicketRepositoryImplTest {
                 "%" + destinationPoint + "%", "%" + carrierName + "%", pageable.getPageSize(), pageable.getOffset()};
 
         TicketWithRouteDataDTO testTicketWithRouteDataDTO = new TicketWithRouteDataDTO();
-        ModelGenerator.setTicketWithRouteDataDtoFieldsWithoutUserId(testTicketWithRouteDataDTO);
+        TicketFactory.setTicketWithRouteDataDtoFieldsWithoutUserId(testTicketWithRouteDataDTO);
 
         List<TicketWithRouteDataDTO> expectedList = new ArrayList<>(Collections.singletonList(testTicketWithRouteDataDTO));
 
@@ -175,12 +187,29 @@ public class TicketRepositoryImplTest {
     }
 
     @Test
+    public void testSaveTicket() {
+        Ticket ticketToSave = TicketFactory.createTicketToSave();
+
+        when(jdbcTemplate.update(any(PreparedStatementCreator.class), any(KeyHolder.class))).thenAnswer(invocation -> {
+            KeyHolder keyHolder = invocation.getArgument(1);
+            keyHolder.getKeyList().add(new java.util.HashMap<String, Object>() {{ put("id", testTicketId); }});
+            return 1;});
+
+        Ticket savedTicket = ticketRepository.save(ticketToSave);
+
+        assertEquals(savedTicket, ticketToSave);
+        verify(jdbcTemplate, times(1)).update(any(PreparedStatementCreator.class),
+                any(KeyHolder.class));
+//        verify(logger, times(1)).debug(anyString(), anyLong());
+    }
+
+    @Test
     public void testUpdateSuccessful() {
         String sql = "UPDATE tickets SET date_time = ?, user_id = ?, route_id = ?, price = ?, seat_number = ?" +
                 " WHERE id = ?";
 
         Ticket ticketToUpdate = new Ticket();
-        ModelGenerator.setTicketFieldsWithoutId(ticketToUpdate);
+        TicketFactory.setTicketFieldsWithoutId(ticketToUpdate);
         ticketToUpdate.setId(testTicketId);
 
 //        when(logger.isDebugEnabled()).thenReturn(true);
@@ -201,7 +230,7 @@ public class TicketRepositoryImplTest {
         String sql = "UPDATE tickets SET date_time = ?, user_id = ?, route_id = ?, price = ?, seat_number = ?" +
                 " WHERE id = ?";
 
-        ModelGenerator.setTicketFieldsWithoutId(testTicket);
+        TicketFactory.setTicketFieldsWithoutId(testTicket);
 
         when(jdbcTemplate.update(eq(sql), anyString(), anyLong(), anyLong(),
                 any(BigDecimal.class), anyString(), anyLong())).thenReturn(0);
@@ -217,7 +246,7 @@ public class TicketRepositoryImplTest {
                 " WHERE id = ?";
 
         Ticket ticket = new Ticket();
-        ModelGenerator.setTicketFieldsWithoutId(ticket);
+        TicketFactory.setTicketFieldsWithoutId(ticket);
         ticket.setId(testTicketId);
 
         when(jdbcTemplate.update(eq(sql), anyString(), anyLong(), anyLong(),
@@ -228,6 +257,9 @@ public class TicketRepositoryImplTest {
         assertEquals(ex.getMessage(), "Error while updating ticket");
 //        verify(logger, times(1)).error("Error while updating ticket", ex);
     }
+
+
+    //fixme СЮДА ПЕРЕНЕСТИ ТЕСТЫ УДАЛЕНИЯЯ
 
     @Test
     public void testIsTicketAvailableTrue() {
@@ -267,5 +299,55 @@ public class TicketRepositoryImplTest {
 //            verify(logger, times(1))
 //                .error("Ticket with id: {} availability definition error", testTicketId, true);
         });
+    }
+
+    @Test
+    public void testDeleteByIdSuccessful() {
+        Ticket ticket = new TicketFactory.TicketBuilder()
+                .withId(testTicketId)
+                .withDateTime(LocalDateTime.now())
+                .withUserId(null)
+                .withRouteId(2L)
+                .withPrice(new BigDecimal("99.99"))
+                .withSeatNumber("1A").build();
+
+        String sql1 = "SELECT * FROM tickets WHERE id = ?";
+        String sql2 = "DELETE FROM tickets WHERE id = ?";
+
+        when(jdbcTemplate.queryForObject(eq(sql1), eq(new Object[]{testTicketId}), any(TicketRowMapper.class)))
+                .thenReturn(ticket);
+        when(jdbcTemplate.update(eq(sql2), eq(testTicketId))).thenReturn(1);
+
+        ticketRepository.deleteById(testTicketId);
+
+        verify(jdbcTemplate, times(1)).update(eq(sql2), eq(testTicketId));
+//        verify(logger, times(1)).debug(anyString(), anyLong());
+    }
+
+    @Test
+    public void testDeleteByIdFailed() {
+        String sql1 = "SELECT * FROM tickets WHERE id = ?";
+        String sql2 = "DELETE FROM tickets WHERE id = ?";
+
+        when(jdbcTemplate.queryForObject(eq(sql1), eq(new Object[]{nonExistingId}), any(TicketRowMapper.class)))
+                .thenThrow(EmptyResultDataAccessException.class);
+
+        assertThrows(TicketNotFoundException.class, () -> ticketRepository.deleteById(nonExistingId));
+        verify(jdbcTemplate, times(0)).update(eq(sql2), eq(nonExistingId));
+//        verify(logger, times(1)).warn(anyString(), anyLong());
+    }
+
+    @Test
+    public void testDeleteByIdDatabaseError() {
+        Ticket ticket = new Ticket();
+        String sql1 = "SELECT * FROM tickets WHERE id = ?";
+        String sql2 = "DELETE FROM tickets WHERE id = ?";
+
+        when(jdbcTemplate.queryForObject(eq(sql1), eq(new Object[]{testTicketId}), any(TicketRowMapper.class)))
+                .thenReturn(ticket);
+
+        when(jdbcTemplate.update(eq(sql2), eq(testTicketId))).thenThrow(DataAccessResourceFailureException.class);
+
+        assertThrows(TicketDeletionException.class, () -> ticketRepository.deleteById(testTicketId));
     }
 }
