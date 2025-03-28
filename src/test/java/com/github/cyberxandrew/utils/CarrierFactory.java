@@ -1,7 +1,11 @@
 package com.github.cyberxandrew.utils;
 
 
+import com.github.cyberxandrew.dto.CarrierCreateDTO;
+import com.github.cyberxandrew.dto.TicketCreateDTO;
 import com.github.cyberxandrew.model.Carrier;
+
+import java.time.LocalDateTime;
 
 public class CarrierFactory {
     private static Long id = 1L;
@@ -13,6 +17,15 @@ public class CarrierFactory {
         carrier.setName(name);
         carrier.setPhoneNumber(phoneNumber);
         return carrier;
+    }
+
+    public static CarrierCreateDTO createCarrierCreateDTO() {
+        CarrierCreateDTO carrierCreateDTO = new CarrierCreateDTO();
+
+        carrierCreateDTO.setName(name);
+        carrierCreateDTO.setPhoneNumber(phoneNumber);
+
+        return carrierCreateDTO;
     }
 
     public static class CarrierBuilder {

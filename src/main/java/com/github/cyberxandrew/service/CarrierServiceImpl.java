@@ -8,20 +8,20 @@ import com.github.cyberxandrew.exception.carrier.CarrierSaveException;
 import com.github.cyberxandrew.exception.carrier.CarrierUpdateException;
 import com.github.cyberxandrew.mapper.CarrierMapper;
 import com.github.cyberxandrew.model.Carrier;
-import com.github.cyberxandrew.repository.CarrierRepository;
 import com.github.cyberxandrew.repository.CarrierRepositoryImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
 public class CarrierServiceImpl implements CarrierService {
     @Autowired private CarrierMapper carrierMapper;
     @Autowired private CarrierRepositoryImpl carrierRepository;
+    @Autowired private JdbcTemplate jdbcTemplate;
 
     @Override
     @Transactional(readOnly = true)
@@ -62,3 +62,5 @@ public class CarrierServiceImpl implements CarrierService {
         carrierRepository.deleteById(carrierId);
     }
 }
+
+

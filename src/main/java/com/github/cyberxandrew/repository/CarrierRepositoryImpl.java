@@ -1,6 +1,7 @@
 package com.github.cyberxandrew.repository;
 
 import com.github.cyberxandrew.exception.carrier.CarrierDeletionException;
+import com.github.cyberxandrew.exception.carrier.CarrierHasRoutesException;
 import com.github.cyberxandrew.exception.carrier.CarrierNotFoundException;
 import com.github.cyberxandrew.exception.carrier.CarrierSaveException;
 import com.github.cyberxandrew.exception.carrier.CarrierUpdateException;
@@ -92,6 +93,8 @@ public class CarrierRepositoryImpl implements CarrierRepository {
     @Override
     @Transactional
     public void deleteById(Long carrierId) {
+        if (hasRoutesBounded(carrierId)) throw new CarrierHasRoutesException("Not possible to delete a carrier" +
+                " with id: " + carrierId + " because it is referenced in the routes table");
         try {
             Optional<Carrier> carrier = findById(carrierId);
             if (carrier.isEmpty()) {
@@ -105,5 +108,11 @@ public class CarrierRepositoryImpl implements CarrierRepository {
             logger.error("Error when deleting carrier with id = {}: {}", carrierId, ex.getMessage(), ex);
             throw new CarrierDeletionException("Error when deleting carrier", ex);
         }
+    }
+
+    public boolean hasRoutesBounded(Long carrierId) {
+        String sql = "SELECT COUNT(*) FROM routes WHERE carrier_id = ?";
+        Integer i = jdbcTemplate.queryForObject(sql, Integer.class, carrierId);
+        return i > 0 && i != null;
     }
 }
