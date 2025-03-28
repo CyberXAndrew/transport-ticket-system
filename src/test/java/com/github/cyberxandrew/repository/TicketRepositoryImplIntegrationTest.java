@@ -19,12 +19,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest
 @ActiveProfiles("test")
-@Sql(scripts = "/test-data/test-data-for-ticket-service-test.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_CLASS)
-@Sql(scripts = "/test-data/delete-data-for-ticket-service-test.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_CLASS)
+@Sql(scripts = "/test-data/test-data-for-tests.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_CLASS)
+@Sql(scripts = "/test-data/delete-data-for-tests.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_CLASS)
 public class TicketRepositoryImplIntegrationTest {
     @Autowired private TicketRepositoryImpl ticketRepository;
 
-    private final Long NOT_EXISTING_ID = 9999999L;
+    private final Long NOT_EXISTING_ID = 999L;
 
     @Test
     @Transactional

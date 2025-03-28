@@ -2,10 +2,10 @@ package com.github.cyberxandrew.utils;
 
 
 import com.github.cyberxandrew.dto.CarrierCreateDTO;
-import com.github.cyberxandrew.dto.TicketCreateDTO;
+import com.github.cyberxandrew.dto.CarrierDTO;
+import com.github.cyberxandrew.dto.CarrierUpdateDTO;
 import com.github.cyberxandrew.model.Carrier;
-
-import java.time.LocalDateTime;
+import org.openapitools.jackson.nullable.JsonNullable;
 
 public class CarrierFactory {
     private static Long id = 1L;
@@ -19,6 +19,16 @@ public class CarrierFactory {
         return carrier;
     }
 
+    public static CarrierDTO createCarrierDTO() {
+        CarrierDTO carrierDTO = new CarrierDTO();
+
+        carrierDTO.setId(id);
+        carrierDTO.setName(name);
+        carrierDTO.setPhoneNumber(phoneNumber);
+        
+        return carrierDTO;
+    }
+
     public static CarrierCreateDTO createCarrierCreateDTO() {
         CarrierCreateDTO carrierCreateDTO = new CarrierCreateDTO();
 
@@ -26,6 +36,15 @@ public class CarrierFactory {
         carrierCreateDTO.setPhoneNumber(phoneNumber);
 
         return carrierCreateDTO;
+    }
+
+    public static CarrierUpdateDTO createCarrierUpdateDTO() {
+        CarrierUpdateDTO updateDTO = new CarrierUpdateDTO();
+
+        updateDTO.setName(JsonNullable.of(name));
+        updateDTO.setPhoneNumber(JsonNullable.of(phoneNumber));
+
+        return updateDTO;
     }
 
     public static class CarrierBuilder {

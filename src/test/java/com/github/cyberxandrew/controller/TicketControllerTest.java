@@ -53,7 +53,7 @@ public class TicketControllerTest {
     }
 
     @Test
-    void testShow() throws Exception {
+    public void testShow() throws Exception {
         TicketDTO ticketDTO = TicketFactory.createTicketDTO();
         ticketDTO.setId(testTicketId);
 

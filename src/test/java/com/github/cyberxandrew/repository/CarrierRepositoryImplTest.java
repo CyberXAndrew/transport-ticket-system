@@ -43,8 +43,8 @@ import static org.mockito.Mockito.when;
 @SpringBootTest
 @ActiveProfiles("test")
 //@ExtendWith(MockitoExtension.class) //fixme ADD EXTENDS WITH ?
-//@Sql(scripts = "/test-data/test-data-for-ticket-service-test.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_CLASS)
-//@Sql(scripts = "/test-data/delete-data-for-ticket-service-test.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_CLASS)
+//@Sql(scripts = "/test-data/test-data-for-tests.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_CLASS)
+//@Sql(scripts = "/test-data/delete-data-for-tests.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_CLASS)
 class CarrierRepositoryImplTest {
 
     @Mock private Logger logger;
@@ -168,7 +168,9 @@ class CarrierRepositoryImplTest {
                 .withCarrierPhoneNumber("123456789").build();
         String sql1 = "SELECT * FROM carriers WHERE id = ?";
         String sql2 = "DELETE FROM carriers WHERE id = ?";
+        String sql3 = "SELECT COUNT(*) FROM routes WHERE carrier_id = ?";
 
+        when(jdbcTemplate.queryForObject(sql3, Integer.class, carrierId1)).thenReturn(0);
         when(jdbcTemplate.queryForObject(eq(sql1), eq(new Object[]{carrierId1}), any(CarrierRowMapper.class)))
                 .thenReturn(carrier);
         when(jdbcTemplate.update(eq(sql2), eq(carrierId1))).thenReturn(1);
@@ -183,7 +185,9 @@ class CarrierRepositoryImplTest {
     public void testDeleteByIdFailed() {
         String sql1 = "SELECT * FROM carriers WHERE id = ?";
         String sql2 = "DELETE FROM carriers WHERE id = ?";
+        String sql3 = "SELECT COUNT(*) FROM routes WHERE carrier_id = ?";
 
+        when(jdbcTemplate.queryForObject(sql3, Integer.class, carrierId1)).thenReturn(0);
         when(jdbcTemplate.queryForObject(eq(sql1), eq(new Object[]{nonExistingId}), any(CarrierRowMapper.class)))
                 .thenThrow(EmptyResultDataAccessException.class);
 
@@ -197,10 +201,11 @@ class CarrierRepositoryImplTest {
         Carrier carrier = new Carrier();
         String sql1 = "SELECT * FROM carriers WHERE id = ?";
         String sql2 = "DELETE FROM carriers WHERE id = ?";
+        String sql3 = "SELECT COUNT(*) FROM routes WHERE carrier_id = ?";
 
+        when(jdbcTemplate.queryForObject(sql3, Integer.class, carrierId1)).thenReturn(0);
         when(jdbcTemplate.queryForObject(eq(sql1), eq(new Object[]{carrierId1}), any(CarrierRowMapper.class)))
                 .thenReturn(carrier);
-
         when(jdbcTemplate.update(eq(sql2), eq(carrierId1))).thenThrow(DataAccessResourceFailureException.class);
 
         assertThrows(CarrierDeletionException.class, () -> carrierRepository.deleteById(carrierId1));

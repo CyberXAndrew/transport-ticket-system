@@ -113,6 +113,6 @@ public class CarrierRepositoryImpl implements CarrierRepository {
     public boolean hasRoutesBounded(Long carrierId) {
         String sql = "SELECT COUNT(*) FROM routes WHERE carrier_id = ?";
         Integer i = jdbcTemplate.queryForObject(sql, Integer.class, carrierId);
-        return i > 0 && i != null;
+        return i != null && i > 0;
     }
 }
