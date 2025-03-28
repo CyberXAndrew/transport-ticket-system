@@ -43,7 +43,7 @@ public class CarrierServiceImpl implements CarrierService {
     public CarrierDTO saveCarrier(CarrierCreateDTO createDTO) {
         if (createDTO == null) throw new CarrierSaveException("Error while saving Carrier: Carrier to save is null");
         Carrier carrier = carrierMapper.carrierCreateDTOToCarrier(createDTO);
-        return carrierMapper.carrierToCarrierDTO(carrierRepository.saveCarrier(carrier));
+        return carrierMapper.carrierToCarrierDTO(carrierRepository.save(carrier));
     }
 
     @Override
@@ -53,7 +53,7 @@ public class CarrierServiceImpl implements CarrierService {
                 new CarrierUpdateException("Error while updating Carrier: Carrier by id is null"));
 
         carrierMapper.update(updateDTO, carrier);
-        return carrierMapper.carrierToCarrierDTO(carrierRepository.updateCarrier(carrier));
+        return carrierMapper.carrierToCarrierDTO(carrierRepository.update(carrier));
     }
 
     @Override

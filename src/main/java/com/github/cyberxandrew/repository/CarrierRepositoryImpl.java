@@ -50,7 +50,7 @@ public class CarrierRepositoryImpl implements CarrierRepository {
 
     @Override
     @Transactional
-    public Carrier saveCarrier(Carrier carrier) {
+    public Carrier save(Carrier carrier) {
         String sql = "INSERT INTO carriers (name, phone_number) VALUES (?, ?)";
         try {
             KeyHolder keyHolder = new GeneratedKeyHolder();
@@ -73,7 +73,7 @@ public class CarrierRepositoryImpl implements CarrierRepository {
 
     @Override
     @Transactional
-    public Carrier updateCarrier(Carrier carrier) {
+    public Carrier update(Carrier carrier) {
         try {
             String sql = "UPDATE carriers SET name = ?, phone_number = ? WHERE id = ?";
             int updated = jdbcTemplate.update(sql, carrier.getName(), carrier.getPhoneNumber(), carrier.getId());

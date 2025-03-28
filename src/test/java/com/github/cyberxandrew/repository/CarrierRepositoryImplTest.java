@@ -42,9 +42,6 @@ import static org.mockito.Mockito.when;
 
 @SpringBootTest
 @ActiveProfiles("test")
-//@ExtendWith(MockitoExtension.class) //fixme ADD EXTENDS WITH ?
-//@Sql(scripts = "/test-data/test-data-for-tests.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_CLASS)
-//@Sql(scripts = "/test-data/delete-data-for-tests.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_CLASS)
 class CarrierRepositoryImplTest {
 
     @Mock private Logger logger;
@@ -120,7 +117,7 @@ class CarrierRepositoryImplTest {
             keyHolder.getKeyList().add(new java.util.HashMap<String, Object>() {{ put("id", carrierId1); }});
             return 1;});
 
-        Carrier savedCarrier = carrierRepository.saveCarrier(carrierToSave);
+        Carrier savedCarrier = carrierRepository.save(carrierToSave);
 
         assertEquals(savedCarrier, carrierToSave);
         verify(jdbcTemplate, times(1)).update(any(PreparedStatementCreator.class),

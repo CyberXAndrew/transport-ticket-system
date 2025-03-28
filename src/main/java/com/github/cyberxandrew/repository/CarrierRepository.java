@@ -9,7 +9,7 @@ import java.util.Optional;
 public interface CarrierRepository {
     Optional<Carrier> findById(Long id);
     List<Carrier> findAll();
-    Carrier saveCarrier(Carrier carrier);
-    Carrier updateCarrier(Carrier carrier);
+    Carrier save(Carrier carrier);
+    Carrier update(Carrier carrier);
     void deleteById(Long id);
 }
