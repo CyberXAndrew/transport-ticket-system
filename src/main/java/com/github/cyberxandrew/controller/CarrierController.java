@@ -1,8 +1,8 @@
 package com.github.cyberxandrew.controller;
 
-import com.github.cyberxandrew.dto.CarrierCreateDTO;
-import com.github.cyberxandrew.dto.CarrierDTO;
-import com.github.cyberxandrew.dto.CarrierUpdateDTO;
+import com.github.cyberxandrew.dto.carrier.CarrierCreateDTO;
+import com.github.cyberxandrew.dto.carrier.CarrierDTO;
+import com.github.cyberxandrew.dto.carrier.CarrierUpdateDTO;
 import com.github.cyberxandrew.service.CarrierServiceImpl;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;

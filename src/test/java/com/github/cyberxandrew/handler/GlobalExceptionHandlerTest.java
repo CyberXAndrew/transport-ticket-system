@@ -2,7 +2,7 @@ package com.github.cyberxandrew.handler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.cyberxandrew.controller.TicketController;
-import com.github.cyberxandrew.dto.TicketCreateDTO;
+import com.github.cyberxandrew.dto.ticket.TicketCreateDTO;
 import com.github.cyberxandrew.service.TicketServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

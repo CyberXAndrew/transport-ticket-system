@@ -1,9 +1,9 @@
 package com.github.cyberxandrew.utils;
 
-import com.github.cyberxandrew.dto.TicketCreateDTO;
-import com.github.cyberxandrew.dto.TicketDTO;
-import com.github.cyberxandrew.dto.TicketUpdateDTO;
-import com.github.cyberxandrew.dto.TicketWithRouteDataDTO;
+import com.github.cyberxandrew.dto.ticket.TicketCreateDTO;
+import com.github.cyberxandrew.dto.ticket.TicketDTO;
+import com.github.cyberxandrew.dto.ticket.TicketUpdateDTO;
+import com.github.cyberxandrew.dto.ticket.TicketWithRouteDataDTO;
 import com.github.cyberxandrew.model.Carrier;
 import com.github.cyberxandrew.model.Ticket;
 import org.openapitools.jackson.nullable.JsonNullable;

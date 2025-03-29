@@ -1,8 +1,8 @@
 package com.github.cyberxandrew.mapper;
 
-import com.github.cyberxandrew.dto.TicketCreateDTO;
-import com.github.cyberxandrew.dto.TicketDTO;
-import com.github.cyberxandrew.dto.TicketUpdateDTO;
+import com.github.cyberxandrew.dto.ticket.TicketCreateDTO;
+import com.github.cyberxandrew.dto.ticket.TicketDTO;
+import com.github.cyberxandrew.dto.ticket.TicketUpdateDTO;
 import com.github.cyberxandrew.model.Ticket;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

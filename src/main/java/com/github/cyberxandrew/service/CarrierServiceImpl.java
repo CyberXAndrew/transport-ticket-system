@@ -1,8 +1,8 @@
 package com.github.cyberxandrew.service;
 
-import com.github.cyberxandrew.dto.CarrierCreateDTO;
-import com.github.cyberxandrew.dto.CarrierDTO;
-import com.github.cyberxandrew.dto.CarrierUpdateDTO;
+import com.github.cyberxandrew.dto.carrier.CarrierCreateDTO;
+import com.github.cyberxandrew.dto.carrier.CarrierDTO;
+import com.github.cyberxandrew.dto.carrier.CarrierUpdateDTO;
 import com.github.cyberxandrew.exception.carrier.CarrierNotFoundException;
 import com.github.cyberxandrew.exception.carrier.CarrierSaveException;
 import com.github.cyberxandrew.exception.carrier.CarrierUpdateException;

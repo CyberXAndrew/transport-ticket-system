@@ -1,16 +1,12 @@
 package com.github.cyberxandrew.repository;
 
-import com.github.cyberxandrew.dto.TicketWithRouteDataDTO;
-import com.github.cyberxandrew.exception.carrier.CarrierDeletionException;
-import com.github.cyberxandrew.exception.carrier.CarrierNotFoundException;
+import com.github.cyberxandrew.dto.ticket.TicketWithRouteDataDTO;
 import com.github.cyberxandrew.exception.ticket.TicketAvailabilityException;
 import com.github.cyberxandrew.exception.ticket.TicketDeletionException;
 import com.github.cyberxandrew.exception.ticket.TicketNotFoundException;
 import com.github.cyberxandrew.exception.ticket.TicketUpdateException;
-import com.github.cyberxandrew.mapper.CarrierRowMapper;
 import com.github.cyberxandrew.mapper.TicketDtoRowMapper;
 import com.github.cyberxandrew.mapper.TicketRowMapper;
-import com.github.cyberxandrew.model.Carrier;
 import com.github.cyberxandrew.model.Ticket;
 import com.github.cyberxandrew.utils.TicketFactory;
 import org.junit.jupiter.api.BeforeEach;
@@ -46,7 +42,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.anyLong;
 import static org.mockito.Mockito.anyString;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.times;

@@ -1,18 +1,21 @@
-package com.github.cyberxandrew.dto;
+package com.github.cyberxandrew.dto.ticket;
 
-import jakarta.validation.constraints.DecimalMin;
 import lombok.Data;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Data
-public class TicketDTO {
+public class TicketWithRouteDataDTO {
     private Long id;
     private LocalDateTime dateTime;
     private Long userId;
     private Long routeId;
-    @DecimalMin("0.00")
     private BigDecimal price;
     private String seatNumber;
+
+    private String departurePoint;
+    private String destinationPoint;
+    private String carrierName;
 }
+

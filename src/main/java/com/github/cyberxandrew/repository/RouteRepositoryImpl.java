@@ -1,13 +1,10 @@
 package com.github.cyberxandrew.repository;
 
-import com.github.cyberxandrew.dto.RouteDTO;
 import com.github.cyberxandrew.exception.route.RouteDeletionException;
-import com.github.cyberxandrew.exception.route.RouteHasRoutesException;
 import com.github.cyberxandrew.exception.route.RouteNotFoundException;
 import com.github.cyberxandrew.exception.route.RouteSaveException;
 import com.github.cyberxandrew.exception.route.RouteUpdateException;
 import com.github.cyberxandrew.mapper.RouteRowMapper;
-import com.github.cyberxandrew.model.Route;
 import com.github.cyberxandrew.model.Route;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

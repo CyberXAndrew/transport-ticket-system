@@ -1,6 +1,6 @@
 package com.github.cyberxandrew.mapper;
 
-import com.github.cyberxandrew.dto.TicketWithRouteDataDTO;
+import com.github.cyberxandrew.dto.ticket.TicketWithRouteDataDTO;
 import com.github.cyberxandrew.exception.ticket.TicketMappingException;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;

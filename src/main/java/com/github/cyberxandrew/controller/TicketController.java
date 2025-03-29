@@ -1,9 +1,9 @@
 package com.github.cyberxandrew.controller;
 
-import com.github.cyberxandrew.dto.TicketCreateDTO;
-import com.github.cyberxandrew.dto.TicketDTO;
-import com.github.cyberxandrew.dto.TicketUpdateDTO;
-import com.github.cyberxandrew.dto.TicketWithRouteDataDTO;
+import com.github.cyberxandrew.dto.ticket.TicketCreateDTO;
+import com.github.cyberxandrew.dto.ticket.TicketDTO;
+import com.github.cyberxandrew.dto.ticket.TicketUpdateDTO;
+import com.github.cyberxandrew.dto.ticket.TicketWithRouteDataDTO;
 import com.github.cyberxandrew.service.TicketServiceImpl;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;

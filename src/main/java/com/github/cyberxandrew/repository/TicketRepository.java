@@ -1,6 +1,6 @@
 package com.github.cyberxandrew.repository;
 
-import com.github.cyberxandrew.dto.TicketWithRouteDataDTO;
+import com.github.cyberxandrew.dto.ticket.TicketWithRouteDataDTO;
 import com.github.cyberxandrew.model.Ticket;
 import org.springframework.data.domain.Pageable;
 

@@ -1,4 +1,4 @@
-package com.github.cyberxandrew.dto;
+package com.github.cyberxandrew.dto.ticket;
 
 import jakarta.validation.constraints.DecimalMin;
 import lombok.Data;

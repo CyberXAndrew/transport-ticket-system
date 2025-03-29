@@ -1,6 +1,5 @@
 package com.github.cyberxandrew.repository;
 
-import com.github.cyberxandrew.dto.CarrierDTO;
 import com.github.cyberxandrew.model.Carrier;
 
 import java.util.List;

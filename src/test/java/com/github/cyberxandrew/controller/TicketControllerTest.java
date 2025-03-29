@@ -2,10 +2,10 @@ package com.github.cyberxandrew.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.cyberxandrew.config.JacksonConfig;
-import com.github.cyberxandrew.dto.TicketCreateDTO;
-import com.github.cyberxandrew.dto.TicketDTO;
-import com.github.cyberxandrew.dto.TicketUpdateDTO;
-import com.github.cyberxandrew.dto.TicketWithRouteDataDTO;
+import com.github.cyberxandrew.dto.ticket.TicketCreateDTO;
+import com.github.cyberxandrew.dto.ticket.TicketDTO;
+import com.github.cyberxandrew.dto.ticket.TicketUpdateDTO;
+import com.github.cyberxandrew.dto.ticket.TicketWithRouteDataDTO;
 import com.github.cyberxandrew.mapper.JsonNullableMapperImpl;
 import com.github.cyberxandrew.mapper.TicketMapper;
 import com.github.cyberxandrew.mapper.TicketMapperImpl;

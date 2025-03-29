@@ -1,4 +1,4 @@
-package com.github.cyberxandrew.dto;
+package com.github.cyberxandrew.dto.carrier;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;

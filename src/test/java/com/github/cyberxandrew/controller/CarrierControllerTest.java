@@ -2,9 +2,9 @@ package com.github.cyberxandrew.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.cyberxandrew.config.JacksonConfig;
-import com.github.cyberxandrew.dto.CarrierCreateDTO;
-import com.github.cyberxandrew.dto.CarrierDTO;
-import com.github.cyberxandrew.dto.CarrierUpdateDTO;
+import com.github.cyberxandrew.dto.carrier.CarrierCreateDTO;
+import com.github.cyberxandrew.dto.carrier.CarrierDTO;
+import com.github.cyberxandrew.dto.carrier.CarrierUpdateDTO;
 import com.github.cyberxandrew.mapper.CarrierMapper;
 import com.github.cyberxandrew.mapper.CarrierMapperImpl;
 import com.github.cyberxandrew.mapper.JsonNullableMapperImpl;

@@ -136,7 +136,7 @@ class CarrierRepositoryImplTest {
 
         when(jdbcTemplate.update(eq(sql), anyString(), anyString(), anyLong())).thenReturn(1);
 
-        Carrier updatedCarrier = carrierRepository.updateCarrier(carrierToUpdate);
+        Carrier updatedCarrier = carrierRepository.update(carrierToUpdate);
 
         assertEquals(carrierToUpdate, updatedCarrier);
 //        verify(logger, times(1)).debug(anyString(), anyLong());
@@ -153,7 +153,7 @@ class CarrierRepositoryImplTest {
 
         when(jdbcTemplate.update(eq(sql), anyString(), anyString(), anyLong())).thenReturn(0);
 
-        assertThrows(CarrierUpdateException.class, () -> carrierRepository.updateCarrier(carrierToUpdate));
+        assertThrows(CarrierUpdateException.class, () -> carrierRepository.update(carrierToUpdate));
 //        verify(logger, times(1)).warn(anyString(), anyLong());
     }
 
