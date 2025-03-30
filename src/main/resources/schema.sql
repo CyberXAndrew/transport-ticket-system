@@ -14,7 +14,7 @@ CREATE TABLE routes (
     departure_point VARCHAR (255) NOT NULL,
     destination_point VARCHAR (255) NOT NULL,
     carrier_id BIGINT NOT NULL,
-    duration_in_minutes INT NOT NULL,
+    duration INT NOT NULL,
     FOREIGN KEY (carrier_id) REFERENCES carriers(id)
 );
 
@@ -43,7 +43,7 @@ INSERT INTO carriers (name, phone_number) VALUES
 ('Seaflot', '123321'),
 ('Hyperloop', '777666555');
 
-INSERT INTO routes (departure_point, destination_point, carrier_id, duration_in_minutes) VALUES
+INSERT INTO routes (departure_point, destination_point, carrier_id, duration) VALUES
 ('Saints-Petersburg', 'Moscow', 1, 120),
 ('Vienna', 'Saints-Petersburg', 1, 260),
 ('Saints-Petersburg', 'Vienna', 2, 260),

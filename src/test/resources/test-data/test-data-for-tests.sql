@@ -5,7 +5,7 @@ INSERT INTO carriers (name, phone_number) VALUES
 ('Seaflot', '123321'),
 ('Hyperloop', '777666555');
 
-INSERT INTO routes (departure_point, destination_point, carrier_id, duration_in_minutes) VALUES
+INSERT INTO routes (departure_point, destination_point, carrier_id, duration) VALUES
 ('Saints-Petersburg', 'Moscow', 1, 120),
 ('Vienna', 'Saints-Petersburg', 1, 260),
 ('Saints-Petersburg', 'Vienna', 2, 260),

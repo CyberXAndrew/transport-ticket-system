@@ -104,10 +104,6 @@ public class TicketFactory {
         ticketWithRouteDataDto.setCarrierName(testCarrierName);
     }
 
-    public static void setCarrierFieldsWithoutId(Carrier carrier) {
-        carrier.setName("");
-    }
-
     public static class TicketBuilder {
         private Long id = 1L;
         private LocalDateTime dateTime = LocalDateTime.now();

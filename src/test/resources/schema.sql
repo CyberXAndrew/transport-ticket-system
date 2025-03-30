@@ -14,7 +14,7 @@ CREATE TABLE routes (
     departure_point VARCHAR (255) NOT NULL,
     destination_point VARCHAR (255) NOT NULL,
     carrier_id BIGINT NOT NULL,
-    duration_in_minutes INT NOT NULL,
+    duration INT NOT NULL,
     FOREIGN KEY (carrier_id) REFERENCES carriers(id)
 );
 

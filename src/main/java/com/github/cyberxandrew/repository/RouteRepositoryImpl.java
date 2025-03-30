@@ -4,7 +4,6 @@ import com.github.cyberxandrew.exception.route.RouteDeletionException;
 import com.github.cyberxandrew.exception.route.RouteNotFoundException;
 import com.github.cyberxandrew.exception.route.RouteSaveException;
 import com.github.cyberxandrew.exception.route.RouteUpdateException;
-import com.github.cyberxandrew.mapper.RouteRowMapper;
 import com.github.cyberxandrew.model.Route;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,6 +12,7 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
@@ -25,9 +25,8 @@ import java.util.Optional;
 @Repository
 public class RouteRepositoryImpl implements RouteRepository {
     private static final Logger logger = LoggerFactory.getLogger(RouteRepositoryImpl.class);
-    @Autowired
-    private JdbcTemplate jdbcTemplate;
-    @Autowired private RouteRowMapper routeRowMapper;
+    @Autowired private JdbcTemplate jdbcTemplate;
+    private RowMapper<Route> routeRowMapper = new BeanPropertyRowMapper<>(Route.class);
 
     @Override
     @Transactional
@@ -35,7 +34,7 @@ public class RouteRepositoryImpl implements RouteRepository {
         if (routeId == null) throw new NullPointerException("Route with id = null cannot be found in database");
         String sql = "SELECT * FROM routes WHERE id = ?";
         try {
-            return Optional.of(jdbcTemplate.queryForObject(sql, new Object[]{routeId}, routeRowMapper.rowMap()));
+            return Optional.of(jdbcTemplate.queryForObject(sql, new Object[]{routeId}, routeRowMapper));
         } catch (EmptyResultDataAccessException ex) {
             logger.warn("Route with id {} not found", routeId);
             return Optional.empty();
@@ -46,7 +45,7 @@ public class RouteRepositoryImpl implements RouteRepository {
     @Transactional
     public List<Route> findAll() {
         String sql = "SELECT * FROM routes";
-        return jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(Route.class));
+        return jdbcTemplate.query(sql, routeRowMapper);
     }
 
     @Override
