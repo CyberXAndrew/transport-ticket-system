@@ -20,7 +20,6 @@ import java.util.stream.Collectors;
 @Service
 public class RouteServiceImpl implements RouteService {
     @Autowired private RouteMapper routeMapper;
-    @Autowired private JdbcTemplate jdbcTemplate;
     @Autowired private RouteRepositoryImpl routeRepository;
 
     @Override
