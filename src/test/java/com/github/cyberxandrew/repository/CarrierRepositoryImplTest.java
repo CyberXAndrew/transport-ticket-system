@@ -49,6 +49,8 @@ class CarrierRepositoryImplTest {
     private Long nonExistingId;
     private Long carrierId1;
     private Long carrierId2;
+    private String carrierName;
+    private String carrierPhoneNumber;
     private Carrier testCarrier;
 
     @BeforeEach
@@ -56,6 +58,8 @@ class CarrierRepositoryImplTest {
         nonExistingId = 999L;
         carrierId1 = 1L;
         carrierId2 = 2L;
+        carrierName = "J7";
+        carrierPhoneNumber = "123-456-7890";
 
         testCarrier = new Carrier();
         testCarrier.setId(carrierId1);
@@ -128,8 +132,8 @@ class CarrierRepositoryImplTest {
 
         Carrier carrierToUpdate = new Carrier();
         carrierToUpdate.setId(carrierId1);
-        carrierToUpdate.setName("Some name");
-        carrierToUpdate.setPhoneNumber("123456789");
+        carrierToUpdate.setName(carrierName);
+        carrierToUpdate.setPhoneNumber(carrierPhoneNumber);
 
         when(jdbcTemplate.update(eq(sql), anyString(), anyString(), anyLong())).thenReturn(1);
 
@@ -145,8 +149,8 @@ class CarrierRepositoryImplTest {
 
         Carrier carrierToUpdate = new Carrier();
         carrierToUpdate.setId(carrierId1);
-        carrierToUpdate.setName("Some name");
-        carrierToUpdate.setPhoneNumber("123456789");
+        carrierToUpdate.setName(carrierName);
+        carrierToUpdate.setPhoneNumber(carrierPhoneNumber);
 
         when(jdbcTemplate.update(eq(sql), anyString(), anyString(), anyLong())).thenReturn(0);
 
@@ -158,8 +162,8 @@ class CarrierRepositoryImplTest {
     public void testDeleteByIdSuccessful() {
         Carrier carrier = new CarrierFactory.CarrierBuilder()
                 .withCarrierId(carrierId1)
-                .withCarrierName("name")
-                .withCarrierPhoneNumber("123456789").build();
+                .withCarrierName(carrierName)
+                .withCarrierPhoneNumber(carrierPhoneNumber).build();
         String sql1 = "SELECT * FROM carriers WHERE id = ?";
         String sql2 = "DELETE FROM carriers WHERE id = ?";
         String sql3 = "SELECT COUNT(*) FROM routes WHERE carrier_id = ?";
