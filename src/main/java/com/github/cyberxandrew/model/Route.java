@@ -16,5 +16,6 @@ public class Route {
     @NotNull
     private Long carrierId;
     @Min(1)
+    @NotNull
     private Integer duration;
 }

@@ -1,6 +1,7 @@
 package com.github.cyberxandrew.repository;
 
 import com.github.cyberxandrew.exception.route.RouteDeletionException;
+import com.github.cyberxandrew.exception.route.RouteHasTicketsException;
 import com.github.cyberxandrew.exception.route.RouteNotFoundException;
 import com.github.cyberxandrew.exception.route.RouteSaveException;
 import com.github.cyberxandrew.exception.route.RouteUpdateException;
@@ -98,6 +99,8 @@ public class RouteRepositoryImpl implements RouteRepository {
     @Override
     @Transactional
     public void deleteById(Long routeId) {
+        if (hasTicketsBounded(routeId)) throw new RouteHasTicketsException("Not possible to delete a route" +
+                " with id: " + routeId + " because it is referenced in the tickets table");
         try {
             Optional<Route> route = findById(routeId);
             if (route.isEmpty()) {
@@ -111,5 +114,11 @@ public class RouteRepositoryImpl implements RouteRepository {
             logger.error("Error when deleting route with id = {}: {}", routeId, ex.getMessage(), ex);
             throw new RouteDeletionException("Error when deleting route", ex);
         }
+    }
+
+    public boolean hasTicketsBounded(Long routeId) {
+        String sql = "SELECT COUNT(*) FROM tickets WHERE route_id = ?";
+        Integer i = jdbcTemplate.queryForObject(sql, Integer.class, routeId);
+        return i != null && i > 0;
     }
 }

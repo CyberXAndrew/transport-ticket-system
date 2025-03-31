@@ -79,8 +79,12 @@ public class TicketRepositoryImpl implements TicketRepository {
             filtrationParams.add(pageSize);
             filtrationParams.add(offset);
         }
-
-        return jdbcTemplate.query(sql.toString(), filtrationParams.toArray(), ticketDtoRowMapper);
+        System.out.println("======\n" + sql + "\n------");//TEMP COMMENT
+        System.out.println(filtrationParams);
+        List<TicketWithRouteDataDTO> query = jdbcTemplate.query(sql.toString(), filtrationParams.toArray(), ticketDtoRowMapper);
+        System.out.println("======\n" + query + "\n------");//TEMP COMMENT
+        return query;
+//        return jdbcTemplate.query(sql.toString(), filtrationParams.toArray(), ticketDtoRowMapper);
     }
 
     private void addFilter(StringBuilder sql, List<Object> filtrationParams, String columnName, Object filter) {

@@ -75,13 +75,16 @@ public class TicketServiceImplIntegrationTest {
 
     @Test
     public void testFindAllAccessibleTicketsWithAllParams() {
-        Pageable pageable = PageRequest.of(1, 1);
+        int pageSize = 1;
+        int pageNumber = 0;
+        Pageable pageable = PageRequest.of(pageNumber, pageSize);
 
         List<TicketWithRouteDataDTO> allAccessibleTickets = ticketService.findAllAccessibleTickets(pageable, null, "Saints-Petersburg",
                 "Moscow", "J7");
+        System.out.println("======\n" + allAccessibleTickets + "\n------");//TEMP COMMENT
 
         assertFalse(allAccessibleTickets.isEmpty());
-        assertEquals(1, allAccessibleTickets.size());
+        assertEquals(pageSize, allAccessibleTickets.size());
         assertEquals("Saints-Petersburg", allAccessibleTickets.get(0).getDeparturePoint());
         assertEquals("Moscow", allAccessibleTickets.get(0).getDestinationPoint());
         assertEquals("J7", allAccessibleTickets.get(0).getCarrierName());

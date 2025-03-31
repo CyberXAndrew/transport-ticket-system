@@ -145,7 +145,7 @@ public class UserRepositoryImplTest {
         userToUpdate.setPassword(password1);
         userToUpdate.setFullName(fullName1);
 
-        when(jdbcTemplate.update(eq(sql), anyString(), anyString(), anyLong(), anyInt(), anyLong())).thenReturn(1);
+        when(jdbcTemplate.update(eq(sql), anyString(), anyString(), anyString(), anyLong())).thenReturn(1);
 
         User updatedUser = userRepository.update(userToUpdate);
 

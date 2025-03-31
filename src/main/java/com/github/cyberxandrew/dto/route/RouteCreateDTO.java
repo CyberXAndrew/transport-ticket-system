@@ -14,5 +14,6 @@ public class RouteCreateDTO {
     @NotNull
     private Long carrierId;
     @Min(1)
+    @NotNull
     private Integer duration;
 }

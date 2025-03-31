@@ -1,6 +1,7 @@
 package com.github.cyberxandrew.repository;
 
 import com.github.cyberxandrew.exception.user.UserDeletionException;
+import com.github.cyberxandrew.exception.user.UserHasTicketsException;
 import com.github.cyberxandrew.exception.user.UserNotFoundException;
 import com.github.cyberxandrew.exception.user.UserSaveException;
 import com.github.cyberxandrew.exception.user.UserUpdateException;
@@ -52,7 +53,7 @@ public class UserRepositoryImpl implements UserRepository {
     @Override
     @Transactional
     public User save(User user) {
-        String sql = "INSERT INTO users (login, password, fullName)" +
+        String sql = "INSERT INTO users (login, password, full_name)" +
                 " VALUES (?, ?, ?)";
         try {
             KeyHolder keyHolder = new GeneratedKeyHolder();
@@ -78,7 +79,7 @@ public class UserRepositoryImpl implements UserRepository {
     @Transactional
     public User update(User user) {
         try {
-            String sql = "UPDATE users SET login = ?, password = ?, fullName = ?" +
+            String sql = "UPDATE users SET login = ?, password = ?, full_name = ?" +
                     " WHERE id = ?";
             int updated = jdbcTemplate.update(sql, user.getLogin(), user.getPassword(),
                     user.getFullName(), user.getId());
@@ -98,6 +99,8 @@ public class UserRepositoryImpl implements UserRepository {
     @Override
     @Transactional
     public void deleteById(Long userId) {
+        if (hasTicketsBounded(userId)) throw new UserHasTicketsException("Not possible to delete a user" +
+                " with id: " + userId + " because it is referenced in the tickets table");
         try {
             Optional<User> user = findById(userId);
             if (user.isEmpty()) {
@@ -111,5 +114,11 @@ public class UserRepositoryImpl implements UserRepository {
             logger.error("Error when deleting user with id = {}: {}", userId, ex.getMessage(), ex);
             throw new UserDeletionException("Error when deleting user", ex);
         }
+    }
+
+    public boolean hasTicketsBounded(Long userId) {
+        String sql = "SELECT COUNT(*) FROM tickets WHERE user_id = ?";
+        Integer i = jdbcTemplate.queryForObject(sql, Integer.class, userId);
+        return i != null && i > 0;
     }
 }

@@ -4,6 +4,7 @@ import com.github.cyberxandrew.dto.route.RouteCreateDTO;
 import com.github.cyberxandrew.dto.route.RouteDTO;
 import com.github.cyberxandrew.dto.route.RouteUpdateDTO;
 import com.github.cyberxandrew.model.Route;
+import org.openapitools.jackson.nullable.JsonNullable;
 
 public class RouteFactory {
     private static Long id = 1L;
@@ -47,10 +48,10 @@ public class RouteFactory {
     public static RouteUpdateDTO createRouteUpdateDTO() {
         RouteUpdateDTO routeUpdateDTO = new RouteUpdateDTO();
 
-        routeUpdateDTO.setDeparturePoint(departurePoint);
-        routeUpdateDTO.setDestinationPoint(destinationPoint);
-        routeUpdateDTO.setCarrierId(carrierId);
-        routeUpdateDTO.setDuration(duration);
+        routeUpdateDTO.setDeparturePoint(JsonNullable.of(departurePoint));
+        routeUpdateDTO.setDestinationPoint(JsonNullable.of(destinationPoint));
+        routeUpdateDTO.setCarrierId(JsonNullable.of(carrierId));
+        routeUpdateDTO.setDuration(JsonNullable.of(duration));
 
         return routeUpdateDTO;
     }

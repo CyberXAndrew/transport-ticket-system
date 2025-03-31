@@ -35,11 +35,15 @@ public class CarrierServiceImplIntegrationTest {
 
     private Long absentId;
     private Long idOfSavedCarrier;
+    private String name;
+    private String phoneNumber;
 
     @BeforeEach
     public void setUp() {
         absentId = 999L;
         idOfSavedCarrier = 1L;
+        name = "test carrier name";
+        phoneNumber = "123-456-7890";
     }
     
     @Test
@@ -75,8 +79,8 @@ public class CarrierServiceImplIntegrationTest {
         CarrierDTO carrierDTOFromDb = carrierService.findCarrierById(idOfSavedCarrier);
 
         CarrierUpdateDTO updateDTO = new CarrierUpdateDTO();
-        updateDTO.setName(JsonNullable.of("test name"));
-        updateDTO.setPhoneNumber(JsonNullable.of("123-456-7890"));
+        updateDTO.setName(JsonNullable.of(name));
+        updateDTO.setPhoneNumber(JsonNullable.of(phoneNumber));
 
         carrierService.updateCarrier(updateDTO, idOfSavedCarrier);
         CarrierDTO updatedCarrierDto = carrierService.findCarrierById(idOfSavedCarrier);
@@ -94,7 +98,7 @@ public class CarrierServiceImplIntegrationTest {
     @Test
     public void deleteCarrier() {
         CarrierCreateDTO createDTO = new CarrierCreateDTO();
-        createDTO.setName("test name");
+        createDTO.setName(name);
 
         CarrierDTO savedCarrierDTO = carrierService.saveCarrier(createDTO);
 

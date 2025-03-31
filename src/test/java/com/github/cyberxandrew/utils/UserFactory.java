@@ -4,6 +4,7 @@ import com.github.cyberxandrew.dto.user.UserCreateDTO;
 import com.github.cyberxandrew.dto.user.UserDTO;
 import com.github.cyberxandrew.dto.user.UserUpdateDTO;
 import com.github.cyberxandrew.model.User;
+import org.openapitools.jackson.nullable.JsonNullable;
 
 public class UserFactory {
     private static Long id = 1L;
@@ -43,9 +44,9 @@ public class UserFactory {
     public static UserUpdateDTO createUserUpdateDTO() {
         UserUpdateDTO userUpdateDTO = new UserUpdateDTO();
 
-        userUpdateDTO.setLogin(login);
-        userUpdateDTO.setPassword(password);
-        userUpdateDTO.setFullName(fullName);
+        userUpdateDTO.setLogin(JsonNullable.of(login));
+        userUpdateDTO.setPassword(JsonNullable.of(password));
+        userUpdateDTO.setFullName(JsonNullable.of(fullName));
 
         return userUpdateDTO;
     }
