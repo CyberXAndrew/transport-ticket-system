@@ -4,6 +4,7 @@ import com.github.cyberxandrew.dto.ticket.TicketCreateDTO;
 import com.github.cyberxandrew.dto.ticket.TicketDTO;
 import com.github.cyberxandrew.dto.ticket.TicketUpdateDTO;
 import com.github.cyberxandrew.dto.ticket.TicketWithRouteDataDTO;
+import com.github.cyberxandrew.model.Ticket;
 import com.github.cyberxandrew.service.TicketServiceImpl;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,8 +34,13 @@ public class TicketController {
     @GetMapping(path = "/{id}")
     @ResponseStatus(HttpStatus.OK)
     public TicketDTO show(@PathVariable Long id) {
-        TicketDTO ticket = ticketService.findTicketById(id);
-        return ticket;
+        return ticketService.findTicketById(id);
+    }
+
+    @GetMapping(path = "/purchased/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public List<TicketDTO> findAllPurchasedTickets(@PathVariable Long id) {
+        return ticketService.findAllPurchasedTickets(id);
     }
 
     @GetMapping(path = "")

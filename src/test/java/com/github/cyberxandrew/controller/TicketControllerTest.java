@@ -9,6 +9,7 @@ import com.github.cyberxandrew.dto.ticket.TicketWithRouteDataDTO;
 import com.github.cyberxandrew.mapper.JsonNullableMapperImpl;
 import com.github.cyberxandrew.mapper.TicketMapper;
 import com.github.cyberxandrew.mapper.TicketMapperImpl;
+import com.github.cyberxandrew.model.Ticket;
 import com.github.cyberxandrew.service.TicketServiceImpl;
 import com.github.cyberxandrew.utils.TicketFactory;
 import org.junit.jupiter.api.BeforeEach;
@@ -24,6 +25,7 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.hamcrest.Matchers.is;
@@ -45,24 +47,45 @@ public class TicketControllerTest {
     @Autowired private ObjectMapper objectMapper;
     @Autowired private TicketMapper ticketMapper;
     @MockitoBean private TicketServiceImpl ticketService;
-    private Long testTicketId;
+    private Long ticketId1;
+    private Long ticketId2;
+    private Long userId;
 
     @BeforeEach
     void setUp() {
-        testTicketId = 1L;
+        ticketId1 = 1L;
+        ticketId2 = 2L;
+        userId = 1L;
     }
 
     @Test
     public void testShow() throws Exception {
         TicketDTO ticketDTO = TicketFactory.createTicketDTO();
-        ticketDTO.setId(testTicketId);
+        ticketDTO.setId(ticketId1);
 
-        when(ticketService.findTicketById(testTicketId)).thenReturn(ticketDTO);
+        when(ticketService.findTicketById(ticketId1)).thenReturn(ticketDTO);
 
-        mockMvc.perform(get("/api/tickets/{id}", testTicketId))
+        mockMvc.perform(get("/api/tickets/{id}", ticketId1))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(content().json(objectMapper.writeValueAsString(ticketDTO)));
+    }
+    
+    @Test
+    public void testFindAllPurchasedTickets() throws Exception {
+        TicketFactory.TicketBuilder ticketBuilder = new TicketFactory.TicketBuilder(); // Fix get out to factory?
+        Ticket ticket1 = ticketBuilder.withId(ticketId1).withUserId(userId).build();
+        TicketDTO ticketDTO1 = ticketMapper.ticketToTicketDTO(ticket1);
+        Ticket ticket2 = ticketBuilder.withId(ticketId2).withUserId(userId).build();
+        TicketDTO ticketDTO2 = ticketMapper.ticketToTicketDTO(ticket2);
+        List<TicketDTO> tickets = new ArrayList<>(List.of(ticketDTO1, ticketDTO2));
+
+        when(ticketService.findAllPurchasedTickets(userId)).thenReturn(tickets);
+
+        mockMvc.perform(get("/api/tickets/purchased/{id}", userId))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(content().json(objectMapper.writeValueAsString(tickets)));
     }
 
     @Test
@@ -114,7 +137,7 @@ public class TicketControllerTest {
     public void testCreate() throws Exception {
         TicketCreateDTO ticketCreateDTO = TicketFactory.createTicketCreateDTO();
         TicketDTO ticketDTO = ticketMapper.ticketCreateDTOToTicketDTO(ticketCreateDTO);
-        ticketDTO.setId(testTicketId);
+        ticketDTO.setId(ticketId1);
 
         when(ticketService.saveTicket(ticketCreateDTO)).thenReturn(ticketDTO);
 
@@ -130,11 +153,11 @@ public class TicketControllerTest {
     public void testUpdate() throws Exception {
         TicketUpdateDTO ticketUpdateDTO = TicketFactory.createTicketUpdateDTO();
         TicketDTO ticketDTO = ticketMapper.ticketUpdateDTOToTicketDTO(ticketUpdateDTO);
-        ticketDTO.setId(testTicketId);
+        ticketDTO.setId(ticketId1);
 
-        when(ticketService.updateTicket(ticketUpdateDTO, testTicketId)).thenReturn(ticketDTO);
+        when(ticketService.updateTicket(ticketUpdateDTO, ticketId1)).thenReturn(ticketDTO);
 
-        mockMvc.perform(put("/api/tickets/{id}", testTicketId)
+        mockMvc.perform(put("/api/tickets/{id}", ticketId1)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(ticketUpdateDTO)))
                 .andExpect(status().isOk())
@@ -145,9 +168,9 @@ public class TicketControllerTest {
     @Test
     public void testDelete() throws Exception {
 
-        doNothing().when(ticketService).deleteTicket(testTicketId);
+        doNothing().when(ticketService).deleteTicket(ticketId1);
 
-        mockMvc.perform(delete("/api/tickets/{id}", testTicketId))
+        mockMvc.perform(delete("/api/tickets/{id}", ticketId1))
                 .andExpect(status().isNoContent());
     }
 }

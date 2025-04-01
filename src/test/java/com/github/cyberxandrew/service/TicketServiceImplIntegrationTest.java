@@ -62,11 +62,11 @@ public class TicketServiceImplIntegrationTest {
     }
 
     @Test
-    public void testFindTicketByUserId() {
+    public void testFindAllPurchasedTickets() {
         TicketCreateDTO createDTO = TicketFactory.createTicketCreateDTO();
         TicketDTO savedTicketDTO = ticketService.saveTicket(createDTO);
 
-        List<TicketDTO> ticketList = ticketService.findTicketByUserId(savedTicketDTO.getUserId());
+        List<TicketDTO> ticketList = ticketService.findAllPurchasedTickets(savedTicketDTO.getUserId());
 
         assertFalse(ticketList.isEmpty());
         assertEquals(1, ticketList.size());
@@ -81,7 +81,6 @@ public class TicketServiceImplIntegrationTest {
 
         List<TicketWithRouteDataDTO> allAccessibleTickets = ticketService.findAllAccessibleTickets(pageable, null, "Saints-Petersburg",
                 "Moscow", "J7");
-        System.out.println("======\n" + allAccessibleTickets + "\n------");//TEMP COMMENT
 
         assertFalse(allAccessibleTickets.isEmpty());
         assertEquals(pageSize, allAccessibleTickets.size());
@@ -139,7 +138,8 @@ public class TicketServiceImplIntegrationTest {
         assertThrows(TicketNotFoundException.class, () -> ticketService.findTicketById(idOfSavedTicket));
     }
     @Test
-    public void testIsTicketAvailable() {
+    public void testPurchaseTicket() { //FIX
+
         boolean ticketAvailable = ticketService.isTicketAvailable(availableTicketId);
         boolean ticketAvailable2 = ticketService.isTicketAvailable(unavailableTicketId);
 

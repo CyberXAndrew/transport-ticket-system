@@ -35,8 +35,8 @@ public class TicketServiceImpl implements TicketService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<TicketDTO> findTicketByUserId(Long userId) {
-        List<Ticket> tickets = ticketRepository.findByUserId(userId);
+    public List<TicketDTO> findAllPurchasedTickets(Long userId) {
+        List<Ticket> tickets = ticketRepository.findAllPurchasedTickets(userId);
         return tickets.stream().map(ticketMapper::ticketToTicketDTO).toList();
     }
 

@@ -28,6 +28,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static org.apache.logging.log4j.ThreadContext.isEmpty;
+
 @Repository
 public class TicketRepositoryImpl implements TicketRepository {
     private static final Logger logger = LoggerFactory.getLogger(TicketRepositoryImpl.class);
@@ -51,7 +53,7 @@ public class TicketRepositoryImpl implements TicketRepository {
 
     @Override
     @Transactional(readOnly = true)
-    public List<Ticket> findByUserId(Long userId) {
+    public List<Ticket> findAllPurchasedTickets(Long userId) {
         String sql = "SELECT * FROM tickets WHERE user_id = ?";
         List<Ticket> result = jdbcTemplate.query(sql, new Object[]{userId}, ticketRowMapper);
         logger.debug("Found {} tickets for user with id: {}", result.size(), userId);
@@ -79,10 +81,7 @@ public class TicketRepositoryImpl implements TicketRepository {
             filtrationParams.add(pageSize);
             filtrationParams.add(offset);
         }
-        System.out.println("======\n" + sql + "\n------");//TEMP COMMENT
-        System.out.println(filtrationParams);
         List<TicketWithRouteDataDTO> query = jdbcTemplate.query(sql.toString(), filtrationParams.toArray(), ticketDtoRowMapper);
-        System.out.println("======\n" + query + "\n------");//TEMP COMMENT
         return query;
 //        return jdbcTemplate.query(sql.toString(), filtrationParams.toArray(), ticketDtoRowMapper);
     }
@@ -173,8 +172,23 @@ public class TicketRepositoryImpl implements TicketRepository {
     }
 
     @Override
+    @Transactional
+    public void purchaseTicket(Long userId, Long ticketId) { //Fix 1 method
+        if (!isTicketAvailable(ticketId)) throw new TicketAvailabilityException(
+                "Ticket with id: " + ticketId + " already bought");
+
+        String sql = "UPDATE tickets SET user_id = ? WHERE id = ?";
+        jdbcTemplate.update(sql, userId, ticketId);
+        logger.debug("Ticket with id: {} successfully purchased by user with id: {}", ticketId, userId);
+    }
+
+    @Override
     @Transactional(readOnly = true)
     public boolean isTicketAvailable(Long ticketId) {
+        if (!ticketExists(ticketId)) {
+            logger.warn("Ticket with id: {} does not exist", ticketId);
+            throw new TicketNotFoundException("Ticket with id: " + ticketId + " not found in db");
+        }
         String sql = "SELECT EXISTS (SELECT * FROM tickets WHERE id = ? AND user_id IS NULL)";
         try {
             Boolean result = jdbcTemplate.queryForObject(sql, new Object[]{ticketId}, Boolean.class);
@@ -184,5 +198,13 @@ public class TicketRepositoryImpl implements TicketRepository {
             logger.error("Ticket with id: {} availability definition error", ticketId, ex);
             throw new TicketAvailabilityException("Ticket availability definition error", ex);
         }
+    }
+
+    @Transactional(readOnly = true)
+    private boolean ticketExists(Long ticketId) {
+        String sql = "SELECT EXISTS (SELECT * FROM tickets WHERE id = ?)";
+        Boolean exists = jdbcTemplate.queryForObject(sql, new Object[]{ticketId}, Boolean.class);
+        logger.debug("Ticket with id: {} exists: {}", ticketId, exists);
+        return exists;
     }
 }

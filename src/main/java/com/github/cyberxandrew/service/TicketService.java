@@ -11,7 +11,7 @@ import java.util.List;
 
 public interface TicketService {
     TicketDTO findTicketById(Long ticketId);
-    List<TicketDTO> findTicketByUserId(Long userId);
+    List<TicketDTO> findAllPurchasedTickets(Long userId);
     List<TicketWithRouteDataDTO> findAllAccessibleTickets(Pageable pageable,
                                                           LocalDateTime dateTime,
                                                           String departurePoint,
