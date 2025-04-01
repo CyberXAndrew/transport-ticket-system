@@ -37,10 +37,10 @@ public class TicketController {
         return ticketService.findTicketById(id);
     }
 
-    @GetMapping(path = "/purchased/{id}")
+    @GetMapping(path = "/purchased")
     @ResponseStatus(HttpStatus.OK)
-    public List<TicketDTO> findAllPurchasedTickets(@PathVariable Long id) {
-        return ticketService.findAllPurchasedTickets(id);
+    public List<TicketDTO> findAllPurchasedTickets(@RequestParam Long userId) {
+        return ticketService.findAllPurchasedTickets(userId);
     }
 
     @GetMapping(path = "")
@@ -75,5 +75,11 @@ public class TicketController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable Long id) {
         ticketService.deleteTicket(id);
+    }
+
+    @PostMapping(path = "/{id}/purchase")
+    @ResponseStatus(HttpStatus.OK)
+    public void purchaseTicket(@PathVariable Long id, @RequestParam Long userId) {
+        ticketService.purchaseTicket(userId, id);
     }
 }

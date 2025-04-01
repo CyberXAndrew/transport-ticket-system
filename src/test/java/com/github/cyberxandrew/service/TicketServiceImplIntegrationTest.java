@@ -26,6 +26,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -41,6 +42,7 @@ public class TicketServiceImplIntegrationTest {
     private Long availableTicketId;
     private Long unavailableTicketId;
     private Long idOfSavedTicket;
+    private Long userId;
 
     @BeforeEach
     public void setUp() {
@@ -48,6 +50,7 @@ public class TicketServiceImplIntegrationTest {
         idOfSavedTicket = 1L;
         availableTicketId = 1L;
         unavailableTicketId = 4L;
+        userId = 2L;
     }
 
     @Test
@@ -140,10 +143,11 @@ public class TicketServiceImplIntegrationTest {
     @Test
     public void testPurchaseTicket() { //FIX
 
-        boolean ticketAvailable = ticketService.isTicketAvailable(availableTicketId);
-        boolean ticketAvailable2 = ticketService.isTicketAvailable(unavailableTicketId);
+        ticketService.purchaseTicket(userId, availableTicketId);
 
-        assertTrue(ticketAvailable);
-        assertFalse(ticketAvailable2);
+        List<TicketDTO> tickets = ticketService.findAllPurchasedTickets(userId);
+        assertFalse(tickets.isEmpty());
+        assertEquals(1, tickets.size());
+        assertEquals(tickets.get(0).getUserId(), userId);
     }
 }

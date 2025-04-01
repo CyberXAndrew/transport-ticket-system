@@ -82,7 +82,7 @@ public class TicketControllerTest {
 
         when(ticketService.findAllPurchasedTickets(userId)).thenReturn(tickets);
 
-        mockMvc.perform(get("/api/tickets/purchased/{id}", userId))
+        mockMvc.perform(get("/api/tickets/purchased?userId=" + userId))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(content().json(objectMapper.writeValueAsString(tickets)));
@@ -167,10 +167,17 @@ public class TicketControllerTest {
 
     @Test
     public void testDelete() throws Exception {
-
         doNothing().when(ticketService).deleteTicket(ticketId1);
 
         mockMvc.perform(delete("/api/tickets/{id}", ticketId1))
                 .andExpect(status().isNoContent());
+    }
+
+    @Test
+    public void testPurchaseTicket() throws Exception {
+        doNothing().when(ticketService).purchaseTicket(userId, ticketId1);
+
+        mockMvc.perform(post("/api/tickets/{id}/purchase?userId=2", ticketId1))
+                .andExpect(status().isOk());
     }
 }

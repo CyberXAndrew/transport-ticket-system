@@ -41,8 +41,6 @@ import static org.mockito.Mockito.when;
 @SpringBootTest
 @ActiveProfiles("test")
 public class UserRepositoryImplTest {
-    @Mock
-    private Logger logger;
     @Mock private JdbcTemplate jdbcTemplate;
     @InjectMocks
     private UserRepositoryImpl userRepository;
@@ -132,7 +130,6 @@ public class UserRepositoryImplTest {
         assertEquals(savedUser, userToSave);
         verify(jdbcTemplate, times(1)).update(any(PreparedStatementCreator.class),
                 any(KeyHolder.class));
-//        verify(logger, times(1)).debug(anyString(), anyLong());
     }
 
     @Test
@@ -150,7 +147,6 @@ public class UserRepositoryImplTest {
         User updatedUser = userRepository.update(userToUpdate);
 
         assertEquals(userToUpdate, updatedUser);
-//        verify(logger, times(1)).debug(anyString(), anyLong());
     }
 
     @Test
@@ -166,7 +162,6 @@ public class UserRepositoryImplTest {
         when(jdbcTemplate.update(eq(sql), anyString(), anyString(), anyLong())).thenReturn(0);
 
         assertThrows(UserUpdateException.class, () -> userRepository.update(userToUpdate));
-//        verify(logger, times(1)).warn(anyString(), anyLong());
     }
 
     @Test
@@ -189,7 +184,6 @@ public class UserRepositoryImplTest {
         userRepository.deleteById(id1);
 
         verify(jdbcTemplate, times(1)).update(eq(sql2), eq(id1));
-//        verify(logger, times(1)).debug(anyString(), eq(userId));
     }
 
     @Test
@@ -204,7 +198,6 @@ public class UserRepositoryImplTest {
 
         assertThrows(UserNotFoundException.class, () -> userRepository.deleteById(nonExistingId));
         verify(jdbcTemplate, times(0)).update(eq(sql2), eq(nonExistingId));
-//        verify(logger, times(1)).warn(anyString(), anyLong());
     }
 
     @Test

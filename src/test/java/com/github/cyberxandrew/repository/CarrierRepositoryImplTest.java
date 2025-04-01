@@ -40,8 +40,6 @@ import static org.mockito.Mockito.when;
 @SpringBootTest
 @ActiveProfiles("test")
 class CarrierRepositoryImplTest {
-
-    @Mock private Logger logger;
     @Mock private JdbcTemplate jdbcTemplate;
     @Mock private CarrierRowMapper carrierRowMapper;
     @InjectMocks private CarrierRepositoryImpl carrierRepository;
@@ -123,7 +121,6 @@ class CarrierRepositoryImplTest {
         assertEquals(savedCarrier, carrierToSave);
         verify(jdbcTemplate, times(1)).update(any(PreparedStatementCreator.class),
                 any(KeyHolder.class));
-//        verify(logger, times(1)).debug(anyString(), anyLong());
     }
 
     @Test
@@ -140,7 +137,6 @@ class CarrierRepositoryImplTest {
         Carrier updatedCarrier = carrierRepository.update(carrierToUpdate);
 
         assertEquals(carrierToUpdate, updatedCarrier);
-//        verify(logger, times(1)).debug(anyString(), anyLong());
     }
 
     @Test
@@ -155,7 +151,6 @@ class CarrierRepositoryImplTest {
         when(jdbcTemplate.update(eq(sql), anyString(), anyString(), anyLong())).thenReturn(0);
 
         assertThrows(CarrierUpdateException.class, () -> carrierRepository.update(carrierToUpdate));
-//        verify(logger, times(1)).warn(anyString(), anyLong());
     }
 
     @Test
@@ -176,7 +171,6 @@ class CarrierRepositoryImplTest {
         carrierRepository.deleteById(carrierId1);
 
         verify(jdbcTemplate, times(1)).update(eq(sql2), eq(carrierId1));
-//        verify(logger, times(1)).debug(anyString(), eq(carrierId));
     }
 
     @Test
@@ -191,7 +185,6 @@ class CarrierRepositoryImplTest {
 
         assertThrows(CarrierNotFoundException.class, () -> carrierRepository.deleteById(nonExistingId));
         verify(jdbcTemplate, times(0)).update(eq(sql2), eq(nonExistingId));
-//        verify(logger, times(1)).warn(anyString(), anyLong());
     }
 
     @Test

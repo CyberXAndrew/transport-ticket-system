@@ -75,7 +75,7 @@ public class TicketServiceImpl implements TicketService {
 
     @Override
     @Transactional(readOnly = true)
-    public boolean isTicketAvailable(Long ticketId) {
-        return ticketRepository.isTicketAvailable(ticketId);
+    public void purchaseTicket(Long userId, Long ticketId) {
+        ticketRepository.purchaseTicket(userId, ticketId);
     }
 }

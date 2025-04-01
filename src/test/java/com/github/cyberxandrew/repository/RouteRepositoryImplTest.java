@@ -41,7 +41,6 @@ import static org.mockito.Mockito.when;
 @SpringBootTest
 @ActiveProfiles("test")
 class RouteRepositoryImplTest {
-    @Mock private Logger logger;
     @Mock private JdbcTemplate jdbcTemplate;
     @InjectMocks private RouteRepositoryImpl routeRepository;
 
@@ -126,7 +125,6 @@ class RouteRepositoryImplTest {
         assertEquals(savedRoute, routeToSave);
         verify(jdbcTemplate, times(1)).update(any(PreparedStatementCreator.class),
                 any(KeyHolder.class));
-//        verify(logger, times(1)).debug(anyString(), anyLong());
     }
 
     @Test
@@ -146,7 +144,6 @@ class RouteRepositoryImplTest {
         Route updatedRoute = routeRepository.update(routeToUpdate);
 
         assertEquals(routeToUpdate, updatedRoute);
-//        verify(logger, times(1)).debug(anyString(), anyLong());
     }
 
     @Test
@@ -164,7 +161,6 @@ class RouteRepositoryImplTest {
         when(jdbcTemplate.update(eq(sql), anyString(), anyString(), anyLong())).thenReturn(0);
 
         assertThrows(RouteUpdateException.class, () -> routeRepository.update(routeToUpdate));
-//        verify(logger, times(1)).warn(anyString(), anyLong());
     }
 
     @Test
@@ -188,7 +184,6 @@ class RouteRepositoryImplTest {
         routeRepository.deleteById(routeId1);
 
         verify(jdbcTemplate, times(1)).update(eq(sql2), eq(routeId1));
-//        verify(logger, times(1)).debug(anyString(), eq(routeId));
     }
 
     @Test
@@ -203,7 +198,6 @@ class RouteRepositoryImplTest {
 
         assertThrows(RouteNotFoundException.class, () -> routeRepository.deleteById(nonExistingId));
         verify(jdbcTemplate, times(0)).update(eq(sql2), eq(nonExistingId));
-//        verify(logger, times(1)).warn(anyString(), anyLong());
     }
 
     @Test

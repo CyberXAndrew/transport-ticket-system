@@ -28,8 +28,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static org.apache.logging.log4j.ThreadContext.isEmpty;
-
 @Repository
 public class TicketRepositoryImpl implements TicketRepository {
     private static final Logger logger = LoggerFactory.getLogger(TicketRepositoryImpl.class);
@@ -81,9 +79,7 @@ public class TicketRepositoryImpl implements TicketRepository {
             filtrationParams.add(pageSize);
             filtrationParams.add(offset);
         }
-        List<TicketWithRouteDataDTO> query = jdbcTemplate.query(sql.toString(), filtrationParams.toArray(), ticketDtoRowMapper);
-        return query;
-//        return jdbcTemplate.query(sql.toString(), filtrationParams.toArray(), ticketDtoRowMapper);
+        return jdbcTemplate.query(sql.toString(), filtrationParams.toArray(), ticketDtoRowMapper);
     }
 
     private void addFilter(StringBuilder sql, List<Object> filtrationParams, String columnName, Object filter) {
@@ -173,7 +169,7 @@ public class TicketRepositoryImpl implements TicketRepository {
 
     @Override
     @Transactional
-    public void purchaseTicket(Long userId, Long ticketId) { //Fix 1 method
+    public void purchaseTicket(Long userId, Long ticketId) {
         if (!isTicketAvailable(ticketId)) throw new TicketAvailabilityException(
                 "Ticket with id: " + ticketId + " already bought");
 
