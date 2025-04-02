@@ -7,3 +7,7 @@ springdoc:
     path: /swagger-ui.html
   api-docs:
     path: /v3/api-docs
+
+jwt:
+  secret: difficultjwtsecretkey #Это поле содержит секретный ключ, который используется для подписи JWT токенов
+  expiration: 3600000 #Это поле содержит время жизни jwt токена в миллисекундах
