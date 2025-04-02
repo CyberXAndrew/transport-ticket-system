@@ -5,6 +5,7 @@ import com.github.cyberxandrew.exception.carrier.CarrierHasRoutesException;
 import com.github.cyberxandrew.exception.carrier.CarrierNotFoundException;
 import com.github.cyberxandrew.exception.carrier.CarrierSaveException;
 import com.github.cyberxandrew.exception.carrier.CarrierUpdateException;
+import com.github.cyberxandrew.exception.route.RouteNotFoundException;
 import com.github.cyberxandrew.mapper.CarrierRowMapper;
 import com.github.cyberxandrew.model.Carrier;
 import org.slf4j.Logger;
@@ -34,10 +35,10 @@ public class CarrierRepositoryImpl implements CarrierRepository {
         if (carrierId == null) throw new NullPointerException("Carrier with id = null cannot be found in database");
         String sql = "SELECT * FROM carriers WHERE id = ?";
         try {
-            return Optional.of(jdbcTemplate.queryForObject(sql, new Object[]{carrierId}, carrierRowMapper));
+            return Optional.ofNullable(jdbcTemplate.queryForObject(sql, new Object[]{carrierId}, carrierRowMapper));
         } catch (EmptyResultDataAccessException ex) {
             logger.warn("Carrier with id {} not found", carrierId);
-            return Optional.empty();
+            throw new CarrierNotFoundException("Carrier was not found", ex);
         }
     }
 

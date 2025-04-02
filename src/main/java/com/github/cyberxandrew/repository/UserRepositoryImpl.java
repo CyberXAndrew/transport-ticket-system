@@ -1,5 +1,6 @@
 package com.github.cyberxandrew.repository;
 
+import com.github.cyberxandrew.exception.route.RouteNotFoundException;
 import com.github.cyberxandrew.exception.user.UserDeletionException;
 import com.github.cyberxandrew.exception.user.UserHasTicketsException;
 import com.github.cyberxandrew.exception.user.UserNotFoundException;
@@ -26,9 +27,8 @@ import java.util.Optional;
 @Repository
 public class UserRepositoryImpl implements UserRepository {
     private static final Logger logger = LoggerFactory.getLogger(UserRepositoryImpl.class);
-    @Autowired
-    private JdbcTemplate jdbcTemplate;
-    private RowMapper<User> userRowMapper = new BeanPropertyRowMapper<>(User.class);
+    private final RowMapper<User> userRowMapper = new BeanPropertyRowMapper<>(User.class);
+    @Autowired private JdbcTemplate jdbcTemplate;
 
     @Override
     @Transactional
@@ -36,10 +36,34 @@ public class UserRepositoryImpl implements UserRepository {
         if (userId == null) throw new NullPointerException("User with id = null cannot be found in database");
         String sql = "SELECT * FROM users WHERE id = ?";
         try {
-            return Optional.of(jdbcTemplate.queryForObject(sql, new Object[]{userId}, userRowMapper));
+            return Optional.ofNullable(jdbcTemplate.queryForObject(sql, new Object[]{userId}, userRowMapper));
         } catch (EmptyResultDataAccessException ex) {
             logger.warn("User with id {} not found", userId);
-            return Optional.empty();
+            throw new UserNotFoundException("User was not found", ex);
+        }
+    }
+
+    @Override
+    @Transactional
+    public Optional<User> findByLogin(String login) { //Fix No test
+        String sql = "SELECT * FROM users WHERE login = ?";
+        try {
+            return Optional.ofNullable(jdbcTemplate.queryForObject(sql, new Object[]{login}, userRowMapper));
+        } catch (DataAccessException ex) {
+            logger.error("User with login: {} not found", login);
+            throw new UserNotFoundException("Error while getting user by login", ex);
+        }
+    }
+
+    @Override
+    @Transactional
+    public boolean existsByLogin(String login) { //Fix No test
+        String sql = "SELECT EXISTS (SELECT * FROM users WHERE login = ?)";
+        try {
+            return Boolean.TRUE.equals(jdbcTemplate.queryForObject(sql, new Object[]{login}, Boolean.class));
+        } catch (DataAccessException ex) {
+            logger.error("Error while getting user with login: {}", login);
+            throw new UserNotFoundException("Error while getting user by login", ex);
         }
     }
 
@@ -69,7 +93,7 @@ public class UserRepositoryImpl implements UserRepository {
             user.setId(keyHolder.getKey().longValue());
             logger.debug("User with id: {} successfully created", user.getId());
             return user;
-        } catch (DataAccessException ex) {
+        } catch (NullPointerException | DataAccessException ex) {
             logger.error("Error while saving user: {}", user.toString());
             throw new UserSaveException("Error while saving user", ex);
         }

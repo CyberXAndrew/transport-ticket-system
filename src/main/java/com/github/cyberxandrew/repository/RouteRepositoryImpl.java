@@ -35,10 +35,10 @@ public class RouteRepositoryImpl implements RouteRepository {
         if (routeId == null) throw new NullPointerException("Route with id = null cannot be found in database");
         String sql = "SELECT * FROM routes WHERE id = ?";
         try {
-            return Optional.of(jdbcTemplate.queryForObject(sql, new Object[]{routeId}, routeRowMapper));
+            return Optional.ofNullable(jdbcTemplate.queryForObject(sql, new Object[]{routeId}, routeRowMapper));
         } catch (EmptyResultDataAccessException ex) {
             logger.warn("Route with id {} not found", routeId);
-            return Optional.empty();
+            throw new RouteNotFoundException("Route was not found", ex);
         }
     }
 

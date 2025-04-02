@@ -1,6 +1,7 @@
 package com.github.cyberxandrew.repository;
 
 import com.github.cyberxandrew.dto.ticket.TicketWithRouteDataDTO;
+import com.github.cyberxandrew.exception.route.RouteNotFoundException;
 import com.github.cyberxandrew.exception.ticket.TicketAvailabilityException;
 import com.github.cyberxandrew.exception.ticket.TicketDeletionException;
 import com.github.cyberxandrew.exception.ticket.TicketNotFoundException;
@@ -42,10 +43,10 @@ public class TicketRepositoryImpl implements TicketRepository {
         if (ticketId == null) throw new NullPointerException("Ticket with id = null cannot be found in database");
         String sql = "SELECT * FROM tickets WHERE id = ?";
         try {
-            return Optional.of(jdbcTemplate.queryForObject(sql, new Object[]{ticketId}, ticketRowMapper));
+            return Optional.ofNullable(jdbcTemplate.queryForObject(sql, new Object[]{ticketId}, ticketRowMapper));
         } catch (EmptyResultDataAccessException ex) {
             logger.warn("Ticket with id {} not found", ticketId);
-            return Optional.empty();
+            throw new TicketNotFoundException("Ticket was not found", ex);
         }
     }
 
