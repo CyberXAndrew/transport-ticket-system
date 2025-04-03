@@ -3,7 +3,6 @@ package com.github.cyberxandrew.security;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.io.Decoder;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
@@ -23,11 +22,11 @@ public class JwtTokenUtil {
     private String secret;
     @Value("${jwt.expiration}")
     private Long expiration;
-
+    // Извлекает имя пользователя из JWT токена
     public String extractLoginFromToken(String token) {
         return extractClaim(token, Claims::getSubject);
     }
-
+    // Извлекает дату истечения срока действия из JWT токена
     public Date extractExpirationFromToken(String  token) {
         return extractClaim(token, Claims::getExpiration);
     }
@@ -46,9 +45,9 @@ public class JwtTokenUtil {
     }
 
     private Key getSignInKey() { // Key представляет собой криптографический ключ, используемый для подписи и проверки JWT токенов
-        byte[] keyBytes = Decoders.BASE64.decode(secret);
-        SecretKey secretKey = Keys.hmacShaKeyFor(keyBytes); // преобразует наш секретный ключ (который хранится в виде строки в поле secret) в массив байтов.
-        return secretKey; //создает объект Key из массива байтов. Используется Keys.hmacShaKeyFor(), чтобы создать ключ для алгоритма HMAC-SHA который мы используем для подписи JWT токенов
+        byte[] keyBytes = Decoders.BASE64.decode(secret); // преобразует наш секретный ключ (который хранится в виде строки в поле secret) в массив байтов.
+        SecretKey secretKey = Keys.hmacShaKeyFor(keyBytes); //создает объект Key из массива байтов. Используется Keys.hmacShaKeyFor(), чтобы создать ключ для алгоритма HMAC-SHA который мы используем для подписи JWT токенов
+        return secretKey;
     }
 
     private boolean isTokenExpired(String token) {
@@ -56,11 +55,7 @@ public class JwtTokenUtil {
         boolean expired = date.before(new Date()); //Сравнивает дату истечения срока действия токена с текущей датой и временем
         return expired;
     }
-
-    public String generateToken(UserDetails userDetails) {
-        return generateToken(new HashMap<>(), userDetails);
-    }
-
+    // Генерирует токен JWT
     public String generateToken(Map<String, Object> extraClaims, UserDetails userDetails) {
         return Jwts.builder() //Создает объект JwtBuilder, который используется для создания JWT токенов
                 .setClaims(extraClaims) //Устанавливает дополнительные утверждения (claims) для JWT токена
@@ -71,6 +66,10 @@ public class JwtTokenUtil {
                 .compact();
     }
 
+    public String generateToken(UserDetails userDetails) {
+        return generateToken(new HashMap<>(), userDetails);
+    }
+    //Валидирует токен, проверяя имя пользователя и срок действия.
     public boolean isTokenValid(String token, UserDetails userDetails) {
         String login = extractLoginFromToken(token);  // извлекаем имя пользователя из JWT токена
         return login.equals(userDetails.getUsername()) && !isTokenExpired(token);
