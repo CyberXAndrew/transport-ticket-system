@@ -1,6 +1,9 @@
 spring:
   profiles:
     active: dev
+  h2:
+    console:
+      enabled: true
 
 springdoc:
   swagger-ui:
@@ -11,3 +14,9 @@ springdoc:
 jwt:
   secret: difficultjwtsecretkey #Это поле содержит секретный ключ, который используется для подписи JWT токенов
   expiration: 3600000 #Это поле содержит время жизни jwt токена в миллисекундах
+
+logging:
+  level:
+    org:
+      springframework:
+        security: DEBUG

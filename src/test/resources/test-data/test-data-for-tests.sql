@@ -16,9 +16,10 @@ INSERT INTO routes (departure_point, destination_point, carrier_id, duration) VA
 ('Moscow', 'Vienna', 3, 190);
 
 INSERT INTO users (login, password, full_name) VALUES
-('login1', 'password1', 'Medvedeva Alisa Ivanovna'),
+('test', '$2a$10$05TlmruwMmySi69dhLf3DO4CAwDKT9QilDam59T21YWZu7NlyQhZy', 'Medvedeva Alisa Ivanovna'),
 ('login2', 'password2', 'Rodionova Sophia Dmitrievna'),
 ('login3', 'password3', 'Romanov Andrey Vladimirovich');
+('test', '$2a$10$OkrDF96TSeN9m2WlGPNcm.zYKLeFfb4iB8sn3xC3Ac5eHQzOGAJvG', 'a b c');
 
 INSERT INTO tickets (date_time, user_id, route_id, price, seat_number) VALUES
 ('2025-03-17T10:20:30.123456789', NULL, 1, 10.0, '1A'),
