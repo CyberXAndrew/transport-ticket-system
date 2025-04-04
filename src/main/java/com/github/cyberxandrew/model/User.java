@@ -12,4 +12,5 @@ public class User {
     private String password;
     @NotBlank
     private String fullName;
+    private String role;
 }

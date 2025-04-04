@@ -7,11 +7,24 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping(path = "/welcome")
+//@RequestMapping(path = "/welcome")
 public class WelcomeController {
-    @GetMapping
+
+    @GetMapping(path = "/welcome")
     @ResponseStatus(HttpStatus.OK)
     public String welcome() {
         return "Hello!";
+    }
+
+    @GetMapping(path = "/welcome/protected")
+    @ResponseStatus(HttpStatus.OK)
+    public String welcomeProtected() {
+        return "Hello, protected world!";
+    }
+
+    @GetMapping(path = "/welcome/admin")
+    @ResponseStatus(HttpStatus.OK)
+    public String admin() {
+        return "This is admin page!";
     }
 }
