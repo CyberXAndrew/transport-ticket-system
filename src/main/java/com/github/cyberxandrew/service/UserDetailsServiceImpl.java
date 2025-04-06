@@ -1,6 +1,7 @@
 package com.github.cyberxandrew.service;
 
 import com.github.cyberxandrew.model.User;
+import com.github.cyberxandrew.model.UserDetailsImpl;
 import com.github.cyberxandrew.repository.UserRepositoryImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -21,9 +22,9 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         User user = userRepository.findByLogin(login).orElseThrow(() ->
                 new UsernameNotFoundException("User with login: " + login + " not found"));
 
-        org.springframework.security.core.userdetails.User user1 = new org.springframework.security.core.userdetails.User(user.getLogin(), user.getPassword(),
+        UserDetailsImpl userDetails =
+                new UserDetailsImpl(user.getId(), user.getLogin(), user.getPassword(),
                 List.of(new SimpleGrantedAuthority("ROLE_" + user.getRole())));
-        System.out.println("======\n" + user1 + "\n------");//TEMP COMMENT
-        return user1;
+        return userDetails;
     }
 }

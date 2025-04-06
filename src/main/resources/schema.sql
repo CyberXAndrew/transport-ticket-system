@@ -2,6 +2,7 @@ DROP TABLE IF EXISTS tickets;
 DROP TABLE IF EXISTS routes;
 DROP TABLE IF EXISTS users;
 DROP TABLE IF EXISTS carriers;
+DROP TABLE IF EXISTS refresh_tokens;
 
 CREATE TABLE carriers (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
@@ -35,6 +36,14 @@ CREATE TABLE tickets (
     seat_number VARCHAR(20) NOT NULL,
     FOREIGN KEY (user_id) REFERENCES users(id),
     FOREIGN KEY (route_id) REFERENCES routes(id)
+);
+
+CREATE TABLE refresh_tokens (
+    id UUID PRIMARY KEY, -- DEFAULT DEFAULT UUID_GENERATE_V4(),
+    user_id BIGINT NOT NULL,
+    token VARCHAR (255) NOT NULL UNIQUE,
+    expiry TIMESTAMP NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES users(id)
 );
 
 INSERT INTO carriers (name, phone_number) VALUES

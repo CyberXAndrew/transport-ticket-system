@@ -27,4 +27,5 @@ public class WelcomeController {
     public String admin() {
         return "This is admin page!";
     }
+
 }
