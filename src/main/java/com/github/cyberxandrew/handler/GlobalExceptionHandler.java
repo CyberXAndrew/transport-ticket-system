@@ -1,6 +1,8 @@
 package com.github.cyberxandrew.handler;
 
 import com.github.cyberxandrew.dto.CustomValidationViolationResponse;
+import com.github.cyberxandrew.exception.JwtRequestFilterException;
+import com.github.cyberxandrew.exception.user.UserNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +17,7 @@ import java.util.List;
 @ControllerAdvice
 public class GlobalExceptionHandler {
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSSSSS");
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<CustomValidationViolationResponse> handleMethodArgumentNotValidException(
             MethodArgumentNotValidException ex, HttpServletRequest request) {
@@ -32,5 +35,15 @@ public class GlobalExceptionHandler {
                 ex.getClass().getName()
         );
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(customResponse);
+    }
+
+    @ExceptionHandler(UserNotFoundException.class)
+    public ResponseEntity<String> handleUserNotFoundException(UserNotFoundException ex) {
+        return ResponseEntity.status(404).body(ex.getMessage());
+    }
+
+    @ExceptionHandler(JwtRequestFilterException.class)
+    public ResponseEntity<String> handleUserNotFoundException(JwtRequestFilterException ex) {
+        return ResponseEntity.status(401).body(ex.getMessage());
     }
 }
