@@ -5,7 +5,6 @@ import com.github.cyberxandrew.exception.carrier.CarrierHasRoutesException;
 import com.github.cyberxandrew.exception.carrier.CarrierNotFoundException;
 import com.github.cyberxandrew.exception.carrier.CarrierSaveException;
 import com.github.cyberxandrew.exception.carrier.CarrierUpdateException;
-import com.github.cyberxandrew.exception.route.RouteNotFoundException;
 import com.github.cyberxandrew.mapper.CarrierRowMapper;
 import com.github.cyberxandrew.model.Carrier;
 import org.slf4j.Logger;
