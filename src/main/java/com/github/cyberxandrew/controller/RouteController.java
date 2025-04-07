@@ -8,6 +8,7 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -39,18 +40,21 @@ public class RouteController {
                 .body(allRoutes);
     }
 
+    @Secured({ "ROLE_ADMIN" })
     @PostMapping(path = "")
     @ResponseStatus(HttpStatus.CREATED)
     public RouteDTO create(@Valid @RequestBody RouteCreateDTO createDTO) {
         return routeService.saveRoute(createDTO);
     }
 
+    @Secured({ "ROLE_ADMIN" })
     @PutMapping(path = "/{id}")
     @ResponseStatus(HttpStatus.OK)
     public RouteDTO update(@Valid @RequestBody RouteUpdateDTO updateDTO, @PathVariable Long id) {
         return routeService.updateRoute(updateDTO, id);
     }
 
+    @Secured({ "ROLE_ADMIN" })
     @DeleteMapping(path = "/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable Long id) {

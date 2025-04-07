@@ -12,6 +12,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -59,27 +60,30 @@ public class TicketController {
                 .body(allAccessibleTickets);
     }
 
+    @PostMapping(path = "/{id}/purchase")
+    @ResponseStatus(HttpStatus.OK)
+    public void purchaseTicket(@PathVariable Long id, @RequestParam Long userId) {
+        ticketService.purchaseTicket(userId, id);
+    }
+
+    @Secured({ "ROLE_ADMIN" })
     @PostMapping(path = "")
     @ResponseStatus(HttpStatus.CREATED)
     public TicketDTO create(@Valid @RequestBody TicketCreateDTO ticketCreateDTO) {
         return ticketService.saveTicket(ticketCreateDTO);
     }
 
+    @Secured({ "ROLE_ADMIN" })
     @PutMapping(path = "/{id}")
     @ResponseStatus(HttpStatus.OK)
     public TicketDTO update(@Valid @RequestBody TicketUpdateDTO updateDTO, @PathVariable Long id) {
         return ticketService.updateTicket(updateDTO, id);
     }
 
+    @Secured({ "ROLE_ADMIN" })
     @DeleteMapping(path = "/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable Long id) {
         ticketService.deleteTicket(id);
-    }
-
-    @PostMapping(path = "/{id}/purchase")
-    @ResponseStatus(HttpStatus.OK)
-    public void purchaseTicket(@PathVariable Long id, @RequestParam Long userId) {
-        ticketService.purchaseTicket(userId, id);
     }
 }
