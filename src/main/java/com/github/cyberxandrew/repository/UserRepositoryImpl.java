@@ -77,8 +77,8 @@ public class UserRepositoryImpl implements UserRepository {
     @Override
     @Transactional
     public User save(User user) {
-        String sql = "INSERT INTO users (login, password, full_name)" +
-                " VALUES (?, ?, ?)";
+        String sql = "INSERT INTO users (login, password, full_name, role)" +
+                " VALUES (?, ?, ?, ?)";
         try {
             KeyHolder keyHolder = new GeneratedKeyHolder();
 
@@ -87,6 +87,7 @@ public class UserRepositoryImpl implements UserRepository {
                 preparedStatement.setString(1, user.getLogin());
                 preparedStatement.setString(2, user.getPassword());
                 preparedStatement.setString(3, user.getFullName());
+                preparedStatement.setString(4, user.getRole().toUpperCase());
                 return preparedStatement;
             }, keyHolder);
 
@@ -103,10 +104,10 @@ public class UserRepositoryImpl implements UserRepository {
     @Transactional
     public User update(User user) {
         try {
-            String sql = "UPDATE users SET login = ?, password = ?, full_name = ?" +
+            String sql = "UPDATE users SET login = ?, password = ?, full_name = ?, role = ?" +
                     " WHERE id = ?";
             int updated = jdbcTemplate.update(sql, user.getLogin(), user.getPassword(),
-                    user.getFullName(), user.getId());
+                    user.getFullName(), user.getRole().toUpperCase(), user.getId());
             if (updated > 0) {
                 logger.debug("Updating user with id: {} is successful", user.getId());
             } else {

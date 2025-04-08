@@ -12,11 +12,13 @@ import java.io.IOException;
 @Component
 public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
     @Override
-    public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
+    public void commence(HttpServletRequest request, HttpServletResponse response,
+                         AuthenticationException authException) throws IOException, ServletException {
+
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         response.setContentType("application/json");
-        String json = String.format("{\"status\": 401, \"error\": \"Unathorized\", \"message\": \"%s\"}",
-                authException.getMessage());
+        String json = String.format("{\"status\": %d, \"error\": \"Unauthorized\", \"message\": \"%s\", \"path\": " +
+                "\"%s\"}", HttpServletResponse.SC_UNAUTHORIZED, authException.getMessage(), request.getRequestURI());
         response.getWriter().write(json);
     }
 }

@@ -1,7 +1,6 @@
 package com.github.cyberxandrew.handler;
 
 import com.github.cyberxandrew.dto.CustomValidationViolationResponse;
-import com.github.cyberxandrew.exception.JwtRequestFilterException;
 import com.github.cyberxandrew.exception.user.UserNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
@@ -40,10 +39,5 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(UserNotFoundException.class)
     public ResponseEntity<String> handleUserNotFoundException(UserNotFoundException ex) {
         return ResponseEntity.status(404).body(ex.getMessage());
-    }
-
-    @ExceptionHandler(JwtRequestFilterException.class)
-    public ResponseEntity<String> handleUserNotFoundException(JwtRequestFilterException ex) {
-        return ResponseEntity.status(401).body(ex.getMessage());
     }
 }

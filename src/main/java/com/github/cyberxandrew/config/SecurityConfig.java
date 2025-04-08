@@ -1,17 +1,17 @@
 package com.github.cyberxandrew.config;
 
+import com.github.cyberxandrew.security.AuthorizationAccessDeniedHandler;
+import com.github.cyberxandrew.security.JwtAuthenticationEntryPoint;
 import com.github.cyberxandrew.security.JwtRequestFilter;
 import com.github.cyberxandrew.service.UserDetailsServiceImpl;
-import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.io.Encoders;
-import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -22,17 +22,17 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-
-import java.security.Key;
-
-import static org.springframework.security.config.Customizer.withDefaults;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
+@EnableGlobalMethodSecurity(securedEnabled = true)
 public class SecurityConfig {
-    @Autowired private UserDetailsServiceImpl userDetailsService;
     @Autowired private JwtRequestFilter jwtRequestFilter;
+    @Autowired private UserDetailsServiceImpl userDetailsService;
+    @Autowired private JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
+    @Autowired private AuthorizationAccessDeniedHandler authorizationAccessDeniedHandler;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -46,9 +46,6 @@ public class SecurityConfig {
 //            System.out.println("Захешированный пароль: " + encodedPassword);
 //        };
 //    }
-//    insert into users (login, password, full_name) values ('test', '$2a$10$NaNZ9Cbjlwrc2E4dVKgTveTvJjtmBIXv2zXY36E1PvPumWyKJ.zTa', 'a b c');
-//    select * from users;
-
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -57,14 +54,17 @@ public class SecurityConfig {
                 .headers(httpSecurityHeadersConfigurer -> {
                     httpSecurityHeadersConfigurer.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable);
                 }) // h2-console frames
+                .exceptionHandling(exceptionHandling -> exceptionHandling
+                        .accessDeniedHandler(authorizationAccessDeniedHandler)
+                        .authenticationEntryPoint(jwtAuthenticationEntryPoint))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/error").permitAll()
-                        .requestMatchers("/authenticate").permitAll()
+                        .requestMatchers("/authenticate", "/refresh-token").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/tickets").hasRole("ADMIN")
                         .requestMatchers("/welcome/admin").hasRole("ADMIN")
                         .anyRequest().authenticated())
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .sessionManagement(session -> session
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class)
-                .httpBasic(withDefaults())
                 .authenticationProvider(authenticationProvider())
                 .build();
     }
