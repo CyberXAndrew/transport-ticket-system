@@ -15,14 +15,15 @@ INSERT INTO routes (departure_point, destination_point, carrier_id, duration) VA
 ('Tokyo', 'Moscow', 2, 420),
 ('Moscow', 'Vienna', 3, 190);
 
-INSERT INTO users (login, password, full_name) VALUES
-('test', '$2a$10$05TlmruwMmySi69dhLf3DO4CAwDKT9QilDam59T21YWZu7NlyQhZy', 'Medvedeva Alisa Ivanovna'),
-('login2', 'password2', 'Rodionova Sophia Dmitrievna'),
-('login3', 'password3', 'Romanov Andrey Vladimirovich');
-('test', '$2a$10$OkrDF96TSeN9m2WlGPNcm.zYKLeFfb4iB8sn3xC3Ac5eHQzOGAJvG', 'a b c');
+INSERT INTO users (login, password, full_name, role) VALUES
+('login1', 'password1', 'Medvedeva Alisa Ivanovna', 'CUSTOMER'),
+('login2', 'password2', 'Rodionova Sophia Dmitrievna', 'CUSTOMER'),
+('login3', 'password3', 'Romanov Andrey Vladimirovich', 'CUSTOMER'),
+('test', '$2a$10$dm.JAkD.U.zcdRRQbyPnDeDCLSGooNspzAkp2o.j2b4xTeJ67YEie', 'Administrator Test Entity', 'ADMIN'),
+('user', '$2a$10$dm.JAkD.U.zcdRRQbyPnDeDCLSGooNspzAkp2o.j2b4xTeJ67YEie', 'Customer Test Entity', 'CUSTOMER');
 
 INSERT INTO tickets (date_time, user_id, route_id, price, seat_number) VALUES
-('2025-03-17T10:20:30.123456789', NULL, 1, 10.0, '1A'),
+('2025-03-17T10:20:30.123456789', NULL, 5, 10.0, '1A'),
 ('2025-05-19T15:25:10.123456789', NULL, 5, 10.0, '2B'),
 ('2025-05-19T15:25:10.123456789', NULL, 3, 10.0, '2B'),
 ('2025-04-18T20:10:30.123456789', 1, 4, 11.0, '1A');

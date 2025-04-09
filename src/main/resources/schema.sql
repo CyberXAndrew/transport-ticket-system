@@ -1,8 +1,8 @@
+DROP TABLE IF EXISTS refresh_tokens;
 DROP TABLE IF EXISTS tickets;
 DROP TABLE IF EXISTS routes;
 DROP TABLE IF EXISTS users;
 DROP TABLE IF EXISTS carriers;
-DROP TABLE IF EXISTS refresh_tokens;
 
 CREATE TABLE carriers (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
@@ -39,7 +39,7 @@ CREATE TABLE tickets (
 );
 
 CREATE TABLE refresh_tokens (
-    id UUID PRIMARY KEY, -- DEFAULT DEFAULT UUID_GENERATE_V4(),
+    id UUID PRIMARY KEY,
     user_id BIGINT NOT NULL,
     token VARCHAR (255) NOT NULL UNIQUE,
     expiry TIMESTAMP NOT NULL,
@@ -67,8 +67,8 @@ INSERT INTO users (login, password, full_name, role) VALUES
 ('login1', 'password1', 'Medvedeva Alisa Ivanovna', 'CUSTOMER'),
 ('login2', 'password2', 'Rodionova Sophia Dmitrievna', 'CUSTOMER'),
 ('login3', 'password3', 'Romanov Andrey Vladimirovich', 'CUSTOMER'),
-('test', '$2a$10$dm.JAkD.U.zcdRRQbyPnDeDCLSGooNspzAkp2o.j2b4xTeJ67YEie', 'a b c', 'ADMIN'),
-('user', '$2a$10$dm.JAkD.U.zcdRRQbyPnDeDCLSGooNspzAkp2o.j2b4xTeJ67YEie', 'Simple User Test', 'CUSTOMER');
+('test', '$2a$10$dm.JAkD.U.zcdRRQbyPnDeDCLSGooNspzAkp2o.j2b4xTeJ67YEie', 'Administrator Test Entity', 'ADMIN'),
+('user', '$2a$10$dm.JAkD.U.zcdRRQbyPnDeDCLSGooNspzAkp2o.j2b4xTeJ67YEie', 'Customer Test Entity', 'CUSTOMER');
 
 INSERT INTO tickets (date_time, user_id, route_id, price, seat_number) VALUES
 ('2025-03-17T10:20:30.123456789', NULL, 5, 10.0, '1A'),

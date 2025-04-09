@@ -4,9 +4,17 @@ spring:
     username: sa
     password: ""
     driver-class-name: org.h2.Driver
+#    continue-on-error: true
 
 logging:
   level:
     repository:
       TicketRepositoryImpl: DEBUG
     root: INFO
+    org:
+      hibernate:
+        SQL: DEBUG
+        type:
+          descriptor:
+            sql:
+              BasicBinder: TRACE

@@ -1,3 +1,4 @@
+DROP TABLE IF EXISTS refresh_tokens;
 DROP TABLE IF EXISTS tickets;
 DROP TABLE IF EXISTS routes;
 DROP TABLE IF EXISTS users;
@@ -22,7 +23,8 @@ CREATE TABLE users (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     login VARCHAR (255) NOT NULL UNIQUE,
     password VARCHAR (255) NOT NULL,
-    full_name VARCHAR (255) NOT NULL
+    full_name VARCHAR (255) NOT NULL,
+    role VARCHAR (255)
 );
 
 CREATE TABLE tickets (
@@ -34,4 +36,12 @@ CREATE TABLE tickets (
     seat_number VARCHAR(20) NOT NULL,
     FOREIGN KEY (user_id) REFERENCES users(id),
     FOREIGN KEY (route_id) REFERENCES routes(id)
+);
+
+CREATE TABLE refresh_tokens (
+    id UUID PRIMARY KEY,
+    user_id BIGINT NOT NULL,
+    token VARCHAR (255) NOT NULL UNIQUE,
+    expiry TIMESTAMP NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES users(id)
 );
