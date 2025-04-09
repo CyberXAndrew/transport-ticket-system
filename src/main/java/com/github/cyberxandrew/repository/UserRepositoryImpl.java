@@ -1,6 +1,5 @@
 package com.github.cyberxandrew.repository;
 
-import com.github.cyberxandrew.exception.route.RouteNotFoundException;
 import com.github.cyberxandrew.exception.user.UserDeletionException;
 import com.github.cyberxandrew.exception.user.UserHasTicketsException;
 import com.github.cyberxandrew.exception.user.UserNotFoundException;
@@ -10,6 +9,7 @@ import com.github.cyberxandrew.model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Primary;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
@@ -129,8 +129,8 @@ public class UserRepositoryImpl implements UserRepository {
         try {
             Optional<User> user = findById(userId);
             if (user.isEmpty()) {
-                logger.warn("User with id: {} not found", userId);
-                throw new UserNotFoundException("User not found while deletion");
+                logger.warn("User with id: {} cannot be mapped from database", userId);
+                throw new UserNotFoundException("User cannot be mapped from database while deletion");
             }
             String sql = "DELETE FROM users WHERE id = ?";
             jdbcTemplate.update(sql, userId);

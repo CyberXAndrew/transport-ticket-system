@@ -1,6 +1,7 @@
 package com.github.cyberxandrew.repository;
 
 import com.github.cyberxandrew.dto.ticket.TicketWithRouteDataDTO;
+import com.github.cyberxandrew.exception.carrier.CarrierNotFoundException;
 import com.github.cyberxandrew.exception.ticket.TicketAvailabilityException;
 import com.github.cyberxandrew.exception.ticket.TicketDeletionException;
 import com.github.cyberxandrew.exception.ticket.TicketNotFoundException;
@@ -91,8 +92,7 @@ public class TicketRepositoryImplTest {
         when(jdbcTemplate.queryForObject(eq(sql), eq(new Object[]{testTicketId}), any(TicketRowMapper.class)))
                 .thenThrow(new EmptyResultDataAccessException(1));
 
-        Optional<Ticket> actual = ticketRepository.findById(testTicketId);
-        assertTrue(actual.isEmpty());
+        assertThrows(TicketNotFoundException.class, () -> ticketRepository.findById(testTicketId));
     }
 
     @Test

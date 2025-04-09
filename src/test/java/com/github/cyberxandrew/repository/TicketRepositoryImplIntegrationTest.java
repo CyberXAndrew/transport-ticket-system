@@ -51,15 +51,13 @@ public class TicketRepositoryImplIntegrationTest {
 
         ticketRepository.deleteById(savedTicket.getId());
 
-        Optional<Ticket> ticketOptional = ticketRepository.findById(savedTicket.getId());
-        assertTrue(ticketOptional.isEmpty());
+        assertThrows(TicketNotFoundException.class, () -> ticketRepository.findById(savedTicket.getId()));
+
     }
 
     @Test
     @Transactional
     public void testDeleteByIdFailed() {
-        Optional<Ticket> ticketOptional = ticketRepository.findById(NOT_EXISTING_ID);
-        assertTrue(ticketOptional.isEmpty());
         assertThrows(TicketNotFoundException.class,
                 () -> ticketRepository.deleteById(NOT_EXISTING_ID));
     }

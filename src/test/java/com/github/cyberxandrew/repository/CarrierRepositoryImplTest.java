@@ -83,8 +83,7 @@ class CarrierRepositoryImplTest {
         when(jdbcTemplate.queryForObject(eq(sql), eq(new Object[]{carrierId1}), any(CarrierRowMapper.class)))
                 .thenThrow(new EmptyResultDataAccessException(1));
 
-        Optional<Carrier> actual = carrierRepository.findById(carrierId1);
-        assertTrue(actual.isEmpty());
+        assertThrows(CarrierNotFoundException.class, () -> carrierRepository.findById(carrierId1));
     }
 
     @Test

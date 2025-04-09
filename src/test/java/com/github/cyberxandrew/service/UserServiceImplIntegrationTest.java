@@ -6,6 +6,7 @@ import com.github.cyberxandrew.dto.user.UserUpdateDTO;
 import com.github.cyberxandrew.exception.user.UserHasTicketsException;
 import com.github.cyberxandrew.exception.user.UserNotFoundException;
 import com.github.cyberxandrew.exception.user.UserSaveException;
+import com.github.cyberxandrew.model.Role;
 import com.github.cyberxandrew.utils.UserFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -104,6 +105,7 @@ public class UserServiceImplIntegrationTest {
         createDTO.setLogin(login);
         createDTO.setPassword(password);
         createDTO.setFullName(fullName);
+        createDTO.setRole(Role.CUSTOMER);
 
         UserDTO savedUserDTO = userService.saveUser(createDTO);
 

@@ -1,12 +1,21 @@
 package com.github.cyberxandrew.handler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.cyberxandrew.config.JacksonConfig;
+import com.github.cyberxandrew.config.SecurityConfig;
 import com.github.cyberxandrew.controller.TicketController;
 import com.github.cyberxandrew.dto.ticket.TicketCreateDTO;
+import com.github.cyberxandrew.mapper.CarrierMapperImpl;
+import com.github.cyberxandrew.mapper.JsonNullableMapperImpl;
+import com.github.cyberxandrew.repository.UserRepository;
+import com.github.cyberxandrew.repository.UserRepositoryImplTest;
+import com.github.cyberxandrew.security.JwtRequestFilter;
 import com.github.cyberxandrew.service.TicketServiceImpl;
+import com.github.cyberxandrew.service.UserDetailsServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
@@ -15,12 +24,15 @@ import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(TicketController.class)
 @ActiveProfiles("test")
+@Import({CarrierMapperImpl.class, JsonNullableMapperImpl.class, JacksonConfig.class, UserDetailsServiceImpl.class,
+        JwtRequestFilter.class, UserRepositoryImplTest.class, UserRepository.class, SecurityConfig.class})
 public class GlobalExceptionHandlerTest {
     @Autowired MockMvc mockMvc;
     @Autowired Validator validator;
@@ -38,7 +50,7 @@ public class GlobalExceptionHandlerTest {
         Errors errors = new BeanPropertyBindingResult(violatedCreateDTO, "violatedCreateDTO");
         validator.validate(violatedCreateDTO, errors);
 
-        mockMvc.perform(post("/api/tickets")
+        mockMvc.perform(post("/api/tickets").with(user("test").password("test").roles("ADMIN"))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(violatedCreateDTO)))
                 .andExpect(status().isBadRequest())

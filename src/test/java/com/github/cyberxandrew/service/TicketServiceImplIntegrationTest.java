@@ -73,7 +73,7 @@ public class TicketServiceImplIntegrationTest {
 
         assertFalse(ticketList.isEmpty());
         assertEquals(1, ticketList.size());
-        assertEquals(ticketList.get(0), savedTicketDTO);
+        assertEquals(ticketList.getFirst(), savedTicketDTO);
     }
 
     @Test
@@ -87,9 +87,9 @@ public class TicketServiceImplIntegrationTest {
 
         assertFalse(allAccessibleTickets.isEmpty());
         assertEquals(pageSize, allAccessibleTickets.size());
-        assertEquals("Saints-Petersburg", allAccessibleTickets.get(0).getDeparturePoint());
-        assertEquals("Moscow", allAccessibleTickets.get(0).getDestinationPoint());
-        assertEquals("J7", allAccessibleTickets.get(0).getCarrierName());
+        assertEquals("Saints-Petersburg", allAccessibleTickets.getFirst().getDeparturePoint());
+        assertEquals("Moscow", allAccessibleTickets.getFirst().getDestinationPoint());
+        assertEquals("J7", allAccessibleTickets.getFirst().getCarrierName());
     }
 
     @Test
@@ -148,6 +148,6 @@ public class TicketServiceImplIntegrationTest {
         List<TicketDTO> tickets = ticketService.findAllPurchasedTickets(userId);
         assertFalse(tickets.isEmpty());
         assertEquals(1, tickets.size());
-        assertEquals(tickets.get(0).getUserId(), userId);
+        assertEquals(tickets.getFirst().getUserId(), userId);
     }
 }

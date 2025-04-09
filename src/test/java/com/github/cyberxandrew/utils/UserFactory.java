@@ -3,6 +3,7 @@ package com.github.cyberxandrew.utils;
 import com.github.cyberxandrew.dto.user.UserCreateDTO;
 import com.github.cyberxandrew.dto.user.UserDTO;
 import com.github.cyberxandrew.dto.user.UserUpdateDTO;
+import com.github.cyberxandrew.model.Role;
 import com.github.cyberxandrew.model.User;
 import org.openapitools.jackson.nullable.JsonNullable;
 
@@ -37,6 +38,7 @@ public class UserFactory {
         userCreateDTO.setLogin(login);
         userCreateDTO.setPassword(password);
         userCreateDTO.setFullName(fullName);
+        userCreateDTO.setRole(Role.CUSTOMER);
 
         return userCreateDTO;
     }

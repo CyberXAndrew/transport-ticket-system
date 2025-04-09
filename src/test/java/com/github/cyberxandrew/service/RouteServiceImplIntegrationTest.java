@@ -35,6 +35,7 @@ public class RouteServiceImplIntegrationTest {
 
     private Long absentId;
     private Long idOfSavedRoute;
+    private Long idOfBoundedWithTicketsRoute;
     private String departurePoint;
     private String destinationPoint;
     private Long carrierId;
@@ -44,6 +45,7 @@ public class RouteServiceImplIntegrationTest {
     public void setUp() {
         absentId = 999L;
         idOfSavedRoute = 1L;
+        idOfBoundedWithTicketsRoute = 5L;
         departurePoint = "NY";
         destinationPoint = "Madrid";
         carrierId = 2L;
@@ -100,7 +102,7 @@ public class RouteServiceImplIntegrationTest {
 
     @Test
     public void deleteBoundedWithTicketsRoute() {
-        assertThrows(RouteHasTicketsException.class, () -> routeService.deleteRoute(idOfSavedRoute));
+        assertThrows(RouteHasTicketsException.class, () -> routeService.deleteRoute(idOfBoundedWithTicketsRoute));
     }
 
     @Test

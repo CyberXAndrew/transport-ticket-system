@@ -1,5 +1,6 @@
 package com.github.cyberxandrew.repository;
 
+import com.github.cyberxandrew.exception.carrier.CarrierNotFoundException;
 import com.github.cyberxandrew.exception.user.UserDeletionException;
 import com.github.cyberxandrew.exception.user.UserNotFoundException;
 import com.github.cyberxandrew.exception.user.UserUpdateException;
@@ -92,8 +93,7 @@ public class UserRepositoryImplTest {
         when(jdbcTemplate.queryForObject(eq(sql), eq(new Object[]{id1}), any(RowMapper.class)))
                 .thenThrow(new EmptyResultDataAccessException(1));
 
-        Optional<User> actual = userRepository.findById(id1);
-        assertTrue(actual.isEmpty());
+        assertThrows(UserNotFoundException.class, () -> userRepository.findById(id1));
     }
 
     @Test
@@ -134,15 +134,17 @@ public class UserRepositoryImplTest {
 
     @Test
     public void testUpdateUserSuccessful() {
-        String sql = "UPDATE users SET login = ?, password = ?, full_name = ? WHERE id = ?";
+        String sql = "UPDATE users SET login = ?, password = ?, full_name = ?, role = ? WHERE id = ?";
 
         User userToUpdate = new User();
         userToUpdate.setId(id1);
         userToUpdate.setLogin(login1);
         userToUpdate.setPassword(password1);
         userToUpdate.setFullName(fullName1);
+        userToUpdate.setRole("CUSTOMER");
 
-        when(jdbcTemplate.update(eq(sql), anyString(), anyString(), anyString(), anyLong())).thenReturn(1);
+        when(jdbcTemplate.update(eq(sql), anyString(), anyString(), anyString(), anyString(), anyLong()))
+                .thenReturn(1);
 
         User updatedUser = userRepository.update(userToUpdate);
 
@@ -151,15 +153,17 @@ public class UserRepositoryImplTest {
 
     @Test
     public void testUpdateUserFailed() {
-        String sql = "UPDATE users SET login = ?, password = ?, full_name = ? WHERE id = ?";
+        String sql = "UPDATE users SET login = ?, password = ?, full_name = ?, role = ? WHERE id = ?";
 
         User userToUpdate = new User();
         userToUpdate.setId(id1);
         userToUpdate.setLogin(login1);
         userToUpdate.setPassword(password1);
         userToUpdate.setFullName(fullName1);
+        userToUpdate.setRole("CUSTOMER");
 
-        when(jdbcTemplate.update(eq(sql), anyString(), anyString(), anyLong())).thenReturn(0);
+        when(jdbcTemplate.update(eq(sql), anyString(), anyString(), anyString(), anyString(), anyLong()))
+                .thenReturn(0);
 
         assertThrows(UserUpdateException.class, () -> userRepository.update(userToUpdate));
     }

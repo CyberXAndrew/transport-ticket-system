@@ -156,8 +156,8 @@ public class TicketRepositoryImpl implements TicketRepository {
         try {
             Optional<Ticket> ticket = findById(ticketId);
             if (ticket.isEmpty()) {
-                logger.warn("Ticket with id: {} not found", ticketId);
-                throw new TicketNotFoundException("Ticket not found while deletion");
+                logger.warn("Ticket with id: {} cannot be mapped from database", ticketId);
+                throw new TicketNotFoundException("Ticket cannot be mapped from database while deletion");
             }
             String sql = "DELETE FROM tickets WHERE id = ?";
             jdbcTemplate.update(sql, ticketId);

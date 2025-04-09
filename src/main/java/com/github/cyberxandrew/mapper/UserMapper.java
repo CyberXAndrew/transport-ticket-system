@@ -24,7 +24,7 @@ public interface UserMapper {
     UserDTO userCreateDTOToUserDTO(UserCreateDTO createDTO);
     UserDTO userUpdateDTOToUserDTO(UserUpdateDTO updateDTO);
 
-    @Mapping(target = "id", ignore = true) //Fix заставляем выполнить код когда нет поля role
+    @Mapping(target = "id", ignore = true)
     @Mapping(target = "role", expression = "java(updateDTO.getRole() != null ? (updateDTO.getRole().get() != null ?" +
             " updateDTO.getRole().get().name() : null) : user.getRole())")
     void update(UserUpdateDTO updateDTO, @MappingTarget User user);

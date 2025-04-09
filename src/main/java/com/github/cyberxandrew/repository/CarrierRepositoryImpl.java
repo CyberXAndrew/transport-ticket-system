@@ -98,8 +98,8 @@ public class CarrierRepositoryImpl implements CarrierRepository {
         try {
             Optional<Carrier> carrier = findById(carrierId);
             if (carrier.isEmpty()) {
-                logger.warn("Carrier with id: {} not found", carrierId);
-                throw new CarrierNotFoundException("Carrier not found while deletion");
+                logger.warn("Carrier with id: {} cannot be mapped from database", carrierId);
+                throw new CarrierNotFoundException("Carrier cannot be mapped from database while deletion");
             }
             String sql = "DELETE FROM carriers WHERE id = ?";
             jdbcTemplate.update(sql, carrierId);

@@ -87,8 +87,7 @@ class RouteRepositoryImplTest {
         when(jdbcTemplate.queryForObject(eq(sql), eq(new Object[]{routeId1}), any(RowMapper.class)))
                 .thenThrow(new EmptyResultDataAccessException(1));
 
-        Optional<Route> actual = routeRepository.findById(routeId1);
-        assertTrue(actual.isEmpty());
+        assertThrows(RouteNotFoundException.class, () -> routeRepository.findById(routeId1));
     }
 
     @Test

@@ -104,8 +104,8 @@ public class RouteRepositoryImpl implements RouteRepository {
         try {
             Optional<Route> route = findById(routeId);
             if (route.isEmpty()) {
-                logger.warn("Route with id: {} not found", routeId);
-                throw new RouteNotFoundException("Route not found while deletion");
+                logger.warn("Route with id: {} cannot be mapped from database", routeId);
+                throw new RouteNotFoundException("Route cannot be mapped from database while deletion");
             }
             String sql = "DELETE FROM routes WHERE id = ?";
             jdbcTemplate.update(sql, routeId);

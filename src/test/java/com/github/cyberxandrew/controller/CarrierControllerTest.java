@@ -2,6 +2,7 @@ package com.github.cyberxandrew.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.cyberxandrew.config.JacksonConfig;
+import com.github.cyberxandrew.config.SecurityConfig;
 import com.github.cyberxandrew.dto.carrier.CarrierCreateDTO;
 import com.github.cyberxandrew.dto.carrier.CarrierDTO;
 import com.github.cyberxandrew.dto.carrier.CarrierUpdateDTO;
@@ -9,7 +10,11 @@ import com.github.cyberxandrew.mapper.CarrierMapper;
 import com.github.cyberxandrew.mapper.CarrierMapperImpl;
 import com.github.cyberxandrew.mapper.JsonNullableMapperImpl;
 import com.github.cyberxandrew.model.Carrier;
+import com.github.cyberxandrew.repository.UserRepository;
+import com.github.cyberxandrew.repository.UserRepositoryImplTest;
+import com.github.cyberxandrew.security.JwtRequestFilter;
 import com.github.cyberxandrew.service.CarrierServiceImpl;
+import com.github.cyberxandrew.service.UserDetailsServiceImpl;
 import com.github.cyberxandrew.utils.CarrierFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -17,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
@@ -26,6 +32,7 @@ import java.util.List;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -35,8 +42,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(CarrierController.class)
-@Import({CarrierMapperImpl.class, JsonNullableMapperImpl.class, JacksonConfig.class})
+@Import({CarrierMapperImpl.class, JsonNullableMapperImpl.class, JacksonConfig.class, UserDetailsServiceImpl.class,
+        JwtRequestFilter.class, UserRepositoryImplTest.class, UserRepository.class, SecurityConfig.class})
 @ActiveProfiles("test")
+@WithMockUser(username = "test", roles = {"ADMIN"})
 public class CarrierControllerTest {
     @Autowired private MockMvc mockMvc;
     @Autowired private ObjectMapper objectMapper;
@@ -66,13 +75,15 @@ public class CarrierControllerTest {
 
         when(carrierService.findCarrierById(carrierId1)).thenReturn(carrierDTO);
 
-        mockMvc.perform(get("/api/carriers/{id}", carrierId1))
+        mockMvc.perform(get("/api/carriers/{id}", carrierId1)
+                        .with(user("test").password("test").roles("ADMIN")))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(content().json(objectMapper.writeValueAsString(carrierDTO)));
     }
 
     @Test
+//    @WithMockUser(username = "test", roles = {"ADMIN"})
     public void testIndex() throws Exception {
         CarrierFactory.CarrierBuilder carrierBuilder = new CarrierFactory.CarrierBuilder(); //fixme Took out to factory
 
