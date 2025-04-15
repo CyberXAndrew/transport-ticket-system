@@ -18,5 +18,5 @@ jwt:
 logging:
   level:
     org:
-      springframework:
-        security: TRACE
+      springframework: DEBUG
+#        security: TRACE
