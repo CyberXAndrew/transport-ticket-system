@@ -1,7 +1,6 @@
 package com.github.cyberxandrew.repository;
 
 import com.github.cyberxandrew.dto.ticket.TicketWithRouteDataDTO;
-import com.github.cyberxandrew.exception.carrier.CarrierNotFoundException;
 import com.github.cyberxandrew.exception.ticket.TicketAvailabilityException;
 import com.github.cyberxandrew.exception.ticket.TicketDeletionException;
 import com.github.cyberxandrew.exception.ticket.TicketNotFoundException;
@@ -12,10 +11,8 @@ import com.github.cyberxandrew.model.Ticket;
 import com.github.cyberxandrew.utils.TicketFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataAccessResourceFailureException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -49,19 +46,17 @@ import static org.mockito.Mockito.when;
 
 @SpringBootTest
 @ActiveProfiles("test")
-@ExtendWith(MockitoExtension.class)
 public class TicketRepositoryImplTest {
     @Mock private JdbcTemplate jdbcTemplate;
     @SuppressWarnings("unused")
     @Mock private TicketRowMapper ticketRowMapper;
     @Mock private TicketDtoRowMapper ticketDtoRowMapper;
-    @InjectMocks
-    private TicketRepositoryImpl ticketRepository;
-
+    @InjectMocks private TicketRepositoryImpl ticketRepository;
     private Long nonExistingId;
     private Long testUserId;
     private Long testTicketId;
     private Ticket testTicket;
+
     @BeforeEach
     void beforeEach() {
         testTicketId = 1L;

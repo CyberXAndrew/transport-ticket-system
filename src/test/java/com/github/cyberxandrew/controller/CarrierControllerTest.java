@@ -1,19 +1,11 @@
 package com.github.cyberxandrew.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.cyberxandrew.config.JacksonConfig;
-import com.github.cyberxandrew.config.SecurityConfig;
 import com.github.cyberxandrew.dto.carrier.CarrierCreateDTO;
 import com.github.cyberxandrew.dto.carrier.CarrierDTO;
 import com.github.cyberxandrew.dto.carrier.CarrierUpdateDTO;
 import com.github.cyberxandrew.mapper.CarrierMapper;
-import com.github.cyberxandrew.mapper.CarrierMapperImpl;
-import com.github.cyberxandrew.mapper.JsonNullableMapperImpl;
 import com.github.cyberxandrew.model.Carrier;
-import com.github.cyberxandrew.model.UserDetailsImpl;
-import com.github.cyberxandrew.repository.UserRepository;
-import com.github.cyberxandrew.repository.UserRepositoryImpl;
-import com.github.cyberxandrew.security.JwtRequestFilter;
 import com.github.cyberxandrew.security.JwtTokenUtil;
 import com.github.cyberxandrew.service.CarrierServiceImpl;
 import com.github.cyberxandrew.service.UserDetailsServiceImpl;
@@ -22,17 +14,12 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
-import javax.sql.DataSource;
 import java.util.List;
 
 import static org.hamcrest.Matchers.is;

@@ -1,15 +1,12 @@
 package com.github.cyberxandrew.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.cyberxandrew.config.JacksonConfig;
 import com.github.cyberxandrew.dto.route.RouteCreateDTO;
 import com.github.cyberxandrew.dto.route.RouteDTO;
 import com.github.cyberxandrew.dto.route.RouteUpdateDTO;
 import com.github.cyberxandrew.mapper.RouteMapper;
-import com.github.cyberxandrew.mapper.RouteMapperImpl;
-import com.github.cyberxandrew.mapper.JsonNullableMapperImpl;
-import com.github.cyberxandrew.security.JwtTokenUtil;
 import com.github.cyberxandrew.model.Route;
+import com.github.cyberxandrew.security.JwtTokenUtil;
 import com.github.cyberxandrew.service.RouteServiceImpl;
 import com.github.cyberxandrew.service.UserDetailsServiceImpl;
 import com.github.cyberxandrew.utils.RouteFactory;
@@ -17,9 +14,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;

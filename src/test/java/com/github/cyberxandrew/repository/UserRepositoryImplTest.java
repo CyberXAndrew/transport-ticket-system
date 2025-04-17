@@ -1,6 +1,5 @@
 package com.github.cyberxandrew.repository;
 
-import com.github.cyberxandrew.exception.carrier.CarrierNotFoundException;
 import com.github.cyberxandrew.exception.user.UserDeletionException;
 import com.github.cyberxandrew.exception.user.UserNotFoundException;
 import com.github.cyberxandrew.exception.user.UserUpdateException;
@@ -10,7 +9,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.slf4j.Logger;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataAccessResourceFailureException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -31,7 +29,6 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
@@ -43,9 +40,7 @@ import static org.mockito.Mockito.when;
 @ActiveProfiles("test")
 public class UserRepositoryImplTest {
     @Mock private JdbcTemplate jdbcTemplate;
-    @InjectMocks
-    private UserRepositoryImpl userRepository;
-
+    @InjectMocks private UserRepositoryImpl userRepository;
     private Long nonExistingId;
     private Long id1;
     private Long id2;

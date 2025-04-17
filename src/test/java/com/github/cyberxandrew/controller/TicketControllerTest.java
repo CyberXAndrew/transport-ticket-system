@@ -1,22 +1,21 @@
 package com.github.cyberxandrew.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.cyberxandrew.config.JacksonConfig;
 import com.github.cyberxandrew.dto.ticket.TicketCreateDTO;
 import com.github.cyberxandrew.dto.ticket.TicketDTO;
 import com.github.cyberxandrew.dto.ticket.TicketUpdateDTO;
 import com.github.cyberxandrew.dto.ticket.TicketWithRouteDataDTO;
-import com.github.cyberxandrew.mapper.JsonNullableMapperImpl;
 import com.github.cyberxandrew.mapper.TicketMapper;
-import com.github.cyberxandrew.mapper.TicketMapperImpl;
 import com.github.cyberxandrew.model.Ticket;
+import com.github.cyberxandrew.security.JwtTokenUtil;
 import com.github.cyberxandrew.service.TicketServiceImpl;
+import com.github.cyberxandrew.service.UserDetailsServiceImpl;
 import com.github.cyberxandrew.utils.TicketFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.context.annotation.Import;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
@@ -39,23 +38,27 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(TicketController.class)
-@Import({TicketMapperImpl.class, JsonNullableMapperImpl.class, JacksonConfig.class})
+@SpringBootTest
+@AutoConfigureMockMvc
 @ActiveProfiles("test")
 public class TicketControllerTest {
     @Autowired private MockMvc mockMvc;
     @Autowired private ObjectMapper objectMapper;
     @Autowired private TicketMapper ticketMapper;
+    @Autowired private JwtTokenUtil jwtTokenUtil;
+    @Autowired private UserDetailsServiceImpl userDetailsService;
     @MockitoBean private TicketServiceImpl ticketService;
     private Long ticketId1;
     private Long ticketId2;
     private Long userId;
+    private String accessToken;
 
     @BeforeEach
     void setUp() {
         ticketId1 = 1L;
         ticketId2 = 2L;
         userId = 1L;
+        accessToken = jwtTokenUtil.generateToken(userDetailsService.loadUserByUsername("test"));
     }
 
     @Test
@@ -65,7 +68,8 @@ public class TicketControllerTest {
 
         when(ticketService.findTicketById(ticketId1)).thenReturn(ticketDTO);
 
-        mockMvc.perform(get("/api/tickets/{id}", ticketId1))
+        mockMvc.perform(get("/api/tickets/{id}", ticketId1)
+                        .header("Authorization", "Bearer " + accessToken))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(content().json(objectMapper.writeValueAsString(ticketDTO)));
@@ -82,7 +86,8 @@ public class TicketControllerTest {
 
         when(ticketService.findAllPurchasedTickets(userId)).thenReturn(tickets);
 
-        mockMvc.perform(get("/api/tickets/purchased?userId=" + userId))
+        mockMvc.perform(get("/api/tickets/purchased?userId=" + userId)
+                        .header("Authorization", "Bearer " + accessToken))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(content().json(objectMapper.writeValueAsString(tickets)));
@@ -95,7 +100,8 @@ public class TicketControllerTest {
         when(ticketService.findAllAccessibleTickets(null, null, null,
                 null, null)).thenReturn(expectedList);
 
-        mockMvc.perform(get("/api/tickets"))
+        mockMvc.perform(get("/api/tickets")
+                        .header("Authorization", "Bearer " + accessToken))
                 .andExpect(status().isOk())
                 .andExpect(header().string("X-Total-Count", is(String.valueOf(expectedList.size()))))
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -115,7 +121,8 @@ public class TicketControllerTest {
 
         mockMvc.perform(get("/api/tickets?page=0&size=2" +
                 "&dateTime=2025-01-02T23:59:59.123456789" +
-                "&departurePoint=Saints-Petersburg&destinationPoint=Moscow&carrierName=J7"))
+                "&departurePoint=Saints-Petersburg&destinationPoint=Moscow&carrierName=J7")
+                        .header("Authorization", "Bearer " + accessToken))
                 .andExpect(status().isOk())
                 .andExpect(header().string("X-Total-Count", is(String.valueOf(expectedList.size()))))
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -142,6 +149,7 @@ public class TicketControllerTest {
         when(ticketService.saveTicket(ticketCreateDTO)).thenReturn(ticketDTO);
 
         mockMvc.perform(post("/api/tickets")
+                        .header("Authorization", "Bearer " + accessToken)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(ticketCreateDTO)))
                 .andExpect(status().isCreated())
@@ -158,6 +166,7 @@ public class TicketControllerTest {
         when(ticketService.updateTicket(ticketUpdateDTO, ticketId1)).thenReturn(ticketDTO);
 
         mockMvc.perform(put("/api/tickets/{id}", ticketId1)
+                        .header("Authorization", "Bearer " + accessToken)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(ticketUpdateDTO)))
                 .andExpect(status().isOk())
@@ -169,7 +178,8 @@ public class TicketControllerTest {
     public void testDelete() throws Exception {
         doNothing().when(ticketService).deleteTicket(ticketId1);
 
-        mockMvc.perform(delete("/api/tickets/{id}", ticketId1))
+        mockMvc.perform(delete("/api/tickets/{id}", ticketId1)
+                        .header("Authorization", "Bearer " + accessToken))
                 .andExpect(status().isNoContent());
     }
 
@@ -177,7 +187,8 @@ public class TicketControllerTest {
     public void testPurchaseTicket() throws Exception {
         doNothing().when(ticketService).purchaseTicket(userId, ticketId1);
 
-        mockMvc.perform(post("/api/tickets/{id}/purchase?userId=2", ticketId1))
+        mockMvc.perform(post("/api/tickets/{id}/purchase?userId=2", ticketId1)
+                        .header("Authorization", "Bearer " + accessToken))
                 .andExpect(status().isOk());
     }
 }

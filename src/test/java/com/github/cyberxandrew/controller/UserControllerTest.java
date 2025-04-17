@@ -1,21 +1,20 @@
 package com.github.cyberxandrew.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.cyberxandrew.config.JacksonConfig;
 import com.github.cyberxandrew.dto.user.UserCreateDTO;
 import com.github.cyberxandrew.dto.user.UserDTO;
 import com.github.cyberxandrew.dto.user.UserUpdateDTO;
-import com.github.cyberxandrew.mapper.JsonNullableMapperImpl;
 import com.github.cyberxandrew.mapper.UserMapper;
-import com.github.cyberxandrew.mapper.UserMapperImpl;
 import com.github.cyberxandrew.model.User;
+import com.github.cyberxandrew.security.JwtTokenUtil;
+import com.github.cyberxandrew.service.UserDetailsServiceImpl;
 import com.github.cyberxandrew.service.UserServiceImpl;
 import com.github.cyberxandrew.utils.UserFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.context.annotation.Import;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
@@ -34,16 +33,16 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(UserController.class)
-@Import({UserMapperImpl.class, JsonNullableMapperImpl.class, JacksonConfig.class})
+@SpringBootTest
+@AutoConfigureMockMvc
 @ActiveProfiles("test")
 public class UserControllerTest {
-    @Autowired
-    private MockMvc mockMvc;
+    @Autowired private MockMvc mockMvc;
     @Autowired private ObjectMapper objectMapper;
     @Autowired private UserMapper userMapper;
-    @MockitoBean
-    private UserServiceImpl userService;
+    @Autowired private JwtTokenUtil jwtTokenUtil;
+    @Autowired private UserDetailsServiceImpl userDetailsService;
+    @MockitoBean private UserServiceImpl userService;
     private Long userId1;
     private Long userId2;
     private String login1;
@@ -52,6 +51,7 @@ public class UserControllerTest {
     private String password2;
     private String fullName1;
     private String fullName2;
+    private String accessToken;
 
     @BeforeEach
     void SetUp() {
@@ -63,6 +63,7 @@ public class UserControllerTest {
         password2 = "test password 2";
         fullName1 = "test fullname 1";
         fullName2 = "test fullname 2";
+        accessToken = jwtTokenUtil.generateToken(userDetailsService.loadUserByUsername("test"));
     }
 
     @Test
@@ -72,7 +73,8 @@ public class UserControllerTest {
 
         when(userService.findUserById(userId1)).thenReturn(userDTO);
 
-        mockMvc.perform(get("/api/users/{id}", userId1))
+        mockMvc.perform(get("/api/users/{id}", userId1)
+                        .header("Authorization", "Bearer " + accessToken))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(content().json(objectMapper.writeValueAsString(userDTO)));
@@ -98,7 +100,8 @@ public class UserControllerTest {
 
         when(userService.findAll()).thenReturn(expectedList);
 
-        mockMvc.perform(get("/api/users"))
+        mockMvc.perform(get("/api/users")
+                        .header("Authorization", "Bearer " + accessToken))
                 .andExpect(status().isOk())
                 .andExpect(header().string("X-Total-Count", is(String.valueOf(expectedList.size()))))
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -114,6 +117,7 @@ public class UserControllerTest {
         when(userService.saveUser(userCreateDTO)).thenReturn(userDTO);
 
         mockMvc.perform(post("/api/users")
+                        .header("Authorization", "Bearer " + accessToken)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(userCreateDTO)))
                 .andExpect(status().isCreated())
@@ -130,6 +134,7 @@ public class UserControllerTest {
         when(userService.updateUser(userUpdateDTO, userId1)).thenReturn(userDTO);
 
         mockMvc.perform(put("/api/users/{id}", userId1)
+                        .header("Authorization", "Bearer " + accessToken)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(userUpdateDTO)))
                 .andExpect(status().isOk())
@@ -141,7 +146,8 @@ public class UserControllerTest {
     public void testDelete() throws Exception {
         doNothing().when(userService).deleteUser(userId1);
 
-        mockMvc.perform(delete("/api/users/{id}", userId1))
+        mockMvc.perform(delete("/api/users/{id}", userId1)
+                        .header("Authorization", "Bearer " + accessToken))
                 .andExpect(status().isNoContent());
     }
 }
