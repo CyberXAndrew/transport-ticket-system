@@ -53,7 +53,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                             new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                     usernamePasswordAuthenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                     SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
-                } //else throw new A
+                }
             }
         } else {
             logger.warn("JWT token Does not begin with \"Bearer \" string or was not transmitted");

@@ -9,12 +9,12 @@ import com.github.cyberxandrew.model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Primary;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.SingleColumnRowMapper;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
@@ -29,6 +29,7 @@ public class UserRepositoryImpl implements UserRepository {
     private static final Logger logger = LoggerFactory.getLogger(UserRepositoryImpl.class);
     private final RowMapper<User> userRowMapper = new BeanPropertyRowMapper<>(User.class);
     @Autowired private JdbcTemplate jdbcTemplate;
+
 
     @Override
     @Transactional
@@ -60,7 +61,7 @@ public class UserRepositoryImpl implements UserRepository {
     public boolean existsByLogin(String login) { //Fix No test
         String sql = "SELECT EXISTS (SELECT * FROM users WHERE login = ?)";
         try {
-            return Boolean.TRUE.equals(jdbcTemplate.queryForObject(sql, new Object[]{login}, Boolean.class));
+            return Boolean.TRUE.equals(jdbcTemplate.queryForObject(sql, new SingleColumnRowMapper<>(Boolean.class), login));
         } catch (DataAccessException ex) {
             logger.error("Error while getting user with login: {}", login);
             throw new UserNotFoundException("Error while getting user by login", ex);
