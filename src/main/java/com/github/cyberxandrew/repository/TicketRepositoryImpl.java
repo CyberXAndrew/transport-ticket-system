@@ -1,7 +1,6 @@
 package com.github.cyberxandrew.repository;
 
 import com.github.cyberxandrew.dto.ticket.TicketWithRouteDataDTO;
-import com.github.cyberxandrew.exception.route.RouteNotFoundException;
 import com.github.cyberxandrew.exception.ticket.TicketAvailabilityException;
 import com.github.cyberxandrew.exception.ticket.TicketDeletionException;
 import com.github.cyberxandrew.exception.ticket.TicketNotFoundException;
