@@ -8,13 +8,17 @@ import com.github.cyberxandrew.dto.route.RouteUpdateDTO;
 import com.github.cyberxandrew.mapper.RouteMapper;
 import com.github.cyberxandrew.mapper.RouteMapperImpl;
 import com.github.cyberxandrew.mapper.JsonNullableMapperImpl;
+import com.github.cyberxandrew.security.JwtTokenUtil;
 import com.github.cyberxandrew.model.Route;
 import com.github.cyberxandrew.service.RouteServiceImpl;
+import com.github.cyberxandrew.service.UserDetailsServiceImpl;
 import com.github.cyberxandrew.utils.RouteFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
@@ -34,13 +38,15 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(RouteController.class)
-@Import({RouteMapperImpl.class, JsonNullableMapperImpl.class, JacksonConfig.class})
+@SpringBootTest
+@AutoConfigureMockMvc
 @ActiveProfiles("test")
 class RouteControllerTest {
     @Autowired private MockMvc mockMvc;
     @Autowired private ObjectMapper objectMapper;
     @Autowired private RouteMapper routeMapper;
+    @Autowired private JwtTokenUtil jwtTokenUtil;
+    @Autowired private UserDetailsServiceImpl userDetailsService;
     @MockitoBean private RouteServiceImpl routeService;
     private Long routeId1;
     private Long routeId2;
@@ -52,8 +58,8 @@ class RouteControllerTest {
     private Long carrierId2;
     private Integer duration1;
     private Integer duration2;
+    private String accessToken;
 
-    
     @BeforeEach
     void SetUp() {
         routeId1 = 1L;
@@ -66,6 +72,7 @@ class RouteControllerTest {
         carrierId2 = 4L;
         duration1 = 60;
         duration2 = 50;
+        accessToken = jwtTokenUtil.generateToken(userDetailsService.loadUserByUsername("test"));
     }
 
     @Test
@@ -75,7 +82,8 @@ class RouteControllerTest {
 
         when(routeService.findRouteById(routeId1)).thenReturn(routeDTO);
 
-        mockMvc.perform(get("/api/routes/{id}", routeId1))
+        mockMvc.perform(get("/api/routes/{id}", routeId1)
+                        .header("Authorization", "Bearer " + accessToken))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(content().json(objectMapper.writeValueAsString(routeDTO)));
@@ -103,7 +111,8 @@ class RouteControllerTest {
 
         when(routeService.findAll()).thenReturn(expectedList);
 
-        mockMvc.perform(get("/api/routes"))
+        mockMvc.perform(get("/api/routes")
+                        .header("Authorization", "Bearer " + accessToken))
                 .andExpect(status().isOk())
                 .andExpect(header().string("X-Total-Count", is(String.valueOf(expectedList.size()))))
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -119,6 +128,7 @@ class RouteControllerTest {
         when(routeService.saveRoute(routeCreateDTO)).thenReturn(routeDTO);
 
         mockMvc.perform(post("/api/routes")
+                        .header("Authorization", "Bearer " + accessToken)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(routeCreateDTO)))
                 .andExpect(status().isCreated())
@@ -135,6 +145,7 @@ class RouteControllerTest {
         when(routeService.updateRoute(routeUpdateDTO, routeId1)).thenReturn(routeDTO);
 
         mockMvc.perform(put("/api/routes/{id}", routeId1)
+                        .header("Authorization", "Bearer " + accessToken)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(routeUpdateDTO)))
                 .andExpect(status().isOk())
@@ -146,7 +157,8 @@ class RouteControllerTest {
     public void testDelete() throws Exception {
         doNothing().when(routeService).deleteRoute(routeId1);
 
-        mockMvc.perform(delete("/api/routes/{id}", routeId1))
+        mockMvc.perform(delete("/api/routes/{id}", routeId1)
+                        .header("Authorization", "Bearer " + accessToken))
                 .andExpect(status().isNoContent());
     }
 }

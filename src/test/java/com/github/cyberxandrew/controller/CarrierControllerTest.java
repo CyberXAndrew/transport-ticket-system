@@ -10,29 +10,34 @@ import com.github.cyberxandrew.mapper.CarrierMapper;
 import com.github.cyberxandrew.mapper.CarrierMapperImpl;
 import com.github.cyberxandrew.mapper.JsonNullableMapperImpl;
 import com.github.cyberxandrew.model.Carrier;
+import com.github.cyberxandrew.model.UserDetailsImpl;
 import com.github.cyberxandrew.repository.UserRepository;
-import com.github.cyberxandrew.repository.UserRepositoryImplTest;
+import com.github.cyberxandrew.repository.UserRepositoryImpl;
 import com.github.cyberxandrew.security.JwtRequestFilter;
+import com.github.cyberxandrew.security.JwtTokenUtil;
 import com.github.cyberxandrew.service.CarrierServiceImpl;
 import com.github.cyberxandrew.service.UserDetailsServiceImpl;
 import com.github.cyberxandrew.utils.CarrierFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
-import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
+import javax.sql.DataSource;
 import java.util.List;
 
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -41,22 +46,23 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(CarrierController.class)
-@Import({CarrierMapperImpl.class, JsonNullableMapperImpl.class, JacksonConfig.class, UserDetailsServiceImpl.class,
-        JwtRequestFilter.class, UserRepositoryImplTest.class, UserRepository.class, SecurityConfig.class})
+@SpringBootTest
+@AutoConfigureMockMvc
 @ActiveProfiles("test")
-@WithMockUser(username = "test", roles = {"ADMIN"})
 public class CarrierControllerTest {
     @Autowired private MockMvc mockMvc;
     @Autowired private ObjectMapper objectMapper;
     @Autowired private CarrierMapper carrierMapper;
     @MockitoBean private CarrierServiceImpl carrierService;
+    @Autowired JwtTokenUtil jwtTokenUtil;
+    @Autowired UserDetailsServiceImpl userDetailsService;
     private Long carrierId1;
     private Long carrierId2;
     private String carrierName1;
     private String carrierName2;
     private String carrierPhoneNumber1;
     private String carrierPhoneNumber2;
+    private String accessToken;
 
     @BeforeEach
     void SetUp() {
@@ -66,6 +72,7 @@ public class CarrierControllerTest {
         carrierName2 = "Java Airlines";
         carrierPhoneNumber1 = "123-456-7890";
         carrierPhoneNumber2 = "098-765-4321";
+        accessToken = jwtTokenUtil.generateToken(userDetailsService.loadUserByUsername("test"));
     }
 
     @Test
@@ -76,14 +83,14 @@ public class CarrierControllerTest {
         when(carrierService.findCarrierById(carrierId1)).thenReturn(carrierDTO);
 
         mockMvc.perform(get("/api/carriers/{id}", carrierId1)
-                        .with(user("test").password("test").roles("ADMIN")))
+                        .header("Authorization", "Bearer " + accessToken)
+                )
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(content().json(objectMapper.writeValueAsString(carrierDTO)));
     }
 
     @Test
-//    @WithMockUser(username = "test", roles = {"ADMIN"})
     public void testIndex() throws Exception {
         CarrierFactory.CarrierBuilder carrierBuilder = new CarrierFactory.CarrierBuilder(); //fixme Took out to factory
 
@@ -101,7 +108,8 @@ public class CarrierControllerTest {
 
         when(carrierService.findAll()).thenReturn(expectedList);
 
-        mockMvc.perform(get("/api/carriers"))
+        mockMvc.perform(get("/api/carriers")
+                        .header("Authorization", "Bearer " + accessToken))
                 .andExpect(status().isOk())
                 .andExpect(header().string("X-Total-Count", is(String.valueOf(expectedList.size()))))
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -117,6 +125,7 @@ public class CarrierControllerTest {
         when(carrierService.saveCarrier(carrierCreateDTO)).thenReturn(carrierDTO);
 
         mockMvc.perform(post("/api/carriers")
+                        .header("Authorization", "Bearer " + accessToken)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(carrierCreateDTO)))
                 .andExpect(status().isCreated())
@@ -133,6 +142,7 @@ public class CarrierControllerTest {
         when(carrierService.updateCarrier(carrierUpdateDTO, carrierId1)).thenReturn(carrierDTO);
 
         mockMvc.perform(put("/api/carriers/{id}", carrierId1)
+                        .header("Authorization", "Bearer " + accessToken)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(carrierUpdateDTO)))
                 .andExpect(status().isOk())
@@ -144,7 +154,8 @@ public class CarrierControllerTest {
     public void testDelete() throws Exception {
         doNothing().when(carrierService).deleteCarrier(carrierId1);
 
-        mockMvc.perform(delete("/api/carriers/{id}", carrierId1))
+        mockMvc.perform(delete("/api/carriers/{id}", carrierId1)
+                        .header("Authorization", "Bearer " + accessToken))
                 .andExpect(status().isNoContent());
     }
 }
