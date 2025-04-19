@@ -19,10 +19,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class TicketServiceImpl implements TicketService {
     @Autowired private TicketMapper ticketMapper;
+    @Autowired private TicketCacheService ticketCacheService;
     @Autowired private TicketRepositoryImpl ticketRepository;
     private static Logger logger = LoggerFactory.getLogger(TicketServiceImpl.class);
 
@@ -36,7 +38,15 @@ public class TicketServiceImpl implements TicketService {
     @Override
     @Transactional(readOnly = true)
     public List<TicketDTO> findAllPurchasedTickets(Long userId) {
+        List<Ticket> purchasedTicketsFromCache = ticketCacheService.getPurchasedTickets(userId);
+        if (purchasedTicketsFromCache != null) {
+            return ticketCacheService.getPurchasedTickets(userId).stream()
+                    .map(ticket -> ticketMapper.ticketToTicketDTO(ticket))
+                    .toList();
+        }
         List<Ticket> tickets = ticketRepository.findAllPurchasedTickets(userId);
+        ticketCacheService.cachePurchasedTickets(userId, tickets);
+
         return tickets.stream().map(ticketMapper::ticketToTicketDTO).toList();
     }
 
@@ -77,5 +87,7 @@ public class TicketServiceImpl implements TicketService {
     @Transactional(readOnly = true)
     public void purchaseTicket(Long userId, Long ticketId) {
         ticketRepository.purchaseTicket(userId, ticketId);
+
+        findAllPurchasedTickets(userId);
     }
 }
