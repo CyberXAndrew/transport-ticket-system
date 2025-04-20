@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
+import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 @Configuration
@@ -16,17 +16,17 @@ public class RedisConfig {
     @Autowired private ObjectMapper objectMapper;
 
     @Bean
-    public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory redisConnectionFactory) {
-        RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
+    public RedisTemplate<String, Ticket> redisTemplate(RedisConnectionFactory redisConnectionFactory) {
+        RedisTemplate<String, Ticket> redisTemplate = new RedisTemplate<>();
 
-        GenericJackson2JsonRedisSerializer genericJackson2JsonRedisSerializer =
-                new GenericJackson2JsonRedisSerializer(objectMapper);
+        Jackson2JsonRedisSerializer<Ticket> ticketJackson2JsonRedisSerializer =
+                new Jackson2JsonRedisSerializer<>(objectMapper, Ticket.class);
 
         redisTemplate.setConnectionFactory(redisConnectionFactory);
         redisTemplate.setKeySerializer(new StringRedisSerializer());
-        redisTemplate.setValueSerializer(genericJackson2JsonRedisSerializer);
+        redisTemplate.setValueSerializer(ticketJackson2JsonRedisSerializer);
         redisTemplate.setHashKeySerializer(new StringRedisSerializer());
-        redisTemplate.setHashValueSerializer(genericJackson2JsonRedisSerializer);
+        redisTemplate.setHashValueSerializer(ticketJackson2JsonRedisSerializer);
         redisTemplate.afterPropertiesSet();
         return redisTemplate;
     }

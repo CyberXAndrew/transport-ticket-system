@@ -38,12 +38,15 @@ public class TicketServiceImpl implements TicketService {
     @Transactional(readOnly = true)
     public List<TicketDTO> findAllPurchasedTickets(Long userId) {
         List<Ticket> purchasedTicketsFromCache = ticketCacheService.getPurchasedTickets(userId);
+        System.out.println("======tickets from cache - \n" + purchasedTicketsFromCache.toString() + "\n------");//TEMP COMMENT
         if (purchasedTicketsFromCache != null && !purchasedTicketsFromCache.isEmpty()) {
+            System.out.println("======\n" + "ПОЛУЧЕНИЕ ДАННЫХ С КЕША РЕДИС" + "\n------");//TEMP COMMENT
             return purchasedTicketsFromCache.stream()
                     .map(ticket -> ticketMapper.ticketToTicketDTO(ticket))
                     .toList();
         }
         List<Ticket> tickets = ticketRepository.findAllPurchasedTickets(userId);
+        System.out.println("======\n" + "ПОЛУЧЕНИЕ ДАННЫХ С РЕПОЗИТОРИЯ" + "\n------");//TEMP COMMENT
         ticketCacheService.cachePurchasedTickets(userId, tickets);
 
         return tickets.stream().map(ticketMapper::ticketToTicketDTO).toList();
@@ -86,10 +89,8 @@ public class TicketServiceImpl implements TicketService {
     @Transactional(readOnly = true)
     public void purchaseTicket(Long userId, Long ticketId) {
         ticketRepository.purchaseTicket(userId, ticketId);
-        //task
-        // НЕ ДОЛЖНЫ ИСКАТЬ В КЕШЕ А должны записать после покупки
+
         List<Ticket> tickets = ticketRepository.findAllPurchasedTickets(userId);
         ticketCacheService.cachePurchasedTickets(userId, tickets);
-//        findAllPurchasedTickets(userId); не нужно
     }
 }
