@@ -19,7 +19,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class TicketServiceImpl implements TicketService {
@@ -39,8 +38,8 @@ public class TicketServiceImpl implements TicketService {
     @Transactional(readOnly = true)
     public List<TicketDTO> findAllPurchasedTickets(Long userId) {
         List<Ticket> purchasedTicketsFromCache = ticketCacheService.getPurchasedTickets(userId);
-        if (purchasedTicketsFromCache != null) {
-            return ticketCacheService.getPurchasedTickets(userId).stream()
+        if (purchasedTicketsFromCache != null && !purchasedTicketsFromCache.isEmpty()) {
+            return purchasedTicketsFromCache.stream()
                     .map(ticket -> ticketMapper.ticketToTicketDTO(ticket))
                     .toList();
         }
@@ -87,7 +86,10 @@ public class TicketServiceImpl implements TicketService {
     @Transactional(readOnly = true)
     public void purchaseTicket(Long userId, Long ticketId) {
         ticketRepository.purchaseTicket(userId, ticketId);
-
-        findAllPurchasedTickets(userId);
+        //task
+        // НЕ ДОЛЖНЫ ИСКАТЬ В КЕШЕ А должны записать после покупки
+        List<Ticket> tickets = ticketRepository.findAllPurchasedTickets(userId);
+        ticketCacheService.cachePurchasedTickets(userId, tickets);
+//        findAllPurchasedTickets(userId); не нужно
     }
 }

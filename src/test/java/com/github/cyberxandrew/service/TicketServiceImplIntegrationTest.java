@@ -39,6 +39,8 @@ public class TicketServiceImplIntegrationTest {
     private Long idOfSavedTicket;
     private Long userId;
 
+//    @Autowired private ObjectMapper objectMapper;
+
     @BeforeEach
     public void setUp() {
         testAbsentId = -1L;
@@ -135,9 +137,9 @@ public class TicketServiceImplIntegrationTest {
 
         assertThrows(TicketNotFoundException.class, () -> ticketService.findTicketById(idOfSavedTicket));
     }
+
     @Test
     public void testPurchaseTicket() { //FIX
-
         ticketService.purchaseTicket(userId, availableTicketId);
 
         List<TicketDTO> tickets = ticketService.findAllPurchasedTickets(userId);
