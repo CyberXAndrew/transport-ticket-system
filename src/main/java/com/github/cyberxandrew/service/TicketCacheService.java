@@ -9,7 +9,6 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -24,7 +23,7 @@ public class TicketCacheService {
         String key = "purchasedTickets:" + userId;
         if (tickets != null && !tickets.isEmpty()) {
             try {
-                redisTemplate.opsForList().trim(key, 1, -1);
+                redisTemplate.opsForList().trim(key, 1, 0);
                 redisTemplate.opsForList().leftPushAll(key, tickets);
                 redisTemplate.expire(key, Duration.ofHours(1));
             } catch (DataAccessException ex) {
@@ -36,20 +35,8 @@ public class TicketCacheService {
     public List<Ticket> getPurchasedTickets(Long userId) {
         String key = "purchasedTickets:" + userId;
         try {
-            ArrayList<Ticket> tickets = new ArrayList<>();
-            List<Ticket> range = Objects.requireNonNull(redisTemplate.opsForList().range(key, 1, 2));
-
-            for (Ticket object : range) {
-                if (object != null) {
-                    System.out.println("======\n" + "RANGE IS INSTANCE OF TICKET!" + "\n------");//TEMP COMMENT
-                    tickets.add((Ticket) object);
-                } else {
-//                    logger.warn("WRONG TYPES");
-                    System.out.println("WRONG TYPES");
-                }
-            }
-            return tickets;
-        } catch (DataAccessException ex) {
+            return Objects.requireNonNull(redisTemplate.opsForList().range(key, 0, -1));
+        } catch (DataAccessException | NullPointerException ex) {
             logger.warn("Error getting purchased tickets for user with id: {}", userId, ex);
             return Collections.emptyList();
         }

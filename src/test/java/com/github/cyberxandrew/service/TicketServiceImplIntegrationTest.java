@@ -74,7 +74,7 @@ public class TicketServiceImplIntegrationTest {
         assertEquals(1, ticketList.size());
         assertEquals(ticketList.getFirst(), savedTicketDTO);
 
-        ticketCacheService.evictPurchasedTickets(userId, 0, -1);
+        ticketCacheService.evictPurchasedTickets(userId, 1, 0);
     }
 
     @Test
@@ -143,7 +143,7 @@ public class TicketServiceImplIntegrationTest {
     }
 
     @Test
-    public void testPurchaseTicket() { //FIX
+    public void testPurchaseTicket() {
         ticketService.purchaseTicket(userId, availableTicketId);
 
         List<TicketDTO> tickets = ticketService.findAllPurchasedTickets(userId);
