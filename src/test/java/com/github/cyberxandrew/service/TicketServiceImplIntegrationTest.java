@@ -33,6 +33,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @ActiveProfiles("test")
 public class TicketServiceImplIntegrationTest {
     @Autowired private TicketServiceImpl ticketService;
+    @Autowired private TicketCacheService ticketCacheService;
     private Long testAbsentId;
     private Long availableTicketId;
     private Long unavailableTicketId;
@@ -64,13 +65,16 @@ public class TicketServiceImplIntegrationTest {
     @Test
     public void testFindAllPurchasedTickets() {
         TicketCreateDTO createDTO = TicketFactory.createTicketCreateDTO();
+        createDTO.setUserId(userId);
         TicketDTO savedTicketDTO = ticketService.saveTicket(createDTO);
 
-        List<TicketDTO> ticketList = ticketService.findAllPurchasedTickets(savedTicketDTO.getUserId());
+        List<TicketDTO> ticketList = ticketService.findAllPurchasedTickets(userId);
 
         assertFalse(ticketList.isEmpty());
         assertEquals(1, ticketList.size());
         assertEquals(ticketList.getFirst(), savedTicketDTO);
+
+        ticketCacheService.evictPurchasedTickets(userId, 0, -1);
     }
 
     @Test

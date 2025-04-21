@@ -39,6 +39,7 @@ public class TicketServiceImpl implements TicketService {
     public List<TicketDTO> findAllPurchasedTickets(Long userId) {
         List<Ticket> purchasedTicketsFromCache = ticketCacheService.getPurchasedTickets(userId);
         System.out.println("======tickets from cache - \n" + purchasedTicketsFromCache.toString() + "\n------");//TEMP COMMENT
+        System.out.println("======cached tickets are empty? : \n" + purchasedTicketsFromCache.isEmpty() + "\n------");//TEMP COMMENT
         if (purchasedTicketsFromCache != null && !purchasedTicketsFromCache.isEmpty()) {
             System.out.println("======\n" + "ПОЛУЧЕНИЕ ДАННЫХ С КЕША РЕДИС" + "\n------");//TEMP COMMENT
             return purchasedTicketsFromCache.stream()

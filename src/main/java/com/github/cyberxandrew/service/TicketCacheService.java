@@ -37,10 +37,10 @@ public class TicketCacheService {
         String key = "purchasedTickets:" + userId;
         try {
             ArrayList<Ticket> tickets = new ArrayList<>();
-            List<Ticket> range = Objects.requireNonNull(redisTemplate.opsForList().range(key, 0, -1));
+            List<Ticket> range = Objects.requireNonNull(redisTemplate.opsForList().range(key, 1, 2));
 
             for (Ticket object : range) {
-                if (object instanceof Ticket) {
+                if (object != null) {
                     System.out.println("======\n" + "RANGE IS INSTANCE OF TICKET!" + "\n------");//TEMP COMMENT
                     tickets.add((Ticket) object);
                 } else {
@@ -52,6 +52,15 @@ public class TicketCacheService {
         } catch (DataAccessException ex) {
             logger.warn("Error getting purchased tickets for user with id: {}", userId, ex);
             return Collections.emptyList();
+        }
+    }
+
+    public void evictPurchasedTickets(Long userId, int startIndex, int endIndex) {
+        String key = "purchasedTickets:" + userId;
+        try {
+            redisTemplate.opsForList().trim(key, startIndex, endIndex);
+        } catch (DataAccessException ex) {
+            logger.warn("Error while deleting cached data from key: {}", key, ex);
         }
     }
 }
