@@ -2,7 +2,22 @@
 [![codecov](https://codecov.io/gh/CyberXAndrew/transport-ticket-system/graph/badge.svg?token=I5AEBG3WVJ)](https://codecov.io/gh/CyberXAndrew/transport-ticket-system)
 
 ### Description
-Microservice application that allow users to purchase transportation tickets.
+Transport ticket system project is a Java-based Spring Boot microservice providing a REST API for managing transportation ticket purchases.
+It includes user registration, ticket browsing, and purchase functionality. Key features include filtering and 
+pagination, input validation, and Swagger API documentation.  Additional features implemented include JWT authentication,
+role-based authorization, Redis caching, and Kafka integration.
+### Key Features
+*   **User Registration:**  Allows users to register with a unique login, password, and full name.
+*   **Ticket Browsing:** Provides a REST endpoint to retrieve a paginated and filtered list of available tickets. Filters include date/time, origin/destination (substring matching), and carrier name (substring matching).
+*   **Ticket Purchase:**  Enables users to purchase available tickets.  Purchased tickets are no longer available for purchase.
+*   **Purchase History:**  Allows users to view a list of their purchased tickets.
+*   **Input Validation:**  Validates all REST method input data, returning HTTP 400 errors with descriptive messages for invalid input.
+*   **Swagger Documentation:**  Includes Swagger annotations for automatically generated API documentation.
+### Additional Features
+*   **JWT Authentication:**  Implements user authentication using JWT tokens (access and refresh tokens).
+*   **Role-Based Authorization:**  Adds user roles (Customer/Administrator) and restricts access to certain API endpoints based on role.
+*   **Redis Caching:**  Caches purchased tickets in Redis for faster retrieval.
+*   **Kafka Integration:**  Publishes ticket purchase events to a Kafka topic for asynchronous processing.
 ### Technologies used
 | Technology                | Version  | Description                                                                                                                    |
 |---------------------------|----------|--------------------------------------------------------------------------------------------------------------------------------|
@@ -35,4 +50,5 @@ Microservice application that allow users to purchase transportation tickets.
 | Jakarta Persistence       | 3.2.0    | API for managing persistence for Java EE objects.                                                                              |
 | **Other**                 |          |                                                                                                                                |
 | Jackson Databind Nullable | 0.2.6    | Utilities for handling nullable values, for more correct work with nullable fields when working with JSON (e.g., in OpenAPI).  |                                                            |
-
+### Status
+In Development
