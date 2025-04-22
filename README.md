@@ -10,9 +10,9 @@ role-based authorization, Redis caching, and Kafka integration.
 ### Key Features
 *   **User Registration:**  Allows users to register with a unique login, password, and full name.
 *   **Ticket Browsing:** Provides a REST endpoint to retrieve a paginated and filtered list of available tickets. Filters include date/time, origin/destination (substring matching), and carrier name (substring matching).
-*   **Ticket Purchase:**  Enables users to purchase available tickets.  Purchased tickets are no longer available for purchase.
+*   **Ticket Purchase:**  Enables users to purchase available tickets. Purchased tickets are no longer available for purchase.
 *   **Purchase History:**  Allows users to view a list of their purchased tickets.
-*   **Input Validation:**  Validates all REST method input data, returning HTTP 400 errors with descriptive messages for invalid input.
+*   **Input Validation:**  Validates all REST method input data, returning HTTP 40х errors with descriptive messages for invalid input.
 *   **Swagger Documentation:**  Includes Swagger annotations for automatically generated API documentation.
 
 ### Additional Features
