@@ -14,15 +14,18 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class TicketServiceImpl implements TicketService {
     @Autowired private TicketMapper ticketMapper;
+    @Autowired private TicketProduser ticketProduser;
     @Autowired private TicketCacheService ticketCacheService;
     @Autowired private TicketRepositoryImpl ticketRepository;
     private static Logger logger = LoggerFactory.getLogger(TicketServiceImpl.class);
@@ -87,7 +90,15 @@ public class TicketServiceImpl implements TicketService {
     public void purchaseTicket(Long userId, Long ticketId) {
         ticketRepository.purchaseTicket(userId, ticketId);
 
+        sendTicket(ticketId);
+
         List<Ticket> tickets = ticketRepository.findAllPurchasedTickets(userId);
         ticketCacheService.cachePurchasedTickets(userId, tickets);
+    }
+
+    private void sendTicket(Long ticketId) {
+        Ticket ticket = ticketRepository.findById(ticketId).orElseThrow(() ->
+                new TicketNotFoundException("Ticket with id " + ticketId + " not found"));
+        ticketProduser.sendMessage(ticket);
     }
 }

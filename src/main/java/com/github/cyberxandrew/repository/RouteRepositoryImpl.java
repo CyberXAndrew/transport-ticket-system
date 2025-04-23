@@ -25,8 +25,29 @@ import java.util.Optional;
 
 @Repository
 public class RouteRepositoryImpl implements RouteRepository {
+    @Override
+    @Transactional
+    public Route update(Route route) {
+        try {
+            String sql = "UPDATE routes SET departure_point = ?, destination_point = ?, carrier_id = ?, duration = ?" +
+                    " WHERE id = ?";
+            int updated = jdbcTemplate.update(sql, route.getDeparturePoint(), route.getDestinationPoint(),
+                    route.getCarrierId(), route.getDuration(), route.getId());
+            if (updated > 0) {
+                logger.debug("Updating route with id: {} is successful", route.getId());
+            } else {
+                logger.warn("Route with id: {} not found for updating", route.getId());
+                throw new RouteUpdateException("Route not found for updating");
+            }
+            return route;
+        } catch (DataAccessException ex) {
+            logger.error("Error while updating route with id: {}", route.getId());
+            throw new RouteUpdateException("Error while updating route", ex);
+        }
+    }
     private static final Logger logger = LoggerFactory.getLogger(RouteRepositoryImpl.class);
     @Autowired private JdbcTemplate jdbcTemplate;
+
     private RowMapper<Route> routeRowMapper = new BeanPropertyRowMapper<>(Route.class);
 
     @Override
@@ -72,27 +93,6 @@ public class RouteRepositoryImpl implements RouteRepository {
         } catch (DataAccessException ex) {
             logger.error("Error while saving route: {}", route.toString());
             throw new RouteSaveException("Error while saving route", ex);
-        }
-    }
-
-    @Override
-    @Transactional
-    public Route update(Route route) {
-        try {
-            String sql = "UPDATE routes SET departure_point = ?, destination_point = ?, carrier_id = ?, duration = ?" +
-                    " WHERE id = ?";
-            int updated = jdbcTemplate.update(sql, route.getDeparturePoint(), route.getDestinationPoint(),
-                    route.getCarrierId(), route.getDuration(), route.getId());
-            if (updated > 0) {
-                logger.debug("Updating route with id: {} is successful", route.getId());
-            } else {
-                logger.warn("Route with id: {} not found for updating", route.getId());
-                throw new RouteUpdateException("Route not found for updating");
-            }
-            return route;
-        } catch (DataAccessException ex) {
-            logger.error("Error while updating route with id: {}", route.getId());
-            throw new RouteUpdateException("Error while updating route", ex);
         }
     }
 

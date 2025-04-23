@@ -14,7 +14,6 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class Ticket {
     private Long id;
-//    @Future
     @NotNull
     private LocalDateTime dateTime;
     private Long userId;
