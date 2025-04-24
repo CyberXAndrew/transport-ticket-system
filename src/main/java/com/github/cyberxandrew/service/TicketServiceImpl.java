@@ -90,15 +90,25 @@ public class TicketServiceImpl implements TicketService {
     public void purchaseTicket(Long userId, Long ticketId) {
         ticketRepository.purchaseTicket(userId, ticketId);
 
-        sendTicket(ticketId);
+        Ticket ticket = ticketRepository.findById(ticketId).orElseThrow(() ->
+                new TicketNotFoundException("Ticket with id " + ticketId + " not found"));
+        ticketProduser.sendMessage(ticket);
 
         List<Ticket> tickets = ticketRepository.findAllPurchasedTickets(userId);
         ticketCacheService.cachePurchasedTickets(userId, tickets);
     }
 
-    private void sendTicket(Long ticketId) {
-        Ticket ticket = ticketRepository.findById(ticketId).orElseThrow(() ->
-                new TicketNotFoundException("Ticket with id " + ticketId + " not found"));
-        ticketProduser.sendMessage(ticket);
+    @Override
+    @Transactional
+    public boolean returnTicket(Long ticketId) {
+        if (ticketRepository.returnTicket(ticketId)) {
+
+            Ticket ticket = ticketRepository.findById(ticketId).orElseThrow(() ->
+                    new TicketNotFoundException("Ticket with id " + ticketId + " not found"));
+            ticketProduser.sendMessageToReturn(ticket);
+
+            return true;
+        }
+        return false;
     }
 }

@@ -14,4 +14,7 @@ public class TicketProduser {
         kafkaTemplate.send("purchased-ticket", ticket);
     }
 
+    public void sendMessageToReturn(Ticket ticket) {
+        kafkaTemplate.send("returned-ticket", ticket);
+    }
 }

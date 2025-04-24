@@ -21,4 +21,5 @@ public interface TicketService {
     TicketDTO updateTicket(TicketUpdateDTO updateDTO, Long id);
     void deleteTicket(Long ticketId);
     void purchaseTicket(Long userId, Long ticketId);
+    boolean returnTicket(Long ticketId);
 }

@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping(path = "/api/tickets")
@@ -64,6 +65,14 @@ public class TicketController {
     @ResponseStatus(HttpStatus.OK)
     public void purchaseTicket(@PathVariable Long id, @RequestParam Long userId) {
         ticketService.purchaseTicket(userId, id);
+    }
+
+    @Secured({ "ROLE_ADMIN" })
+    @PutMapping(path = "/{id}/return")
+    @ResponseStatus(HttpStatus.OK)
+    public Map<String, Boolean> returnTicket(@PathVariable Long id) {
+        boolean result = ticketService.returnTicket(id);
+        return Map.of("ticket_returned_by_user: ", result);
     }
 
     @Secured({ "ROLE_ADMIN" })

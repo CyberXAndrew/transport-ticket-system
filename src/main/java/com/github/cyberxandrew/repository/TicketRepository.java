@@ -20,5 +20,5 @@ public interface TicketRepository {
     Ticket update(Ticket ticket);
     void deleteById(Long ticketId);
     void purchaseTicket(Long userId, Long ticketId);
-    boolean isTicketAvailable(Long ticketId);
+    boolean returnTicket(Long ticketId);
 }

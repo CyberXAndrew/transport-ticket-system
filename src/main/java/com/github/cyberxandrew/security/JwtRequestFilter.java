@@ -27,7 +27,9 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
 
         String requestURI = request.getRequestURI();
-        if (requestURI.equals("/authenticate") || requestURI.equals("/refresh-token")) {
+        if (requestURI.startsWith("/css") || requestURI.startsWith("/js") || requestURI.startsWith("/images") ||
+                requestURI.equals("/favicon.ico") || requestURI.equals("/authenticate") ||
+                requestURI.equals("/refresh-token")) {
             filterChain.doFilter(request, response);
             return;
         }
@@ -41,10 +43,8 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                 login = jwtTokenUtil.extractLoginFromToken(jwtToken);
             } catch (IllegalArgumentException ex) {
                 logger.warn("Unable to get JWT token");
-                throw new AuthenticationException("Unable to get JWT token") {};
             } catch (ExpiredJwtException ex) {
                 logger.warn("JWT token has expired");
-                throw new AuthenticationException("JWT token has expired") {};
             }
             if (login != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                 UserDetails userDetails = userDetailsService.loadUserByUsername(login);
@@ -57,7 +57,6 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             }
         } else {
             logger.warn("JWT token Does not begin with \"Bearer \" string or was not transmitted");
-            throw new AuthenticationException("JWT token Does not begin with \"Bearer \" string or was not transmitted") {};
         }
         filterChain.doFilter(request, response);
     }

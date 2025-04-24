@@ -178,7 +178,6 @@ public class TicketRepositoryImpl implements TicketRepository {
         logger.debug("Ticket with id: {} successfully purchased by user with id: {}", ticketId, userId);
     }
 
-    @Override
     @Transactional(readOnly = true)
     public boolean isTicketAvailable(Long ticketId) {
         if (!ticketExists(ticketId)) {
@@ -202,5 +201,13 @@ public class TicketRepositoryImpl implements TicketRepository {
         Boolean exists = jdbcTemplate.queryForObject(sql, new Object[]{ticketId}, Boolean.class);
         logger.debug("Ticket with id: {} exists: {}", ticketId, exists);
         return exists;
+    }
+
+    @Override
+    @Transactional
+    public boolean returnTicket(Long ticketId) {
+        String sql = "UPDATE tickets SET user_id = NULL WHERE id = ?";
+
+        return jdbcTemplate.update(sql, ticketId) > 0;
     }
 }
