@@ -58,7 +58,7 @@ public class SecurityConfig {
                         .accessDeniedHandler(authorizationAccessDeniedHandler)
                         .authenticationEntryPoint(jwtAuthenticationEntryPoint))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/authenticate", "/refresh-token").permitAll()
+                        .requestMatchers("/authenticate", "/refresh-token", "/h2-console/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/tickets").hasRole("ADMIN")
                         .requestMatchers("/welcome/admin").hasRole("ADMIN")
                         .anyRequest().authenticated())
