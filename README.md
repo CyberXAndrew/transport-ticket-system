@@ -4,7 +4,8 @@
 ### Description
 Transport ticket system project is a Java-based Spring Boot microservice providing a REST API for managing transportation ticket purchases.
 It includes user registration, ticket browsing, and purchase functionality. Key features include filtering and 
-pagination, input validation, and Swagger API documentation.  Additional features implemented include JWT authentication,
+pagination, input validation, and Swagger API documentation. Additional features implemented include authentication by 
+JWT access & refresh tokens,
 role-based authorization, Redis caching, and Kafka integration.
 
 ### Key Features
