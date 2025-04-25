@@ -6,6 +6,9 @@ import com.github.cyberxandrew.dto.ticket.TicketUpdateDTO;
 import com.github.cyberxandrew.dto.ticket.TicketWithRouteDataDTO;
 import com.github.cyberxandrew.exception.ticket.TicketNotFoundException;
 import com.github.cyberxandrew.exception.ticket.TicketSaveException;
+import com.github.cyberxandrew.mapper.TicketMapper;
+import com.github.cyberxandrew.model.Ticket;
+import com.github.cyberxandrew.utils.KafkaTestListener;
 import com.github.cyberxandrew.utils.TicketFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -14,31 +17,45 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.kafka.test.context.EmbeddedKafka;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest
+@EmbeddedKafka(partitions = 1, brokerProperties = { "listeners=PLAINTEXT://localhost:9092", "port=9092" })
 @Transactional
 @ActiveProfiles("test")
+@DirtiesContext
+@TestPropertySource(properties = { "spring.kafka.bootstrap-servers:localhost:9092" })
 public class TicketServiceImplIntegrationTest {
     @Autowired private TicketServiceImpl ticketService;
     @Autowired private TicketCacheService ticketCacheService;
+    @Autowired private KafkaTemplate<String, Ticket> kafkaTemplate; // fix Ticket?
+    @Autowired private KafkaTestListener kafkaTestListener;
+    @Autowired private TicketMapper ticketMapper;
     private Long testAbsentId;
     private Long availableTicketId;
     private Long unavailableTicketId;
     private Long idOfSavedTicket;
     private Long userId;
+    private Long routeId;
+    private String seatNumber;
 
 //    @Autowired private ObjectMapper objectMapper;
 
@@ -49,6 +66,10 @@ public class TicketServiceImplIntegrationTest {
         availableTicketId = 1L;
         unavailableTicketId = 4L;
         userId = 2L;
+        routeId = 3L;
+        seatNumber = "1C";
+
+        kafkaTestListener.reset();
     }
 
     @Test
@@ -64,17 +85,26 @@ public class TicketServiceImplIntegrationTest {
 
     @Test
     public void testFindAllPurchasedTickets() {
-        TicketCreateDTO createDTO = TicketFactory.createTicketCreateDTO();
-        createDTO.setUserId(userId);
-        TicketDTO savedTicketDTO = ticketService.saveTicket(createDTO);
+        Ticket ticketToPurchase = new TicketFactory.TicketBuilder()
+                .withDateTime(LocalDateTime.now())
+                .withUserId(null)
+                .withRouteId(routeId)
+                .withPrice(new BigDecimal("123.00"))
+                .withSeatNumber(seatNumber)
+                .build();
+        TicketCreateDTO ticketDTO = ticketMapper.ticketToTicketCreateDTO(ticketToPurchase);
+        TicketDTO savedTicketDTO = ticketService.saveTicket(ticketDTO);
+        Long savedTicketId = ticketService.findTicketById(savedTicketDTO.getId()).getId();
+        ticketCacheService.evictPurchasedTickets(userId, 0, -1);
+        ticketService.purchaseTicket(userId, savedTicketId);
 
         List<TicketDTO> ticketList = ticketService.findAllPurchasedTickets(userId);
 
         assertFalse(ticketList.isEmpty());
         assertEquals(1, ticketList.size());
-        assertEquals(ticketList.getFirst(), savedTicketDTO);
+        assertEquals(ticketList.getFirst().getId(), savedTicketId);
 
-        ticketCacheService.evictPurchasedTickets(userId, 1, 0);
+        ticketCacheService.evictPurchasedTickets(userId, 0, -1);
     }
 
     @Test
@@ -143,12 +173,20 @@ public class TicketServiceImplIntegrationTest {
     }
 
     @Test
-    public void testPurchaseTicket() {
+    public void testPurchaseTicket() throws InterruptedException {
         ticketService.purchaseTicket(userId, availableTicketId);
 
         List<TicketDTO> tickets = ticketService.findAllPurchasedTickets(userId);
         assertFalse(tickets.isEmpty());
         assertEquals(1, tickets.size());
         assertEquals(tickets.getFirst().getUserId(), userId);
+
+        boolean messageConsumed = kafkaTestListener.getCountDownLatch().await(10, TimeUnit.SECONDS);
+        Ticket expectedMessage = ticketMapper.ticketDTOToTicket(tickets.getFirst());
+
+        assertTrue(messageConsumed, "Message was not consumed by kafka listener");
+        assertNotNull(kafkaTestListener.getReceivedMessage(), "Received message is null");
+        assertEquals(expectedMessage, kafkaTestListener.getReceivedMessage(), "Received message does not" +
+                " match expected ticket");
     }
 }
