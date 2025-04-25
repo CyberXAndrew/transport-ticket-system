@@ -41,6 +41,7 @@ public class TicketServiceImpl implements TicketService {
     @Transactional(readOnly = true)
     public List<TicketDTO> findAllPurchasedTickets(Long userId) {
         List<Ticket> purchasedTicketsFromCache = ticketCacheService.getPurchasedTickets(userId);
+        System.out.println("====from cache==\n" + purchasedTicketsFromCache + "\n------");//TEMP COMMENT
         if (purchasedTicketsFromCache != null && !purchasedTicketsFromCache.isEmpty()) {
             return purchasedTicketsFromCache.stream()
                     .map(ticket -> ticketMapper.ticketToTicketDTO(ticket))
@@ -92,6 +93,7 @@ public class TicketServiceImpl implements TicketService {
 
         Ticket ticket = ticketRepository.findById(ticketId).orElseThrow(() ->
                 new TicketNotFoundException("Ticket with id " + ticketId + " not found"));
+
         ticketProduser.sendMessage(ticket);
 
         List<Ticket> tickets = ticketRepository.findAllPurchasedTickets(userId);

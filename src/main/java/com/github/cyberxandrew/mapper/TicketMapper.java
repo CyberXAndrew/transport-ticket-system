@@ -18,7 +18,9 @@ componentModel = MappingConstants.ComponentModel.SPRING,
 unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface TicketMapper {
     TicketDTO ticketToTicketDTO(Ticket ticket);
+    Ticket ticketDTOToTicket(TicketDTO ticketDTO);
     Ticket ticketCreateDTOToTicket(TicketCreateDTO createDTO);
+    TicketCreateDTO ticketToTicketCreateDTO(Ticket ticket);
     TicketDTO ticketCreateDTOToTicketDTO(TicketCreateDTO createDTO);
     TicketDTO ticketUpdateDTOToTicketDTO(TicketUpdateDTO updateDTO);
     TicketUpdateDTO ticketDTOToUpdateDTO(TicketDTO ticketDTO);
