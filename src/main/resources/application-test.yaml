@@ -8,6 +8,18 @@ spring:
     init:
       mode: always
       schema-locations: classpath:schema.sql
+  kafka:
+    consumer:
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring:
+          json:
+            trusted:
+              packages: '*'
+      group-id: ticket-consumers
+    template:
+      default-topic: purchased-ticket
 
 logging:
   level:
