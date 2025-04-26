@@ -174,6 +174,10 @@ public class TicketServiceImplIntegrationTest {
 
     @Test
     public void testPurchaseTicket() throws InterruptedException {
+//        System.out.println("======[KAFKA LISTENER]:\n" + kafkaTestListener.getCountDownLatch() + "\n------");// TEST TEMPORARY STRING
+        System.out.println("======[KAFKA LISTENER]:\n" + kafkaTestListener.getMessageReceived() + "\n------");// TEST TEMPORARY STRING
+        System.out.println("======[KAFKA LISTENER]:\n" + kafkaTestListener.getReceivedMessage() + "\n------");// TEST TEMPORARY STRING
+
         ticketService.purchaseTicket(userId, availableTicketId);
 
         List<TicketDTO> tickets = ticketService.findAllPurchasedTickets(userId);
@@ -181,10 +185,23 @@ public class TicketServiceImplIntegrationTest {
         assertEquals(1, tickets.size());
         assertEquals(tickets.getFirst().getUserId(), userId);
 
-        boolean messageConsumed = kafkaTestListener.getCountDownLatch().await(10, TimeUnit.SECONDS);
-        Ticket expectedMessage = ticketMapper.ticketDTOToTicket(tickets.getFirst());
+//        boolean messageConsumed = kafkaTestListener.getCountDownLatch().await(10, TimeUnit.SECONDS);
+        long startTime = System.currentTimeMillis();
+        long awaitTime = 10000;
 
-        assertTrue(messageConsumed, "Message was not consumed by kafka listener");
+        System.out.println("======[ATOMIC ]:\n" + kafkaTestListener.getMessageReceived().get() + "\n------");// TEST TEMPORARY STRING
+        int i = 0;
+        while (!kafkaTestListener.getMessageReceived().get() && (System.currentTimeMillis() - startTime) < awaitTime) {
+            System.out.println("======[WHILE]:\n" + kafkaTestListener.getMessageReceived().get() + "\n------");// TEST TEMPORARY STRING
+            i++;
+            Thread.sleep(1000);
+            Thread.yield();
+        }
+        System.out.println("======[i]:\n" + i + "\n------");// TEST TEMPORARY STRING
+
+        Ticket expectedMessage = ticketMapper.ticketDTOToTicket(tickets.getFirst());
+//        assertTrue(messageConsumed, "Message was not consumed by kafka listener");
+        System.out.println("======[received message]:\n" + kafkaTestListener.getReceivedMessage() + "\n------");// TEST TEMPORARY STRING
         assertNotNull(kafkaTestListener.getReceivedMessage(), "Received message is null");
         assertEquals(expectedMessage, kafkaTestListener.getReceivedMessage(), "Received message does not" +
                 " match expected ticket");
