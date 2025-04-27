@@ -52,3 +52,6 @@ redis.log
 
 # Kafka
 kafka.log
+
+# Tasks list
+Project tasks list
