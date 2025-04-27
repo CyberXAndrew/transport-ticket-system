@@ -1,15 +1,15 @@
 package com.github.cyberxandrew.utils;
 
 import com.github.cyberxandrew.model.Ticket;
-import org.springframework.context.annotation.Scope;
+import lombok.Getter;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+@Getter
 @Component
-//@Scope("prototype")
 public class KafkaTestListener {
 
     private AtomicBoolean messageReceived = new AtomicBoolean(false);
@@ -17,17 +17,12 @@ public class KafkaTestListener {
 //    private CountDownLatch countDownLatch = new CountDownLatch(1);
 
     @KafkaListener(topics = "purchased-ticket", groupId = "test-consumers-one")
-    public void listenTopic(Ticket ticket) throws InterruptedException {//fix
-        System.out.println("======[MEthod listen start]:\n\n------");// TEST TEMPORARY STRING
+    public void listenTopic(Ticket ticket) {
+        System.out.println("KafkaTestListener в классе слушателя: " + System.identityHashCode(this));
 //        countDownLatch.countDown();
         receivedMessage = ticket;
         messageReceived.set(true);
-//        Thread.sleep(12350);
         System.out.println("Message received: " + ticket);
-
-        System.out.println("======[message true?]:\n" + messageReceived + "\n------");// TEST TEMPORARY STRING
-        System.out.println("======[ticket]:\n" + ticket + "\n------");// TEST TEMPORARY STRING
-//        System.out.println("======[countdownlatch]:\n" + countDownLatch.getCount() + "\n------");// TEST TEMPORARY STRING
     }
 
     public void reset() {
@@ -35,16 +30,4 @@ public class KafkaTestListener {
         receivedMessage = null;
 //        countDownLatch = new CountDownLatch(1);
     }
-
-    public AtomicBoolean getMessageReceived() {
-        return messageReceived;
-    }
-
-    public Ticket getReceivedMessage() {
-        return receivedMessage;
-    }
-
-//    public CountDownLatch getCountDownLatch() {
-//        return countDownLatch;
-//    }
 }
