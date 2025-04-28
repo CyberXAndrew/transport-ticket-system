@@ -1,3 +1,4 @@
+---
 spring:
   profiles:
     active: dev
@@ -22,8 +23,8 @@ springdoc:
     path: /v3/api-docs
 
 jwt:
-  secret: PF0QWCZUrwhimpysmXvy9LAxJCcD6tU1lQvIo+hlBiQ= #Это поле содержит секретный ключ, который используется для подписи JWT токенов
-  expiration: 3600000 #Это поле содержит время жизни jwt токена в миллисекундах
+  secret: PF0QWCZUrwhimpysmXvy9LAxJCcD6tU1lQvIo+hlBiQ=  #Это поле содержит секретный ключ, который используется для подписи JWT токенов
+  expiration: 3600000  #Это поле содержит время жизни jwt токена в миллисекундах
 
 logging:
   level:
