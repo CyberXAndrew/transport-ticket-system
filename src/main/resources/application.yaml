@@ -7,6 +7,11 @@ spring:
       path: /h2-console
       settings:
         web-allow-others: true #?
+  sql:
+    init:
+      mode: always
+      schema-locations: classpath:schema.sql
+      data-locations: classpath:data.sql
   kafka:
     bootstrap-servers: localhost:9092
 
@@ -24,4 +29,3 @@ logging:
   level:
     org:
       springframework: TRACE
-#        security: TRACE

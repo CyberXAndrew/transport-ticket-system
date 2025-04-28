@@ -4,10 +4,7 @@ spring:
     username: sa
     password: ""
     driver-class-name: org.h2.Driver
-  sql:
-    init:
-      mode: always
-      schema-locations: classpath:schema.sql
+
   kafka:
     consumer:
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
