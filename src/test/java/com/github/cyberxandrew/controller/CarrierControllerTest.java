@@ -37,29 +37,33 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
 public class CarrierControllerTest {
+    
     @Autowired private MockMvc mockMvc;
     @Autowired private ObjectMapper objectMapper;
     @Autowired private CarrierMapper carrierMapper;
     @MockitoBean private CarrierServiceImpl carrierService;
     @Autowired JwtTokenUtil jwtTokenUtil;
     @Autowired UserDetailsServiceImpl userDetailsService;
+    private final String URL = "/api/carriers";
+    private String authenticationHeader;
     private Long carrierId1;
     private Long carrierId2;
     private String carrierName1;
     private String carrierName2;
     private String carrierPhoneNumber1;
     private String carrierPhoneNumber2;
-    private String accessToken;
 
     @BeforeEach
-    void SetUp() {
+    void setUp() {
         carrierId1 = 1L;
         carrierId2 = 2L;
         carrierName1 = "J7";
         carrierName2 = "Java Airlines";
         carrierPhoneNumber1 = "123-456-7890";
         carrierPhoneNumber2 = "098-765-4321";
-        accessToken = jwtTokenUtil.generateToken(userDetailsService.loadUserByUsername("test"));
+
+        String accessToken = jwtTokenUtil.generateToken(userDetailsService.loadUserByUsername("test"));
+        authenticationHeader = "Bearer " + accessToken;
     }
 
     @Test
@@ -69,8 +73,8 @@ public class CarrierControllerTest {
 
         when(carrierService.findCarrierById(carrierId1)).thenReturn(carrierDTO);
 
-        mockMvc.perform(get("/api/carriers/{id}", carrierId1)
-                        .header("Authorization", "Bearer " + accessToken)
+        mockMvc.perform(get(URL + "/{id}", carrierId1)
+                        .header("Authorization", authenticationHeader)
                 )
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -95,8 +99,8 @@ public class CarrierControllerTest {
 
         when(carrierService.findAll()).thenReturn(expectedList);
 
-        mockMvc.perform(get("/api/carriers")
-                        .header("Authorization", "Bearer " + accessToken))
+        mockMvc.perform(get(URL)
+                        .header("Authorization", authenticationHeader))
                 .andExpect(status().isOk())
                 .andExpect(header().string("X-Total-Count", is(String.valueOf(expectedList.size()))))
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -111,8 +115,8 @@ public class CarrierControllerTest {
 
         when(carrierService.saveCarrier(carrierCreateDTO)).thenReturn(carrierDTO);
 
-        mockMvc.perform(post("/api/carriers")
-                        .header("Authorization", "Bearer " + accessToken)
+        mockMvc.perform(post(URL)
+                        .header("Authorization", authenticationHeader)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(carrierCreateDTO)))
                 .andExpect(status().isCreated())
@@ -128,8 +132,8 @@ public class CarrierControllerTest {
 
         when(carrierService.updateCarrier(carrierUpdateDTO, carrierId1)).thenReturn(carrierDTO);
 
-        mockMvc.perform(put("/api/carriers/{id}", carrierId1)
-                        .header("Authorization", "Bearer " + accessToken)
+        mockMvc.perform(put(URL + "/{id}", carrierId1)
+                        .header("Authorization", authenticationHeader)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(carrierUpdateDTO)))
                 .andExpect(status().isOk())
@@ -141,8 +145,8 @@ public class CarrierControllerTest {
     public void testDelete() throws Exception {
         doNothing().when(carrierService).deleteCarrier(carrierId1);
 
-        mockMvc.perform(delete("/api/carriers/{id}", carrierId1)
-                        .header("Authorization", "Bearer " + accessToken))
+        mockMvc.perform(delete(URL + "/{id}", carrierId1)
+                        .header("Authorization", authenticationHeader))
                 .andExpect(status().isNoContent());
     }
 }

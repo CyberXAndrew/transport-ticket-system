@@ -28,7 +28,7 @@ public class TicketFactory {
         testPrice = new BigDecimal("123.45");
         testSeatNumber = "1A";
 
-        testDeparturePoint = "Saints-Petersburg";
+        testDeparturePoint = "Saint Petersburg";
         testDestinationPoint = "Moscow";
         testCarrierName = "Java Airlines";
     }

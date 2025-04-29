@@ -151,7 +151,7 @@ public class TicketRepositoryImplTest {
 
         Pageable pageable = PageRequest.of(0, 2);
         LocalDateTime dateTime = LocalDateTime.now();
-        String departurePoint = "Saints-Petersburg";
+        String departurePoint = "Saint Petersburg";
         String destinationPoint = "Moscow";
         String carrierName = "Java Airlines";
 

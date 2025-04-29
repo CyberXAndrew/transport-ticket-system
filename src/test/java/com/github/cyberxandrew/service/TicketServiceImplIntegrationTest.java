@@ -107,12 +107,12 @@ public class TicketServiceImplIntegrationTest {
         Pageable pageable = PageRequest.of(pageNumber, pageSize);
 
         List<TicketWithRouteDataDTO> allAccessibleTickets = ticketService.findAllAccessibleTickets(pageable,
-                null, "Saints-Petersburg",
+                null, "Saint Petersburg",
                 "Moscow", "J7");
 
         assertFalse(allAccessibleTickets.isEmpty());
         assertEquals(pageSize, allAccessibleTickets.size());
-        assertEquals("Saints-Petersburg", allAccessibleTickets.getFirst().getDeparturePoint());
+        assertEquals("Saint Petersburg", allAccessibleTickets.getFirst().getDeparturePoint());
         assertEquals("Moscow", allAccessibleTickets.getFirst().getDestinationPoint());
         assertEquals("J7", allAccessibleTickets.getFirst().getCarrierName());
     }

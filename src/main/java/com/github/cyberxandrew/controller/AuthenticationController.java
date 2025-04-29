@@ -3,10 +3,8 @@ package com.github.cyberxandrew.controller;
 import com.github.cyberxandrew.dto.authentication.AuthRequest;
 import com.github.cyberxandrew.dto.authentication.AuthResponse;
 import com.github.cyberxandrew.dto.authentication.RefreshTokenRequest;
-import com.github.cyberxandrew.dto.user.UserUpdateDTO;
 import com.github.cyberxandrew.exception.user.UserNotFoundException;
 import com.github.cyberxandrew.model.RefreshToken;
-import com.github.cyberxandrew.model.Role;
 import com.github.cyberxandrew.model.User;
 import com.github.cyberxandrew.model.UserDetailsImpl;
 import com.github.cyberxandrew.repository.RefreshTokenRepositoryImpl;
@@ -14,7 +12,6 @@ import com.github.cyberxandrew.repository.UserRepositoryImpl;
 import com.github.cyberxandrew.security.JwtTokenUtil;
 import com.github.cyberxandrew.service.UserDetailsServiceImpl;
 import lombok.RequiredArgsConstructor;
-import org.openapitools.jackson.nullable.JsonNullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -35,11 +32,12 @@ import java.util.UUID;
 @RestController
 @RequiredArgsConstructor
 public class AuthenticationController {
+
+    @Autowired private UserRepositoryImpl userRepository;
+    @Autowired private RefreshTokenRepositoryImpl refreshTokenRepository;
     private final JwtTokenUtil jwtTokenUtil;
     private final UserDetailsServiceImpl userDetailsService;
     private final AuthenticationManager authenticationManager;
-    @Autowired private RefreshTokenRepositoryImpl refreshTokenRepository;
-    @Autowired private UserRepositoryImpl userRepository;
 
     @PostMapping(path = "/authenticate")
     public ResponseEntity<?> createAuthenticationToken(@RequestBody AuthRequest authRequest) {
