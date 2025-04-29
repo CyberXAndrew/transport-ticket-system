@@ -5,12 +5,10 @@ spring:
     username: sa
     password: ""
     driver-class-name: org.h2.Driver
-
   kafka:
     consumer:
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-      value-deserializer: org.springframework.kafka.support
-        .serializer.JsonDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
       properties:
         spring:
           json:
@@ -25,10 +23,3 @@ logging:
     repository:
       TicketRepositoryImpl: DEBUG
     root: INFO
-    org:
-      hibernate:
-        SQL: DEBUG
-        type:
-          descriptor:
-            sql:
-              BasicBinder: TRACE

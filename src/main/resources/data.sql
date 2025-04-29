@@ -6,12 +6,12 @@ INSERT INTO carriers (name, phone_number) VALUES
 ('Hyperloop', '777666555');
 
 INSERT INTO routes (departure_point, destination_point, carrier_id, duration) VALUES
-('Saints-Petersburg', 'Moscow', 1, 120),
-('Vienna', 'Saints-Petersburg', 1, 260),
-('Saints-Petersburg', 'Vienna', 2, 260),
-('Moscow', 'Saints-Petersburg', 3, 110),
-('Saints-Petersburg', 'Moscow', 2, 420),
-('Saints-Petersburg', 'Moscow', 2, 410),
+('Saint Petersburg', 'Moscow', 1, 120),
+('Vienna', 'Saint Petersburg', 1, 260),
+('Saint Petersburg', 'Vienna', 2, 260),
+('Moscow', 'Saint Petersburg', 3, 110),
+('Saint Petersburg', 'Moscow', 2, 420),
+('Saint Petersburg', 'Moscow', 2, 410),
 ('Tokyo', 'Moscow', 2, 420),
 ('Moscow', 'Vienna', 3, 190);
 
